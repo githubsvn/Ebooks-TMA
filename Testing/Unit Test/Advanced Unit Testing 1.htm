@@ -1,0 +1,1689 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Advanced Unit Testing, Part I - Overview - The Code Project - C# Programming</title>
+
+
+
+
+<!-- base -->
+<meta http-equiv="Reply-to" content="mailto:webmaster@codeproject.com">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="MS.LOCALE" content="en-US">
+<meta name="Description" content="An Introduction To The Issues Of Unit Testing">
+<meta name="Search.TopicType" content="kbArticle">
+<meta name="Author" content="Marc Clifton">
+<meta name="Search.PublishDate" content="18 Sep 2003 14:00:00 GMT">
+<meta name="Search.RevisedDate" content="18 Sep 2003 14:00:00 GMT">
+
+<meta name="keywords" content="Free source code, , Visual C++, MFC, Windows, Unit Test NUnit CSUnit XP Extreme Programming">
+<meta name="Copyright" content="Article content copyright Marc Clifton, 2003, everthing else Copyright © CodeProject, 1999-2006, All Rights Reserved.">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Lounge Postings" href="http://www.codeproject.com/webservices/LoungeRSS.aspx">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - All topics" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=1">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - MFC / C++" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=2">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - C#" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=3">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - ASP.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=4">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - .NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=5">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - VB.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=6">
+<link rel="search" type="application/opensearchdescription+xml" title="The Code Project" href="http://www.codeproject.com/info/OpenSearch.xml">
+<link rel="icon" href="http://www.codeproject.com/favicon.ico" type="image/ico">
+<link rel="SHORTCUT ICON" href="http://www.codeproject.com/favicon.ico">
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%201_files/global.css">
+
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%201_files/netscape6.css">
+<script language="javascript">
+if (top != self) top.location.href = location.href;
+if (typeof(DemoUrl) != "undefined")
+	document.write('<me' + 'ta http' + '-equiv="re' + 'fresh" con' + 'tent="1;url=' + DemoUrl + '">');
+</script></head><body style="margin: 0pt;" oncopy="return copyCode();" alink="red" bgcolor="white" link="blue" text="black" vlink="navy">
+
+<!-- COPYRIGHT 2006 I/PRO Corporation ALL RIGHTS RESERVED. - Page view auditing -->
+<script type="text/javascript" language="JavaScript">
+var LSPT="";
+LSPT += "?durl=" + escape(document.URL);
+LSPT += "&hostname=" + location.hostname;
+LSPT += "&url=" + location.pathname;
+LSPT += "&query=" + escape(location.search) + escape(location.hash);
+LSPT += "&referrer=" + escape(document.referrer);
+LSPT += "&browser=" + escape(navigator.appName);
+LSPT += "&version=" + escape(navigator.appVersion);
+LSPT += "&os=" + escape(navigator.platform);
+LSPT += "&xdomain=codeproject.com";
+LSPT += "&custid=codeproject";
+</script>
+<script type="text/javascript">
+document.write('<img src=http://'+'content.ipro.com/images/pixel.gif'+LSPT+' height="1" width="1" style="position:absolute; top:0px; left:0px">');
+</script><img src="Advanced%20Unit%20Testing%201_files/pixel.gif" style="position: absolute; top: 0px; left: 0px;" height="1" width="1">
+<noscript>
+<img src="http://content.ipro.com/images/pixel?version=nonjava" height="1" width="1" style="position:absolute;top:0px;left:0px">
+</noscript>
+<!-- END I/PRO PAGE TAG -->
+
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+<tbody><tr>
+	<td class="HeaderLogo"><a href="http://www.codeproject.com/"><img alt="Home" src="Advanced%20Unit%20Testing%201_files/codeproject225x90.gif" border="0" height="90"></a></td>
+	<td bgcolor="#ff9900">&nbsp;</td>
+</tr>
+
+
+<tr><td colspan="2">
+
+	<table class="ArticleHeader" cellpadding="3" cellspacing="0" width="100%">
+	<tbody><tr valign="top">
+		<td class="smallText" style="padding-right: 10px;"><a href="http://www.codeproject.com/?cat=1">All Topics</a>, <a href="http://www.codeproject.com/?cat=3">C#</a>, <a href="http://www.codeproject.com/?cat=5">.NET</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/">C# Programming</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/#General">General</a> &nbsp;(<span class="SmallText" style="color: green; font-weight: bold;">Beginner</span>)<br>
+			
+			<a href="http://www.codeproject.com/csharp/autp1.asp">http://www.codeproject.com/csharp/autp1.asp</a><br>
+			
+			<br>
+			<div style="font-weight: bold; font-size: 16pt;">Advanced Unit Testing, Part I - Overview</div>
+			<b>By <a href="http://www.codeproject.com/script/Articles/list_articles.asp?userid=36803">Marc Clifton</a></b>.
+			
+			<br><br><div style="font-size: 12px;">An Introduction To The Issues Of Unit Testing</div>
+		</td>
+		<td class="smallText" style="width: 200px;">
+			C#<br> Windows (WinXP, Win2K, Win2003, Win95, Win98, WinME), .NET<br> Win32, VS<br> Dev<br>
+			<span style="padding-right: 2ex;">Posted</span>: <b>19 Sep 2003</b><br>
+			<span style="padding-right: 3ex;">Views</span>: <b>168,419</b>
+		</td>
+	</tr>
+	
+	
+
+	
+
+
+</tbody></table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="top">
+
+	
+
+	<td width="100%">
+
+		
+		
+		<table width="100%">
+		<tbody><tr valign="top">
+		<td class="SmallText" nowrap="nowrap">
+		</td>
+		<td align="right" nowrap="nowrap"><a name="__top"></a><table><tbody><tr><td class="smallText" align="right">85 votes  for this article.</td><td>
+<table border="2" cellpadding="0" cellspacing="0"><tbody><tr>
+<td><img src="Advanced%20Unit%20Testing%201_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%201_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%201_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%201_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%201_files/red.gif" border="0" height="5" width="11"><img src="Advanced%20Unit%20Testing%201_files/white.gif" border="0" height="5" width="9"></td>
+</tr></tbody></table>
+</td></tr><tr><td colspan="2" class="smallText" align="right"><a href="http://www.codeproject.com/script/articles/top_articles.asp?st=2" title="Calculated as rating x Log10(# votes)">Popularity: 8.77</a>. Rating: <b>4.55</b> out of 5.</td></tr></tbody></table></td></tr>
+		</tbody></table>
+		
+			
+	</td>
+</tr>
+
+<tr>
+	<td class="ArticlePane">
+
+<span name="intelliTxt" id="intelliTXT">
+<div nd="1" id="contentdiv">
+
+
+<!-- Article Starts -->
+
+
+<i>Oh dear God, anybody who votes [for unit-testing] has major
+problems. I hate the @#$% things. And the "Write tests first, code
+later" paradigm eludes me. I mean, come on, unit testing is not the
+end-all, be-all people! I don't care how sophisticated your tests are,
+a "pass/fail" grade is not sufficient to make sure you're ready for
+production. </i>- David Stone, on the "do you like design or unit testing better" survey. 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Preface0">Preface</a> 
+</li><li><a href="#Introduction1">Introduction</a> 
+</li><li><a href="#What%20Is%20A%20Unit%20Test2">What Is A Unit Test?</a> 
+<ul>
+<li><a href="#Black%20Box%20vs.%20White%20Box%20Test3">Black Box vs. White Box Test</a> 
+<ul>
+<li><a href="#Black%20Box%20Testing4">Black Box Testing</a> 
+</li><li><a href="#White%20Box%20Testing5">White Box Testing</a> </li></ul>
+</li><li><a href="#Test%20Harness6">Test Harness</a> 
+</li><li><a href="#Mock%20Objects7">Mock Objects</a> </li></ul>
+</li><li><a href="#What%20Does%20A%20Unit%20Test%20Test8">What Does A Unit Test Test?</a> 
+<ul>
+<li><a href="#Customer%20Requirements9">Customer Requirements</a> 
+</li><li><a href="#Implementation%20Requirements10">Implementation Requirements</a> 
+</li><li><a href="#Global%20Requirements11">Global Requirements</a> </li></ul>
+</li><li><a href="#What%20Is%20NUnit12">What Is NUnit?</a> 
+<ul>
+<li><a href="#How%20Does%20NUnit%20Work13">How Does NUnit Work?</a> 
+<ul>
+<li><a href="#TestFixture14">TestFixture</a> 
+</li><li><a href="#SetUp15">SetUp</a> 
+</li><li><a href="#TearDown16">TearDown</a> 
+</li><li><a href="#Test17">Test</a> 
+</li><li><a href="#ExpectedException18">ExpectedException</a> 
+</li><li><a href="#Ignore19">Ignore</a> 
+</li><li><a href="#Suite20">Suite</a> 
+</li><li><a href="#An%20Example21">An Example</a> </li></ul></li></ul>
+</li><li><a href="#A%20Case%20Study22">A Case Study</a> 
+<ul>
+<li><a href="#The%20Extreme%20Programming%20Process23">The Extreme Programming Process</a> 
+<ul>
+<li><a href="#The%20User%20Story24">The User Story</a> 
+</li><li><a href="#Release%20Planning25">Release Planning</a> 
+</li><li><a href="#Iteration%20Plan26">Iteration Plan</a> 
+</li><li><a href="#Tasks27">Tasks</a> 
+</li><li><a href="#Non-Tasks28">Non-Tasks</a> 
+</li><li><a href="#CRC%20Cards29">CRC Cards</a> 
+</li><li><a href="#Scenario%20Walk%20Through%20Using%20CRC%20Cards30">Scenario Walk Through Using CRC Cards</a> 
+</li><li><a href="#Newly%20Discovered%20Non-Tasks31">Newly Discovered Non-Tasks</a> 
+</li><li><a href="#A%20Word%20About%20Object%20Entanglement%20And%20System-Wide%20Planning32">A Word About Object Entanglement And System-Wide Planning</a> 
+</li><li><a href="#A%20Word%20About%20Objects33">A Word About Objects</a> </li></ul>
+</li><li><a href="#Unit%20Tests34">Unit Tests</a> 
+<ul>
+<li><a href="#Part35">Part</a> 
+</li><li><a href="#Vendor36">Vendor</a> 
+<ul>
+<li><a href="#Weakness%20#1:%20Incomplete%20Unit%20Tests37">Weakness #1: Incomplete Unit Tests</a> 
+</li><li><a href="#Weakness%20#2:%20No%20Performance%20Measurements38">Weakness #2: No Performance Measurements</a> 
+</li><li><a href="#Weakness%20#3:%20No%20Resource%20Utilization%20Measurements39">Weakness #3: No Resource Utilization Measurements</a> 
+</li><li><a href="#Weakness%20#4:%20Lower%20Order%20Dependencies40">Weakness #4: Lower Order Dependencies</a> </li></ul>
+</li><li><a href="#Charge41">Charge</a> 
+</li><li><a href="#ChargeSlip42">ChargeSlip</a> 
+<ul>
+<li><a href="#Weakness:%20Entanglement%20And%20Complexity43">Weakness: Entanglement And Complexity</a> </li></ul>
+</li><li><a href="#WorkOrder44">WorkOrder</a> 
+<ul>
+<li><a href="#Weakness:%20Sort-Of%20Useless%20Test45">Weakness: Sort-Of Useless Test</a> 
+</li><li><a href="#Weakness:%20The%20Un-Designed46">Weakness: The Un-Designed</a> 
+</li><li><a href="#Weakness:%20Solving%20Problems%20That%20Don%27t%20Exist47">Weakness: Solving Problems That Don't Exist</a> </li></ul>
+</li><li><a href="#Invoice48">Invoice</a> 
+</li><li><a href="#Customer49">Customer</a> 
+</li><li><a href="#PurchaseOrder50">PurchaseOrder</a> </li></ul></li></ul>
+</li><li><a href="#Coming%20Soon...51">Coming Next...</a> </li></ul>
+<h2><a name="Preface0">Preface</a></h2>
+<p nd="2">This is a meandering article on the issues of unit testing
+and the Extreme Programming (XP) process.&nbsp; And what's worse, this
+is Part I of four articles.&nbsp; I've combined these two threads here
+because I think it's important to have the context (Extreme
+Programming) for the content (unit testing).&nbsp; While unit testing
+isn't something that's exclusive to XP, it is <i>the</i> critical
+element of XP.&nbsp; I think that in order to get a really good
+understanding of unit testing, looking at how it's used in the XP
+process is very valuable.&nbsp; XP does a good job of defining
+processes in which it is easier to think in terms of test driven
+development and helps to identify how to at least create a core set of
+unit tests.&nbsp; Without this context, it becomes a lot harder to
+write about unit testing as an autonomous process.</p>
+<p nd="3">The four articles in this series are:</p>
+<ul>
+<li nd="4">Part I: Introduction to unit testing and a case study taking the XP process up to the point of writing some unit tests 
+</li><li nd="5">Part II: Implementation of an NUnit look-alike and developing the case study further with real tests and real code 
+</li><li nd="6">Part III: Implementation of NUnit extensions, revising and progressing with the case study 
+</li><li nd="7">Part IV: Using reflection to create unit tests that are
+script based instead of code based, and the impact of that on the case
+study</li></ul>
+<h2><a name="Introduction1">Introduction</a></h2>
+<p nd="8">As brash as the title sounds, I personally feel that the
+concept of unit testing has a long way to go.&nbsp; I think it's overly
+simplistic, over-emphasized, and often misconstrued as a replacement
+for "mainstream" coding techniques - requirements documentation, design
+documents, code reviews, walkthroughs, instrumentation, profiling, and
+QA.&nbsp; And while I also don't particularly believe that formal
+design processes are appropriate for a lot of development efforts (so
+yes, some of the techniques in XP more accurately describe how I do
+things), I've developed a different solution that I find works very
+well for me.</p>
+<p nd="9">On the other hand, I'm realizing that unit testing has its
+place in the code-writing process.&nbsp; Even if it does very little,
+it has its uses, especially as a program gets bigger and bigger and
+changes not just can, but will, result in undetected broken code.</p>
+<p nd="10">On the other hand, I also think unit testing is too
+simplistic.&nbsp; It won't find most of the higher level problems that
+can occur when code is changed.&nbsp; I'm talking about information
+flow problems primarily, like making sure that when an item is received
+down in inventory, it's automatically billed out to the customer if the
+purchase order for the part was associated with a work order.&nbsp;
+That's a complex information flow that requires a sophisticated unit
+test.</p>
+<p nd="11">There is also the idea that if your unit tests pass, then
+your code is ready for production (or, at least, acceptance
+testing).&nbsp; This is an absurd assumption as David Stone so
+eloquently pointed out.&nbsp; The problem is that if you depend on your
+unit tests to determine whether your code is ready or not, then your
+unit tests had darn well be pretty good.&nbsp; And writing good unit
+tests is time consuming, boring, laborious, tedious, difficult, and
+requires skill.&nbsp; Oh wait.&nbsp; It also requires a good design
+document, so you can test the design, a good requirements document, so
+you can test the requirements, a good manager, so you have the time to
+write all these tests, and a lot of patience, because the design and
+requirements are going to change, so you'll be needing to change all
+those nice tests you wrote too.&nbsp; While writing unit tests is
+something that we'd like to give to the grunt down the hall, sadly, it
+often requires a level of expertise that the grunt doesn't have.</p>
+<p nd="12">So, here I am, of at least three minds, wondering if I just
+don't understand the benefits of unit testing, or if the rest of world
+simply loves hype.&nbsp; And before I make a foregone conclusion, I
+figured the best way to sink my teeth into the problem is to recreate
+NUnit and then add some of the features that I think are important to
+move it into the "real world".&nbsp; There's nothing like figuring out
+how something is done to understand why something is done.</p>
+<p nd="13">One thing I'll say right from the get-go, though.&nbsp; I'm
+a framework guy.&nbsp; I believe in the concept of building on
+"provably correct constructs".&nbsp; That means I start small, I
+generalize, and I build a framework out of code that I have proven to
+do what it's supposed to do, without unit testing.&nbsp; There are
+other ways to test things, after all.&nbsp; So, after building the
+lowest foundation, proving that the objects and functions are correct,
+I then build the next layer, prove that layer, and so on.&nbsp; This is
+the basis for the Application Automation Layer, as illustrated by this
+diagram:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/framework.jpg" border="0" height="220" width="541"></p>
+<p nd="14">The result is that when I write applications, sure there's
+custom, application specific code that has to be written, but for the
+most part, most of what I'm doing is gluing together proven code, which
+means that most of what I'm doing is coding data flow between GUI and
+database, coding application specific rules (using a proven rule
+engine), and coding any other business layer issues.&nbsp; It's all
+data flow, in other words.</p>
+<p nd="15">Also, I do very little refactoring.&nbsp; There isn't anything <i>to</i>
+refactor, because the proven code is well designed, simple, and
+works.&nbsp; Any refactoring that I do is usually related to improving
+the user interface.&nbsp; There are exceptions, of course.&nbsp; For
+example, my framework uses script files which code all the component
+glue.&nbsp; On a large project, there can be hundreds of script files
+which are pre-parsed when the application loads.&nbsp; Well, guess
+what?&nbsp; When the client is running a virus checker, the application
+takes 15 seconds to load, as compared to 1-2 seconds.&nbsp; So there's
+a good example of some refactoring that needs to get done.</p>
+<p nd="16">Why do I bring up refactoring?&nbsp; Because refactoring
+means changing code and object organization, often low-level
+code.&nbsp; So it would be nice if there were some automated regression
+tests lying around that you could use to make sure that the code still
+works the way its supposed to after all those changes are made.&nbsp;
+And regression testing is performed, in part, using unit tests.&nbsp;
+By the way, if you're wondering why XP relies so much on unit testing,
+well, it's because it relies on refactoring, and it relies on
+refactoring because code is "design as you go" - meaning, only design a
+little bit at a time.&nbsp; And of course, nobody is looking at the
+system-wide design, including the customer, so the customer makes lots
+of changes during the process.&nbsp; The idea behind XP is that it's
+supposed to handle projects where there's the potential for a lot of
+change during the development, coming from the customer.&nbsp; Well,
+that's a self-fulfilling prophecy.&nbsp; If you let the customer feed
+you requirements without really designing at least major components up
+front, then of course the customer is going to change the requirements,
+and of course you're going to need to refactor the code, and of course
+you're going to need unit testing to figure out what broke.&nbsp; And
+as for the "write the test first" idea, well, I'll get to that
+later.&nbsp; So much for any endorsement by Kent Beck, I suppose.</p>
+<h2><a name="What Is A Unit Test2">What Is A Unit Test</a>?</h2>
+<p nd="17">A unit test verifies that a function or set of functions
+"honors its contract" - in other words, that the function(s) under test
+meet the requirements.&nbsp; Unit tests inspect both black boxes or
+white boxes.</p>
+<h3><a name="Black Box vs. White Box Test3">Black Box vs. White Box Test</a></h3>
+<p nd="18">Black box testing is different from white box testing.&nbsp;
+The kind of testing that you can perform on the code determines, among
+other things, the complexity of the unit test.</p>
+<h4><a name="Black Box Testing4">Black Box Testing</a></h4>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/blackbox.jpg" border="0" height="49" width="361"></p>
+<p nd="19">A black box test (also known as a "functional test") is one
+in which you feed it inputs and verify the outputs without being able
+to inspect the internal workings.&nbsp; Furthermore, one doesn't
+usually have information regarding:</p>
+<ul>
+<li nd="20">how the box handles errors 
+</li><li nd="21">whether your inputs are executing all code pathways 
+</li><li nd="22">how to modify your inputs so that all code pathways are executed 
+</li><li nd="23">dependencies on other resources </li></ul>
+<p nd="24">Black box testing limits your ability to thoroughly test the
+code, primarily because the you don't know if you're testing all the
+code pathways.&nbsp; Typically, a black box test only verifies that
+good inputs result in good outputs (hence the term "functional test").</p>
+<p nd="25">Classes are often implemented as black boxes, giving the
+"user" of the class access only to the public methods and properties
+that the implementer selected.</p>
+<h4><a name="White Box Testing5">White Box Testing</a></h4>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/whitebox.jpg" border="0" height="92" width="385"></p>
+<p nd="26">A white box provides the information necessary to test all
+the possible pathways.&nbsp; This includes not only correct inputs, but
+incorrect inputs, so that error handlers can be verified as well.&nbsp;
+This provides several advantages:</p>
+<ul>
+<li nd="27">you know how the box handles errors 
+</li><li nd="28">you can usually write tests that verify all code pathways 
+</li><li nd="29">the unit test, being more complete, is a kind of
+documentation guideline that the implementer can use when actually
+writing the code in the box </li><li nd="30">resource dependencies are known 
+</li><li nd="31">internal workings can be inspected </li></ul>
+<p nd="32">In the "write the test first" scenario, the ability to write
+complete tests is vital information to the person that ultimately
+implements the code, therefore a good white box unit test must ensure
+that, at least conceptually, all the different pathways are exercised.</p>
+<p nd="33">Another benefit of white box testing is the ability for the
+unit test to inspect the internal state of the box after the test has
+been run.&nbsp; This can be useful to ensure that internal information
+is in the correct state, regardless of whether the output was
+correct.&nbsp; Even though classes are often implemented with many
+private methods and accessors.&nbsp; with C# and reflection, unit tests
+can be written which provide you the ability to invoke private methods
+and set/inspect private properties.</p>
+<h3><a name="Test Harness6">Test Harness</a></h3>
+<p nd="34">A unit test also incorporates a "test fixture" or "test harness".</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/testHarness.jpg" border="0" height="284" width="517"></p>
+<p nd="35">The test fixture performs any setup and teardown that the
+test requires.&nbsp; This might consist of creating a database
+connection, instantiating some dependant classes, initializing state,
+etc.&nbsp; The test fixture is one of the things that causes problems
+for unit testing.&nbsp; Non-trivial testing can require complex setup
+and teardown processes which in themselves may be buggy, time
+consuming, and difficult to maintain.&nbsp; Hence, the need for "mock
+objects".</p>
+<p nd="36">The test fixture performs two levels of setup and teardown:</p>
+<ul>
+<li nd="37">necessary setup and teardown for the suite of tests 
+</li><li nd="38">necessary setup and teardown for individual tests </li></ul>
+<p nd="39">The point of having a separate setup and teardown for a
+suite of tests is primarily for performance reasons - repeatedly
+setting up and tearing down objects for each method is much less
+efficient than setting up and tearing down once, for a collection of
+objects.&nbsp; The following diagram illustrates this process:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/testSuiteFlow.jpg" border="0" height="265" width="469"></p>
+<h3><a name="Mock Objects7">Mock Objects</a></h3>
+<p nd="40">Mock objects are things that simulate complex objects with
+simplified functionality and make it easier to create a test
+harness.&nbsp; I'll go into mock objects in detail later, because to
+use them requires certain up-front design decisions to be made that are
+system-wide issues.&nbsp; But for now, simply keep in mind that unit
+testing often requires mock objects to simulate hardware, connections,
+or other resources that may not be available to the test harness.&nbsp;
+Unit tests also require mock objects for performance reasons -
+interfaces to production objects may be overly complex (requiring to
+much setup and teardown) and/or the production objects degrade the
+performance of the tests.&nbsp; Since unit tests are typically run very
+frequently, test performance is a factor.</p>
+<h2><a name="What Does A Unit Test Test8">What Does A Unit Test Test</a>?</h2>
+<p nd="41">This is perhaps the most important question, and the
+question most difficult to answer.&nbsp; Simply put, the unit test
+verifies that the requirements are being met.&nbsp; Easy to say, but
+it's really hard to identify what the requirements are and which
+requirements are worthy of testing.</p>
+<h3><a name="Customer Requirements9">Customer Requirements</a></h3>
+<p nd="42">Customer requirements typically specify some combination of
+function, performance, data, and workflow.&nbsp; A general template for
+this can be illustrated as:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/Requirements.jpg" border="0" height="181" width="553"></p>
+<p nd="43">The customer typically thinks in terms of the user
+interface, clicking on a button that does something, and having the
+user interface change as a result.&nbsp; The customer also specifies
+the data, from the presentation level perspective.</p>
+<p nd="44">The program implements this workflow by decomposing the
+workflow into a set of processes (typically determined by the customer
+as well, because the customer wants the processes in the workflow to
+remain familiar).&nbsp; Each process is then decomposed into a set of
+functions, again, often functions familiar to the customer.&nbsp;
+Automated workflows (in which the entire workflow is a black box to the
+customer) are less coupled to the customer's concept.</p>
+<p nd="45">Unit testing of the customer requirements therefore consists
+several things, each at a different quantization.&nbsp; From bottom up:</p>
+<ul>
+<li>
+<p nd="46">Testing each function</p>
+</li><li>
+<p nd="47">Testing each process</p>
+</li><li>
+<p nd="48">Testing the workflow </p></li></ul>
+<p nd="49">It should be understood that unit testing on the function
+level is not sufficient.&nbsp; The process level integrates the
+functions, just as the workflow level integrates the processes.&nbsp;
+Just because the functions are working doesn't mean that the programmer
+put together the processes correctly, and the same for a workflow built
+out of the processes.&nbsp; Keep in mind that the term "function"
+relates to the customer's concept and does not necessarily map one for
+one to class methods.</p>
+<h3><a name="Implementation Requirements10">Implementation Requirements</a></h3>
+<p nd="50">During the design/implementation phase, what's really going
+on is that the programmer is translating the customer requirements to
+schemas and implementations.&nbsp; The following is a rough idea of
+this concept (don't get the idea that these are set in stone or
+definitive - the illustration is meant to be a rough categorization and
+provoke thought):</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/req2impl.jpg" border="0" height="202" width="241"></p>
+<p nd="51">Unit tests that test implementation requirements are often different from unit tests that test customer requirements.</p>
+<ul>
+<li nd="52">Translating between customer data presentation to more optimal internal data presentation 
+</li><li nd="53">Translating functions into objects 
+</li><li nd="54">Translating data store into schemas (relational, XSD, structs, etc) </li></ul>
+<h3><a name="Global Requirements11">Global Requirements</a></h3>
+<p nd="55">This consists of meta-design issues, which the customer
+typically has no knowledge of.&nbsp; Taking the previous illustration
+and extending it, you see where meta-design unit testing comes in to
+play:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/metadesign.jpg" border="0" height="220" width="493"></p>
+<p nd="56">The meta-design considers the entire application from a holistic point of view and is concerned with such issues as:</p>
+<ul>
+<li>
+<p nd="57">object decoupling through the use of design patterns </p>
+</li><li>
+<p nd="58">an application wide framework </p>
+</li><li>
+<p nd="59">componentization of different functional blocks </p>
+</li><li>
+<p nd="60">instrumentation </p></li></ul>
+<p nd="61">Here again, unit testing takes a different shape.&nbsp; The
+meta-design typically relates to structure, abstraction, resource
+management, and other application-wide issues.&nbsp; Unit testing at
+this level is probably more concerned with validating the performance
+of containers, measuring resource utilization, network traffic, and
+other system-wide issues.</p>
+<h2><a name="What Is NUnit12">What Is NUnit</a>?</h2>
+<p nd="62">NUnit is an application designed to facilitate unit
+testing.&nbsp; It consists of both a command line and Window's
+interface, allowing it to be used both interactively and in automated
+test batches or integrated with the build process.&nbsp; The following
+sections discuss NUnit as it applies to C# programming.</p>
+<h3><a name="How Does NUnit Work13">How Does NUnit Work</a>?</h3>
+<p nd="63">NUnit utilizes attributes to designate the different aspects of a unit test class.</p>
+<h4><a name="TestFixture14">TestFixture</a></h4>
+<p nd="64">The <code nd="65">TestFixture</code> attribute designates that a class is a test fixture.&nbsp; Classes thus designated contain setup, teardown, and unit tests.</p>
+<h4><a name="SetUp15">SetUp</a></h4>
+<p nd="66">The <code nd="67">SetUp</code> attribute is associated with
+a specific method inside the test fixture class.&nbsp; It instructs the
+unit test engine that this method should be called prior to invoking
+each unit test.&nbsp; A test fixture can only have one <code nd="68">SetUp</code> method.</p>
+<h4><a name="TearDown16">TearDown</a></h4>
+<p nd="69">The <code nd="70">TearDown</code> attribute is associated
+with a specific method inside the test fixture class.&nbsp; It
+instructs the unit test engine that this method should be called after
+invoking each unit test.&nbsp; A test fixture can only have one <code nd="71">TearDown</code> method.</p>
+<h4><a name="Test17">Test</a></h4>
+<p nd="72">The <code nd="73">Test</code> attribute indicates that a
+method in the test fixture is a unit test.&nbsp; The unit test engine
+invokes all the methods indicated with this attribute once per test
+fixture, invoking the set up method prior to the test method and the
+tear down method after the test method, if they have been defined.</p>
+<p nd="74">The test method signature must be specific: <code nd="75"><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> xxx()</code>,
+where "xxx" is a descriptive name of the test.&nbsp; In other words, a
+public method taking no parameters and returning no parameters.</p>
+<p nd="76">Upon return from the method being tested, the unit test
+typically performs an assertion to ensure that the method worked
+correctly.</p>
+<h4><a name="ExpectedException18">ExpectedException</a></h4>
+<p nd="77">The <code nd="78">ExpectedException</code> attribute is an
+optional attribute that can be added to a unit test method (designated
+using the Test attribute).&nbsp; As unit testing should in part verify
+that the method under test throws the appropriate exceptions, this
+attribute causes the unit test engine to catch the exception and pass
+the test if the correct exception is thrown.</p>
+<p nd="79">Methods that instead return an error status need to be tested using the <code nd="80">Assertion</code> class provided with NUnit.</p>
+<h4><a name="Ignore19">Ignore</a></h4>
+<p nd="81">The <code nd="82">Ignore</code> attribute is an optional
+attribute that can be added to a unit test method.&nbsp; This attribute
+instructs the unit test engine to ignore the associated method.&nbsp; A
+requires string indicating the reason for ignoring the test must be
+provided.</p>
+<h4><a name="Suite20">Suite</a></h4>
+<p nd="83">The <code nd="84">Suite</code> attribute is being deprecated.&nbsp; The original intent was to specify test subsets.</p>
+<h4><a name="An Example21">An Example</a></h4><div class="smallText" id="premain0" style="width: 100%;"><img preid="0" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg0" height="9" width="9"><span nd="85" preid="0" style="margin-bottom: 0pt;" id="precollapse0"> Collapse</span></div><pre nd="86" style="margin-top: 0pt;" id="pre0">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ATestFixtureClass
+{
+    <span class="cpp-keyword">private</span> ClassBeingTested cbt;
+
+    [SetUp]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Initialize()
+    {
+        cbt=<span class="cpp-keyword">new</span> ClassBeingTested();
+    }
+
+    [TearDown]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Terminate()
+    {
+        cbt.Dispose();
+    }
+
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> DoATest()
+    {
+        cbt.LoadImage(<span nd="87" class="cpp-string">"fish.jpg"</span>);
+    }
+
+    [Test, Ignore(<span nd="88" class="cpp-string">"Test to be implemented"</span>)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> IgnoreThisTest()
+    {
+    }
+
+    [Test, ExpectedException(typeof(ArithmeticException))]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ThrowAnException()
+    {
+        <span class="cpp-keyword">throw</span> <span class="cpp-keyword">new</span> ArithmeticException(<span nd="89" class="cpp-string">"an exception"</span>);
+    }
+}</pre>
+<p nd="90">This example illustrates the use of the six different attributes. </p>
+<h2><a name="A Case Study22">A Case Study</a></h2>
+<p nd="91">In order to put some meat onto the bones that I've been
+writing about, let's look at an example of a real requirement for my
+boatyard client - automatic customer billing.&nbsp; This is a fairly
+complex example, but I for one do not like trivial examples because
+they leave too many questions unanswered.&nbsp; </p>
+<h3><a name="The Extreme Programming Process23">The Extreme Programming Process</a></h3>
+<p nd="92">I'll use the Extreme Programming methodology and look at the
+issue from the "test-first" perspective.&nbsp; This means that we're
+going to have to take a break from the topic of unit testing and do a
+quick walkthrough of the XP design process:</p>
+<ul>
+<li nd="93">User Story 
+</li><li nd="94">Release Planning 
+</li><li nd="95">Iteration Planning 
+</li><li nd="96">Tasks 
+</li><li nd="97">CRC Cards </li></ul>
+<p nd="98">Once we get through those steps, the discussion will return
+to unit testing!.&nbsp; If you'd like to skip this section, go
+ahead.&nbsp; However, the reason it's in here is to illustrate <i>how</i>
+the unit tests are determined.&nbsp; And for that, I'd like to take you
+through an example of how the unit tests are determined, which requires
+beginning with the "user story".</p>
+<h4><a name="The User Story24">The User Story</a></h4>
+<p nd="99">The user story is thus:</p>
+<blockquote><i>Parts purchases against a specific work order should be
+automatically billed to the customer when the invoice comes in and
+should include additional vendor charges as part of the bill.</i></blockquote>
+<h4><a name="Release Planning25">Release Planning</a></h4>
+<p nd="100">The detailed requirements for this story are thus:</p>
+<ul>
+<li nd="101">One or more work orders is associated with a specific customer 
+</li><li nd="102">The purchase order is associated with a vendor 
+</li><li nd="103">Each line item on the purchase order reflects a part purchased for that vendor 
+</li><li nd="104">A part in the inventory system may be available from several vendors 
+</li><li nd="105">Each vendor has its own cost for the part 
+</li><li nd="106">The inventory system manages its own "cost" of the part 
+</li><li nd="107">The inventory cost is adjusted using a moving average: (4*oldCost + newCost)/5 
+</li><li nd="108">Parts are designated as taxable or not 
+</li><li nd="109">Each PO line item is purchased either for inventory or as a part needed for a work order 
+</li><li nd="110">When the vendor invoice comes in, additional charges, such as shipping, hazmat, etc., are added to the purchase order 
+</li><li nd="111">The purchase order is closed when the purchased items are reconciled with the invoice 
+</li><li nd="112">When the PO is closed, any parts that were purchased against a work order are automatically billed to the customer 
+</li><li nd="113">Additional charges on the PO are added to the charge slip 
+</li><li nd="114">Since line items on a purchase order may be
+associated with different work orders from different customers, the
+additional charges have to be fairly distributed </li><li nd="115">The only rule that anyone can come up with
+regarding this distribution is to divvy up the charges based on the
+part cost in relation to the total purchase order cost </li><li nd="116">Parts are billed on charge slips, which emulates the manual process being used 
+</li><li nd="117">One or more charge slips are associated with one work order 
+</li><li nd="118">Parts are assigned added to the PO by selecting the part out of inventory. 
+</li><li nd="119">Only parts for the vendor from which the parts will be purchased should be available for addition to the PO&nbsp; 
+</li><li nd="120">Customers get different discount rates and may or may not be taxable </li></ul>
+<p nd="121">Which can be pictorially represented as:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/releasePlanning.jpg" border="0" height="247" width="529"></p>
+<h4><a name="Iteration Plan26">Iteration Plan</a></h4>
+<p nd="122">Since this is a complete "package" of functionality, the customer selects the entire user story for the iteration.</p>
+<h4><a name="Tasks27">Tasks</a></h4>
+<p nd="123">The team breaks down the user story into specific tasks:</p>
+<ul>
+<li>
+<p nd="124">Create a database schema to manage this data</p>
+</li><li>
+<p nd="125">Design/Implement the user interface</p>
+</li><li>
+<p nd="126">Design/Implement the purchase order system</p>
+<ul>
+<li>
+<p nd="127">Create PO's</p>
+</li><li>
+<p nd="128">Add Parts</p>
+</li><li>
+<p nd="129">Reconcile additional charges from vendor invoice</p>
+</li><li>
+<p nd="130">Data access layer interface</p>
+</li><li>
+<p nd="131">All parts on a PO are purchased one vendor</p></li></ul>
+<p>&nbsp;</p>
+</li><li>
+<p nd="132">Design/Implement the work order entry system</p>
+<ul>
+<li>
+<p nd="133">Create WO's</p>
+</li><li>
+<p nd="134">Add Parts</p>
+</li><li>
+<p nd="135">Assign work orders to a customer</p>
+</li><li>
+<p nd="136">Data access layer interface</p></li></ul>
+<p>&nbsp;</p>
+</li><li>
+<p nd="137">Design/Implement the charge slip system</p>
+<ul>
+<li>
+<p nd="138">Automatically create a charge slip</p>
+</li><li>
+<p nd="139">Automatically add parts to the charge slip</p>
+</li><li>
+<p nd="140">Automatically add additional parts to the charge slip based on the cost distribution rule</p>
+</li><li>
+<p nd="141">Data access layer interface</p></li></ul>
+<p>&nbsp;</p>
+</li><li>
+<p nd="142">Design/Implement the concept of a part</p>
+<ul>
+<li>
+<p nd="143">Parts have internal part number</p>
+</li><li>
+<p nd="144">Parts have a vendor cost (and there can be more than one vendor for a part)</p>
+</li><li>
+<p nd="145">Parts have a vendor part number</p>
+</li><li>
+<p nd="146">Parts have an internal cost</p>
+</li><li>
+<p nd="147">Parts have a "taxable" field.&nbsp; If cleared, the part is not taxed</p></li></ul>
+<p>&nbsp;</p>
+</li><li>
+<p nd="148">There is an implied concept of a "vendor"</p>
+<ul>
+<li>
+<p nd="149">Implement the vendor as a mock object</p></li></ul></li></ul>
+<ul>
+<li>
+<p nd="150">Implement the concept of a customer</p>
+<ul>
+<li>
+<p nd="151">The customer gets different discount rates</p>
+</li><li>
+<p nd="152">Parts purchased for the customer may or may not be taxable</p></li></ul></li></ul>
+<h4><a name="Non-Tasks28">Non-Tasks</a></h4>
+<p nd="153">Since this user story excludes the idea of managing PO's,
+WO's, and parts (delete or modify), these processes will be left out of
+the current iteration.&nbsp; This also allows us to focus primarily on
+the infrastructure necessary to get build and validate the automatic
+billing process.&nbsp; Furthermore, on closer inspection, this
+iteration and the user story doesn't imply that persistent data storage
+is required, so for the time being, we'll ignore all interactions with
+the data access layer.</p>
+<h4><a name="CRC Cards29">CRC Cards</a></h4>
+<p nd="154">Using Class, Responsibility, and Collaboration cards (CRC Cards), we can create some models for this system:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/crc1.jpg" border="0" height="685" width="601"></p>
+<p nd="155">There's probably some things I left out or could have done
+better.&nbsp; Next is to see how the CRC Cards work in simulating the
+scenario the customer has in mind.</p>
+<h4><a name="Scenario Walk Through Using CRC Cards30">Scenario Walk Through Using CRC Cards</a></h4>
+<p nd="156">Once the CRC Cards have been created, it's important to
+"place them on the table" and see how they come and go throughout the
+workflow.&nbsp; This also helps to identify data transactions between
+the objects, which is something that static CRC Cards does not do by
+itself unless we play with them in simulating our scenarios.</p>
+<table id="AutoNumber3" style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0">
+<tbody>
+<tr>
+<td width="50%">
+<p nd="157">Create some vendors</p></td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc2.jpg" border="0" height="91" width="133"></td></tr>
+<tr>
+<td nd="158" width="50%">Add parts to the vendor list</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc3.jpg" border="0" height="91" width="160"></td></tr>
+<tr>
+<td nd="159" width="50%">Associate vendor parts with inventory parts</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc4.jpg" border="0" height="91" width="162"></td></tr>
+<tr>
+<td nd="160" width="50%">Create some customers</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc5.jpg" border="0" height="91" width="133"></td></tr>
+<tr>
+<td nd="161" width="50%">Create some work orders associated with a customer</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc6.jpg" border="0" height="91" width="160"></td></tr>
+<tr>
+<td nd="162" width="50%">Create a purchase order for a particular vendor and associated with a customer's work order</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc7.jpg" border="0" height="91" width="220"></td></tr>
+<tr>
+<td nd="163" width="50%">Add parts to the purchase order, selected from the vendor's part list</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc8.jpg" border="0" height="91" width="192"></td></tr>
+<tr>
+<td nd="164" width="50%">Wait for the invoice to come in, the log any additional charges on the purchase order</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc9.jpg" border="0" height="91" width="190"></td></tr>
+<tr>
+<td nd="165" width="50%">Create a charge slip associated with the work order</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc10.jpg" border="0" height="91" width="277"></td></tr>
+<tr>
+<td nd="166" width="50%">Add parts and charges from the purchase order to the charge slip</td>
+<td align="center" width="50%"><img src="Advanced%20Unit%20Testing%201_files/crc11.jpg" border="0" height="139" width="253"></td></tr></tbody></table>
+<h4><a name="Newly Discovered Non-Tasks31">Newly Discovered Non-Tasks</a></h4>
+<p nd="167">So now we have a pretty good idea of how are objects
+interact in all the different pieces of the project.&nbsp; One thing
+that came out of this process is that there isn't really any need for
+an inventory object at this point.&nbsp; All parts are directly
+associated with the vendor part list, so while the customer views
+things in relation to inventory (which is natural, because purchased
+parts go into inventory and parts used are taken out of inventory), the
+user story requirements can be met without the inventory object.</p>
+<p nd="168">Another point is that the above example demonstrates that
+the parts are properly added to the charge slip without regard to tax
+rate, discount, etc.&nbsp; These issues are really part of a second
+process, the "customer billing" cycle.&nbsp; It is important to realize
+that during the design phase of the different tasks, we've learned some
+additional vital information that changes the user story and the tasks
+derived from the user story.&nbsp; This information really needs to get
+back to the customer.</p>
+<h4><a name="A Word About Object Entanglement And System-Wide Planning32">A Word About Object Entanglement And System-Wide Planning</a></h4>
+<p nd="169">Consider for a moment the entanglement that has been created by a corresponding object model:</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%201_files/uml1.jpg" border="0" height="420" width="535"></p>
+<p nd="170">This is exactly what should be avoided in a large system,
+because changing any one object affects most, if not all, of the other
+objects.&nbsp; OK, you say:</p>
+<ul>
+<li>
+<p nd="171">That's why we have unit tests that can be applied to regression tests!</p>
+</li><li>
+<p nd="172">And if we design the system to compartmentalize processes and classes into components, then the problem can be managed!</p>
+</li><li>
+<p nd="173">And even better yet, if we use some good design pattern practices, we can decouple these dependencies!</p></li></ul>
+<p nd="174">Well, now there's the rub:</p>
+<ul>
+<li>
+<p nd="175">Where in the XP process do we have the opportunity to consider system planning issues such as a component management framework?</p>
+</li><li>
+<p nd="176">Where/when do you look at the issue of abstracting your
+objects a bit, for example using interfaces so that you can plug in
+different solutions?</p>
+</li><li>
+<p nd="177">Where/when in the XP process do we look at design patterns such as class factories and messaging to manage a little abstraction?</p>
+</li><li>
+<p nd="178">Where/when is instrumentation put in - debug traces to
+catch the problems that unit testing doesn't find, and to have an audit
+trail of what the customer did to create problem?</p></li></ul>
+<p nd="179">A good framework should provide instrumentation
+automatically, and that means using messaging or some other mechanism
+to communicate between objects, which also reduces object
+entanglement.&nbsp; But all of these consideration are part of
+system-wide planning for which there is no explicit consideration in
+the XP process.&nbsp; Heck, these issues are usually not considered in <i>any</i> development process, from my experience.&nbsp; But anyways, this is why I'm a framework person - I address these issues <i>first</i>, not last (or never), in software design.</p>
+<h4><a name="A Word About Objects33">A Word About Objects</a></h4>
+<p nd="180">Are all these objects necessary?&nbsp; No!&nbsp; Do we
+really need to copy data from the database into an object?&nbsp;
+No!&nbsp; Can't some of these transaction be handled entirely in SQL
+with a little abstraction and some smart interfacing between the GUI,
+the business layer, and the data access layer, and, ummm, maybe some <i>scripting</i>?&nbsp;
+Yes!&nbsp; And that' something else a good framework will do for you -
+it'll literally cut down the amount of hard coded objects, which
+reduces how much code you have to write, which eliminates a whole lot
+of unit testing.&nbsp; Now, that's simplicity, in my book (err,
+figuratively speaking).</p>
+<h3><a name="Unit Tests34">Unit Tests</a></h3>
+<p nd="181">The first thing in unit testing that can be accomplished,
+now that we have the CRC Cards and object concepts in place, is to
+write tests for the core classes.&nbsp; These classes are (in order of
+dependencies):</p>
+<ul>
+<li>
+<p nd="182">Part</p>
+</li><li>
+<p nd="183">Vendor</p>
+</li><li>
+<p nd="184">Charge</p>
+</li><li>
+<p nd="185">ChargeSlip</p>
+</li><li>
+<p nd="186">WorkOrder</p>
+</li><li>
+<p nd="187">PurchaseOrder</p>
+</li><li>
+<p nd="188">Invoice</p>
+</li><li>
+<p nd="189">Customer</p></li></ul>
+<p nd="190">We will create unit tests for each of these classes from
+the information on the CRC Cards using the NUnit attribute
+syntax.&nbsp; I think this process illustrates rather clearly the
+critical importance of writing good unit tests up front in order to
+prevent serious problems downstream, and the complexity and difficulty
+of writing good unit tests. </p>
+<h4><a name="Part35">Part</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcPart.jpg" border="0" height="217" width="289"></p>
+<p nd="191">Given this CRC Card, the Part unit test needs to primarily
+validate that a part class can be created without errors and has
+setters and getters that set and return the expected values.&nbsp; In
+addition, we want to validate that a newly constructed Part object is
+initialized to a well-defined state.</p><div class="smallText" id="premain1" style="width: 100%;"><img preid="1" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg1" height="9" width="9"><span nd="192" preid="1" style="margin-bottom: 0pt;" id="precollapse1"> Collapse</span></div><pre nd="193" style="margin-top: 0pt;" id="pre1">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> PartTest
+{
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        Assertion.Assert(part.VendorCost==<span class="cpp-literal">0</span>);
+        Assertion.Assert(part.Taxable==<span class="cpp-keyword">false</span>);
+        Assertion.Assert(part.InternalCost==<span class="cpp-literal">0</span>);
+        Assertion.Assert(part.Markup==<span class="cpp-literal">0</span>);
+        Assertion.Assert(part.Number==<span nd="194" class="cpp-string">""</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> SetVendorInfo()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.Number=<span nd="195" class="cpp-string">"FIG 4RAC #R11T"</span>;
+        part.VendorCost=<span class="cpp-literal">12.50</span>;
+        part.Taxable=<span class="cpp-keyword">true</span>;
+        part.InternalCost=<span class="cpp-literal">13.00</span>;
+        part.Markup=<span class="cpp-literal">2.0</span>;
+        
+        Assertion.Assert(part.Number==<span nd="196" class="cpp-string">"FIG 4RAC #R11T"</span>);
+        Assertion.Assert(part.VendorCost==<span class="cpp-literal">12.50</span>);
+        Assertion.Assert(part.Taxable==<span class="cpp-keyword">true</span>);
+        Assertion.Assert(part.InternalCost==<span class="cpp-literal">13.00</span>);
+        Assertion.Assert(part.Markup==<span class="cpp-literal">2.0</span>);
+    }
+</pre>
+<h4><a name="Vendor36">Ven</a>dor</h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcVendor.jpg" border="0" height="109" width="289"></p>
+<p nd="197">From the vendor CRC card, we see that it manages parts
+associated with that particular vendor. Not exactly specified in the
+user story or iteration (probably my fault, but hey, things like this
+are overlooked all the time) is that the same part number should not
+exist more than once for a particular vendor (although, often, the same
+part number is used by different vendors, so that's OK). In this
+particular case, notice that for each test we use a setup method to
+instantiate a <code nd="198">Vendor</code> class.</p><div class="smallText" id="premain2" style="width: 100%;"><img preid="2" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg2" height="9" width="9"><span nd="199" preid="2" style="margin-bottom: 0pt;" id="precollapse2"> Collapse</span></div><pre nd="200" style="margin-top: 0pt;" id="pre2">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> VendorTest
+{
+    <span class="cpp-keyword">private</span> Vendor vendor;
+    
+    [Setup]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> VendorSetup()
+    {
+        vendor=<span class="cpp-keyword">new</span> Vendor();
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Assertion.Assert(vendor.Name==<span class="cpp-string">""</span>);
+        Assertion.Assert(vendor.PartCount==<span class="cpp-literal">0</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> VendorName()
+    {
+        vendor.Name=<span class="cpp-string">"Jamestown Distributors"</span>;
+        Assertion.Assert(vendor.Name==<span class="cpp-string">"Jamestown Distributors"</span>;
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddUniqueParts()
+    {
+        CreateTestParts();
+        Assertion.Assert(vendor.PartCount==<span class="cpp-literal">2</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveParts()
+    {
+        CreateTestParts();
+        Part part;
+        part=vendor.Parts[<span class="cpp-literal">0</span>];
+        Assertion.Assert(part.PartNumber==<span class="cpp-string">"BOD-13-25P"</span>);
+        part=vendor.Parts[<span class="cpp-literal">1</span>];
+        Assertion.Assert(part.PartNumber==<span class="cpp-string">"BOD-13-33P"</span>);
+    }
+    
+    [Test, ExpectedException(DuplicatePartException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> DuplicateParts()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.PartNumber=<span class="cpp-string">"Same Part Number"</span>;
+        vendor.Add(part);
+        vendor.Add(part);
+    }
+    
+    [Test, ExpectedException(UnassignedPartNumberException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedPartNumber()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        vendor.Add(part);
+    }
+    
+    <span class="cpp-keyword">void</span> CreateTestParts()
+    {
+        Part part1=<span class="cpp-keyword">new</span> Part();
+        part1.PartNumber=<span class="cpp-string">"BOD-13-25P"</span>;
+        vendor.Add(part1);
+        
+        Part part2=<span class="cpp-keyword">new</span> Part();
+        part2.PartNumber=<span class="cpp-string">"VOD-13-33P"</span>;
+        vendor.Add(part2);
+    }    
+}</pre>
+<p>As illustrated by the unit tests, there are certain things that the implementer must abide by:</p>
+<ul>
+<li>Duplicate parts cause an exception 
+</li><li>Parts not assigned a part number throw an exception 
+</li><li>Parts are retrieved in the same order that they are added 
+</li><li>Parts are retrieved by ordinal </li></ul>
+<h5><a name="Weakness #1: Incomplete Unit Tests37">Weakness #1: Incomplete Unit Tests</a></h5>
+<p>This last requirement, "parts are retrieved by ordinal", illustrates
+an interesting "artifact" of unit testing.&nbsp; This would imply to
+the person that implements the class that an <code>ArrayList</code> is sufficient to manage parts.&nbsp; But now consider a more complete test:</p><pre>...
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrievePartsByName()
+    {
+        CreateTestParts();
+        Part part;
+        part=vendor.Parts[<span class="cpp-string">"BOD-13-25P"</span>];
+        Assertion.Assert(part.PartNumber==<span class="cpp-string">"BOD-13-25P"</span>);
+        part=vendor.Parts[<span class="cpp-string">"BOD-13-33P"</span>];
+        Assertion.Assert(part.PartNumber==<span class="cpp-string">"BOD-13-33P"</span>);
+    }
+    ...
+</pre>
+<p>This test requires that the <code>Vendor</code> class implements a
+retrieval mechanism based on the part number, not just the ordinal in
+the part collection.&nbsp; This may change how the parts collection is
+implemented and have an impact on the "retrieve in the same order..."
+implementation.</p>
+<h5><a name="Weakness #2: No Performance Measurements38">Weakness #2: No Performance Measurements</a></h5>
+<p>Given both the ordinal and the string-based part lookup, the
+implementer may still choose to use an array list and implement the
+string-based lookup using a simple 0..n search.&nbsp; This is highly
+inefficient, but the unit test does not measure this performance.</p>
+<table id="AutoNumber5" style="border-collapse: collapse;" bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>This is an issue that we will look at further, in part III -
+extending the unit test features.&nbsp; If the unit test included a
+performance measure, then the implementer would have a guideline for
+choosing an appropriate collection.</td></tr></tbody></table>
+<h5><a name="Weakness #3: No Resource Utilization Measurements39">Weakness #3: No Resource Utilization Measurements</a></h5>
+<p>A typical vendor will have thousands of parts.&nbsp; Therefore, the
+Vendor class should implement a Dispose method that manually clears out
+the part's collection instead of waiting for the Garbage Collector (GC)
+to get around to freeing up unreferenced memory.&nbsp; Again, a unit
+test for this is missing.</p>
+<table id="AutoNumber6" style="border-collapse: collapse;" bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>If memory management isn't part of unit testing, performance
+problems will result later on, causing a lot of unnecessary
+refactoring.&nbsp; I'll look at this issue also in Part III.</td></tr></tbody></table>
+<h5><a name="Weakness #4: Lower Order Dependencies40">Weakness #4: Lower Order Dependencies</a></h5>
+<p>If the implementation changes later on, perhaps for performance
+reasons, so that parts are no longer maintained in the same order as
+they are created, then the unit test has to be modified.&nbsp;
+Unfortunately, changing the unit test does not make it obvious that
+code that ends up depending on this requirement also needs to be
+refactored.&nbsp; There really isn't anything that can be done about
+this except to recognize this dependency an write unit tests for the
+"higher" objects that specifically test this requirement.&nbsp; This
+kind of "float upward" test requirement is difficult to keep track
+of.&nbsp; The key is, when a higher level process depends on some
+specific lower order functionality, then the higher order unit test
+must also ensure that the lower order functions still perform as
+expected.</p>
+<p>One may argue that this problem is resolved by not changing the
+functionality such that the unit test breaks.&nbsp; This is
+unrealistic.&nbsp; Both form (class architecture) and function must
+occasionally be changed to a degree that causes unit test
+refactoring.&nbsp; While this can be mitigated through a formal
+deprecation process, the point is that if the higher level processes
+are missing dependant lower order functional unit tests, then you might
+easily miss all the places where refactoring is necessary.&nbsp; Sure,
+the lower order class passes its unit test, but the higher order
+classes and their unit tests <i>may not</i>.&nbsp; This is where one
+of the cost-benefit tradeoffs in unit testing exists - do you take the
+time to write unit tests for all lower order dependencies in higher
+order unit tests?</p>
+<h4><a name="Charge41">Charge</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcCharge.jpg" border="0" height="85" width="289"></p>
+<p>Charges are very simplistic - they have a description and an amount.&nbsp; There's not much to the unit test for this object.</p><pre>[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ChargeTest
+{
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        Assertion.Assert(charge.Description==<span class="cpp-string">""</span>);
+        Assertion.Assert(charge.Amount==<span class="cpp-literal">0</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> SetChargeInfo()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        charge.Description=<span class="cpp-string">"Freight"</span>;
+        charge.Amount=<span class="cpp-literal">8.50</span>;
+        
+        Assertion.Assert(charge.Description==<span class="cpp-string">"Freight"</span>);
+        Assertion.Assert(charge.Amount==<span class="cpp-literal">8.50</span>);
+    }
+</pre>
+<h4><a name="ChargeSlip42">ChargeSlip</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcChargeSlip.jpg" border="0" height="97" width="289"></p>
+<p>A charge slip is a collection of parts and charges.&nbsp; There
+aren't that many charges/parts on a charge slip, so performance and
+memory utilization isn't really an issue, making the unit tests fairly
+simple.&nbsp; Similar the vendor unit tests, we want to ensure that
+parts and charges are added correctly and that "empty" parts and
+charges cause an exception to be thrown.&nbsp; Ordering is irrelevant.</p><div class="smallText" id="premain5" style="width: 100%;"><img preid="5" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg5" height="9" width="9"><span preid="5" style="margin-bottom: 0pt;" id="precollapse5"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre5">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ChargeSlipTest
+{
+    <span class="cpp-keyword">private</span> ChargeSlip chargeSlip;
+    
+    [Setup]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Setup()
+    {
+        chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+    }
+
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Assertion.Assert(chargeSlip.Number==<span class="cpp-string">"000000"</span>);
+        Assertion.Assert(chargeSlip.PartCount==<span class="cpp-literal">0</span>);
+        Assertion.Assert(chargeSlip.ChargeCount==<span class="cpp-literal">0</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ChargeSlipNumberAssignment()
+    {
+        chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+        Assertion.Assert(chargeSlip.Number==<span class="cpp-string">"123456"</span>;
+    }
+    
+    [Test, ExpectedException(BadChargeSlipNumberException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> BadChargeSlipNumber()
+    {
+        chargeSlip.Number=<span class="cpp-string">"12345"</span>;        <span class="cpp-comment">// must be six digits or letters</span>
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddPart()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.PartNumber=<span class="cpp-string">"VOD-13-33P"</span>;
+        chargeSlip.Add(part);
+        Assertion.Assert(chargeSlip.PartCount==<span class="cpp-literal">1</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddCharge()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        charge.Description=<span class="cpp-string">"Freight"</span>;
+        charge.Amount=<span class="cpp-literal">10.50</span>;        
+        chargeSlip.Add(charge);
+        Assertion.Assert(chargeSlip.ChargeCount==<span class="cpp-literal">1</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrievePart()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.PartNumber=<span class="cpp-string">"VOD-13-33P"</span>;
+        chargeSlip.Add(part);
+        Part p2=chargeSlip.Parts[<span class="cpp-literal">0</span>];
+        Assertion.Assert(p2.PartNumber==part.PartNumber);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveCharge()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        charge.Description=<span class="cpp-string">"Freight"</span>;
+        charge.Amount=<span class="cpp-literal">10.50</span>;        
+        chargeSlip.Add(charge);
+        Charge c2=chargeSlip.Charges[<span class="cpp-literal">0</span>];
+        Assertion.Assert(c2.Description==charge.Description);
+    }
+
+    [Test, ExpectedException(UnassignedPartNumberException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddUnassignedPart()
+    {
+        Part part=<span class="cpp-keyword">new</span> Part();
+        chargeSlip.Add(part);
+    }
+    
+    [Test, ExpectedException(UnassignedChargeException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedCharge()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        chargeSlip.Add(charge);
+    }
+}</pre>
+<h5><a name="Weakness: Entanglement And Complexity43">Weakness: Entanglement And Complexity</a></h5>
+<p>We can see something developing as we move from lower order functions to higher order ones:</p>
+<ul>
+<li>the unit tests are becoming entangled with the objects required by the object under tests 
+</li><li>setting up the unit tests is becoming more involved because of other required setups </li></ul>
+<table id="AutoNumber4" style="border-collapse: collapse;" bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>These are issues that are addressed in Part IV, where I discuss a
+scripting approach to unit testing and demonstrate the advantages of
+exporting setup data to a file, for example an XML file.&nbsp; The
+primary advantage of this is that you can have a data-driven unit test
+iterating through a variety of data combinations which can be easily
+changed without recompiling the program.</td></tr></tbody></table>
+<h4><a name="WorkOrder44">WorkOrder</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcWorkOrder.jpg" border="0" height="97" width="289"></p>
+<p>A work order has a required six digit work order number and tracks
+all the charge slips associated with it.&nbsp; It's a lot like the
+vendor class, in that it tracks a collection of charge slips.</p><div class="smallText" id="premain6" style="width: 100%;"><img preid="6" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg6" height="9" width="9"><span preid="6" style="margin-bottom: 0pt;" id="precollapse6"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre6">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> WorkOrderTest
+{
+    <span class="cpp-keyword">private</span> WorkOrder workOrder;
+    
+    [Setup]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> WorkOrderSetup()
+    {
+        workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Assertion.Assert(workOrder.Number==<span class="cpp-string">"000000"</span>);
+        Assertion.Assert(workOrder.ChargeSlipCount==<span class="cpp-literal">0</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> WorkOrderNumber()
+    {
+        workOrder.Number=<span class="cpp-string">"112233"</span>;
+        Assertion.Assert(workOrder.Number==<span class="cpp-string">"112233"</span>;
+    }
+    
+    [Test, ExpectedException(BadWorkOrderNumberException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> BadWorkOrderNumber()
+    {
+        workOrder.Number=<span class="cpp-string">"12345"</span>;
+        Assertion.Assert(workOrder.Number==<span class="cpp-string">"12345"</span>;
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddChargeSlip()
+    {
+        ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+        chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+        workOrder.Add(chargeSlip);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveChargeSlip()
+    {
+        ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+        chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+        workOrder.Add(chargeSlip);
+        ChargeSlip cs2=workOrder.ChargeSlips[<span class="cpp-literal">0</span>];
+        Assertion.Assert(chargeSlip.Number==cs2.Number);
+    }
+    
+    [Test, ExpectedException(DuplicateChargeSlipException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> DuplicateParts()
+    {
+        ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+        chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+        workOrder.Add(chargeSlip);
+        workOrder.Add(chargeSlip);
+    }
+    
+    [Test, ExpectedException(UnassignedChargeSlipException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedChargeSlipNumber()
+    {
+        ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+        workOrder.Add(chargeSlip);
+    }
+}</pre>
+<h5><a name="Weakness: Sort-Of Useless Test45">Weakness: Sort-Of Useless Test</a></h5>
+<p>At this point, I'm beginning to question the usefulness of my
+"Retrieve..." tests, both in this class and the other classes.&nbsp;
+Does it really test that I'm getting back the same charge slip that I
+put into the system?&nbsp; I don't think so.&nbsp; It can be easily
+fooled by the implementer creating a new charge slip and copying just
+the charge slip number!&nbsp; But should the test rely on a shallow
+comparison between two charge slips, namely their memory
+addresses?&nbsp; No!&nbsp; The returned item could easily be a
+copy.&nbsp; Which leads to the next problem...&nbsp; </p>
+<h5><a name="Weakness: The Un-Designed46">Weakness: The Un-Designed</a></h5>
+<p>There really needs to be a deep comparison operator built into each
+of these classes.&nbsp; But I didn't think of that when I did the
+design because I was too focused on the user story, forgetting good
+overall design practices.&nbsp; So, as a result, I didn't think of a
+deep comparison operator and I didn't code any unit tests to make sure
+that the comparison operator worked correctly.&nbsp; Now, maybe this
+wouldn't have happened if I was working with a team of
+programmers.&nbsp; Maybe one of them would have said, gee, we need to
+follow good design practices here and implement deep comparison
+operators for these classes.</p>
+<h5><a name="Weakness: Solving Problems That Don't Exist47">Weakness: Solving Problems That Don't Exist</a></h5>
+<p>This also brings up a whole slew of design issues that really are
+easily missed.&nbsp; For example, are two charge slips equal if they
+have the same parts and charges but the ordering of their parts and
+charges is different?&nbsp; And where else would we really require a
+deep comparison operator except in the unit testing?&nbsp; Are we
+solving a problem that doesn't really exist?&nbsp; In this, I'd say yes.</p>
+<h4><a name="Invoice48">Invoice</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcInvoice.jpg" border="0" height="109" width="289"></p>
+<p>The invoice is straight forward, basically just being a placeholder
+for charges associated with an invoice, which are associated with a
+purchase order and added to the charge slip on a work order.&nbsp; For
+all that, all that needs to be tracked is the invoice number and a
+collection of charges.</p><div class="smallText" id="premain7" style="width: 100%;"><img preid="7" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg7" height="9" width="9"><span preid="7" style="margin-bottom: 0pt;" id="precollapse7"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre7">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> InvoiceTest
+{
+    <span class="cpp-keyword">private</span> Invoice invoice;
+    
+    [Setup]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> InvoiceSetup()
+    {
+        invoice=<span class="cpp-keyword">new</span> Invoice();
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Assertion.Assert(invoice.Number==<span class="cpp-string">"000000"</span>);
+        Assertion.Assert(invoice.ChargeCount==<span class="cpp-literal">0</span>);
+        Assertion.Assert(invoice.Vendor=null);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> InvoiceNumber()
+    {
+        invoice.Number=<span class="cpp-string">"112233"</span>;
+        Assertion.Assert(invoice.Number==<span class="cpp-string">"112233"</span>;
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> InvoiceVendor()
+    {
+        Vendor vendor=<span class="cpp-keyword">new</span> Vendor();
+        vendor.Name=<span class="cpp-string">"Nantucket Parts"</span>;
+        invoice.Vendor=vendor;
+        Assertion.Assert(invoice.Vendor.Name=vendor.Name);
+    }
+    
+    [Test, ExpectedException(BadInvoiceNumberException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> BadInvoiceNumber()
+    {
+        invoice.Number=<span class="cpp-string">"12345"</span>;
+        Assertion.Assert(invoice.Number==<span class="cpp-string">"12345"</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddCharge()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        charge.Number=<span class="cpp-string">"123456"</span>;
+        invoice.Add(charge);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveCharge()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+        invoice.Add(charge);
+        Charge c2=invoice.Charges[<span class="cpp-literal">0</span>];
+        Assertion.Assert(chargeSlip.Number==c2.Number);
+    }
+    
+    [Test, ExpectedException(UnassignedChargeException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedChargeNumber()
+    {
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        invoice.Add(charge);
+    }
+}</pre>
+<h4><a name="Customer49">Customer</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcCustomer.jpg" border="0" height="85" width="289"></p>
+<p>The customer manages a collection of work orders.</p><div class="smallText" id="premain8" style="width: 100%;"><img preid="8" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg8" height="9" width="9"><span preid="8" style="margin-bottom: 0pt;" id="precollapse8"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre8">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> CustomerTest
+{
+    <span class="cpp-keyword">private</span> Customer customer;
+    
+    [Setup]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> CustomerSetup()
+    {
+        customer=<span class="cpp-keyword">new</span> Customer();
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Assertion.Assert(customer.Name==<span class="cpp-string">""</span>);
+        Assertion.Assert(customer.WorkOrderCount==<span class="cpp-literal">0</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> CustomerName()
+    {
+        customer.Name=<span class="cpp-string">"Marc Clifton"</span>;
+        Assertion.Assert(customer.Name==<span class="cpp-string">"Marc Clifton"</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddWorkOrder()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        workOrder.Number=<span class="cpp-string">"123456"</span>;
+        customer.Add(workOrder);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveWorkOrder()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        workOrder.Number=<span class="cpp-string">"123456"</span>;
+        customer.Add(workOrder);
+        WorkOrder wo2=customer.WorkOrders[<span class="cpp-literal">0</span>];
+        Assertion.Assert(customer.Name==wo2.Name);
+    }
+    
+    [Test, ExpectedException(UnassignedWorkOrderException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedWorkOrderNumber()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        customer.Add(workOrder);
+    }
+}</pre>
+<table id="AutoNumber7" style="border-collapse: collapse;" bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>Something that you might have noticed is that these tests are all
+similar, and believe me, it sure is getting boring writing out these
+tests for this article.&nbsp; We'll look at automating similar tests
+using reflection in Part IV to alleviate some of this drudgery.</td></tr></tbody></table>
+<h4><a name="PurchaseOrder50">PurchaseOrder</a></h4>
+<p><img src="Advanced%20Unit%20Testing%201_files/crcPurchaseOrder.jpg" border="0" height="241" width="289"></p>
+<p>The purchase order is the final piece that glues all of these
+concepts together.&nbsp; The purchase order has parts that are
+associated with the work order.&nbsp; When the invoice comes in, the
+part pricing may need to be adjusted and additional charges may need to
+be added.&nbsp; After this is done, the purchase order is
+"closed".&nbsp; The parts and charges are then added to a charge slip,
+and the charge slip is added to the work order.&nbsp; A purchase order
+can be have parts associated with different work orders on it, so that
+adds a small level of complexity.&nbsp; The unit test for this process
+is large.&nbsp; A design issue, as to whether the automatic billing
+logic should be part of the purchase order or extracted from it is not
+thoroughly considered.&nbsp; For now, it'll remain in the purchase
+order object.</p>
+<p>The other complexity is distributing charges (which are global to
+the purchase order) with some fairness amongst the charge slips created
+for different work order.&nbsp; The only "fairness" algorithm that is
+possible at this point is to distribute additional charges based on the
+relative dollar amounts of each charge slip.</p><div class="smallText" id="premain9" style="width: 100%;"><img preid="9" src="Advanced%20Unit%20Testing%201_files/minus.gif" id="preimg9" height="9" width="9"><span preid="9" style="margin-bottom: 0pt;" id="precollapse9"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre9">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> PurchaseOrderTest
+{
+    <span class="cpp-keyword">private</span> PurchaseOrder po;
+    <span class="cpp-keyword">private</span> Vendor vendor;
+    
+    [Setup]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> PurchaseOrderSetup()
+    {
+        po=<span class="cpp-keyword">new</span> PurchaseOrder();
+        vendor=<span class="cpp-keyword">new</span> Vendor();
+        vendor.Name=<span class="cpp-string">"West Marine"</span>;
+        po.Vendor=vendor;
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+    {
+        Assertion.Assert(po.Number==<span class="cpp-string">"000000"</span>);
+        Assertion.Assert(po.PartCount==<span class="cpp-literal">0</span>);
+        Assertion.Assert(po.ChargeCount==<span class="cpp-literal">0</span>);
+        Assertion.Assert(po.Invoice==null);
+        Assertion.Assert(po.Vendor==null);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> PONumber()
+    {
+        po.Number=<span class="cpp-string">"123456"</span>;
+        Assertion.Assert(po.Number==<span class="cpp-string">"123456"</span>);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddPart()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        workOrder.Number=<span class="cpp-string">"123456"</span>;
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.Number=<span class="cpp-string">"112233"</span>;
+        vendor.Add(part);
+        po.Add(part, workOrder);
+    }
+    
+    [Test, ExpectedException(PartNotFromVendorException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddPartNotFromVendor()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        workOrder.Number=<span class="cpp-string">"123456"</span>;
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.Number=<span class="cpp-string">"131133"</span>;
+        vendor.Add(part);
+        po.Add(part, workOrder);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddInvoice()
+    {
+        Invoice invoice=<span class="cpp-keyword">new</span> Invoice();
+        invoice.Number=<span class="cpp-string">"123456"</span>;
+        invoice.Vendor=vendor;
+        po.Add(invoice);
+    }
+    
+    [Test, ExpectedException(DifferentVendorException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddInvoiceFromDifferentVendor()
+    {
+        Invoice invoice=<span class="cpp-keyword">new</span> Invoice();
+        invoice.Number=<span class="cpp-string">"123456"</span>;
+        Vendor vendor2=<span class="cpp-keyword">new</span> Vendor();
+        invoice.Vendor=vendor2;
+        po.Add(invoice);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrievePart()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        workOrder.Number=<span class="cpp-string">"123456"</span>;
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.Number=<span class="cpp-string">"112233"</span>;
+        po.Add(part, workOrder);
+        WorkOrder wo2;
+        Part p2;
+        po.GetPart(<span class="cpp-literal">0</span>, out p2, out wo2);
+        Assertion.Assert(p2.Number==part.Number);
+        Assertion.Assert(wo2.Number==workOrder.Number);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveCharge()
+    {
+        Invoice invoice=<span class="cpp-keyword">new</span> Invoice();
+        invoice.Number=<span class="cpp-string">"123456"</span>;
+        po.Add(invoice);
+        Invoice i2=po.Invoices[<span class="cpp-literal">0</span>];
+        Assertion.Assert(i2.Number==invoice.Number);
+    }
+    
+    [Test, ExpectedException(UnassignedWorkOrderException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedWorkOrderNumber()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        Part part=<span class="cpp-keyword">new</span> Part();
+        part.Number=<span class="cpp-string">"112233"</span>;
+        po.Add(part, workOrder);
+    }
+    
+    [Test, ExpectedException(UnassignedPartException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedPartNumber()
+    {
+        WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+        workOrder.Number=<span class="cpp-string">"123456"</span>;
+        Part part=<span class="cpp-keyword">new</span> Part();
+        po.Add(part, workOrder);
+    }
+    
+    [Test, ExpectedException(UnassignedInvoiceException)]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedInvoiceNumber()
+    {
+        Invoice invoice=<span class="cpp-keyword">new</span> Invoice();
+        po.Add(invoice);
+    }
+    
+    [Test]
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ClosePO()
+    {
+        WorkOrder wo1=<span class="cpp-keyword">new</span> WorkOrder();
+        WorkOrder wo2=<span class="cpp-keyword">new</span> WorkOrder();
+
+        wo1.Number=<span class="cpp-string">"000001"</span>;
+        wo2.Number=<span class="cpp-string">"000002"</span>;
+
+        Part p1=<span class="cpp-keyword">new</span> Part();
+        Part p2=<span class="cpp-keyword">new</span> Part();
+        Part p3=<span class="cpp-keyword">new</span> Part();
+
+        p1.Number=<span class="cpp-string">"A"</span>;
+        p1.VendorCost=<span class="cpp-literal">15</span>;
+
+        p2.Number=<span class="cpp-string">"B"</span>;
+        p2.VendorCost=<span class="cpp-literal">20</span>;
+
+        p3.Number=<span class="cpp-string">"C"</span>;
+        p3.VendorCost=<span class="cpp-literal">25</span>;
+
+        vendor.Add(p1);
+        vendor.Add(p2);
+        vendor.Add(p3);
+
+        po.Add(p1, wo1);
+        po.Add(p2, wo1);
+        po.Add(p3, wo2);
+
+        Charge charge=<span class="cpp-keyword">new</span> Charge();
+        charge.Description=<span class="cpp-string">"Freight"</span>;
+        charge.Amount=<span class="cpp-literal">10.50</span>;
+        po.Add(charge);
+
+        po.Close();
+
+        <span class="cpp-comment">// one charge slip should be added to both work orders</span>
+        Assertion.Assert(wo1.ChargeSlipCount==<span class="cpp-literal">1</span>);
+        Assertion.Assert(wo2.ChargeSlipCount==<span class="cpp-literal">1</span>);
+
+        ChargeSlip cs1=wo1.ChargeSlips[<span class="cpp-literal">0</span>];
+        ChargeSlip cs2=wo2.ChargeSlips[<span class="cpp-literal">0</span>];
+
+        <span class="cpp-comment">// three charges should exist for charge slip #1: two parts and one </span>
+        <span class="cpp-comment">// freight charge</span>
+        Assertion.Assert(cs1.ChargeCount==<span class="cpp-literal">3</span>);
+
+        <span class="cpp-comment">// the freight for CS1 should be 10.50 * (15+20)/(15+20+25) = 6.125</span>
+        Assertion.Assert(cs1.Charges[<span class="cpp-literal">0</span>].Amount=<span class="cpp-literal">6.125</span>;
+
+        <span class="cpp-comment">// two charges should exist for charge slip #2: one part and one </span>
+        <span class="cpp-comment">// freight charge</span>
+        Assertion.Assert(cs2.ChargeCount==<span class="cpp-literal">2</span>);
+
+        <span class="cpp-comment">// the freight for CS2 should be 10.50 * 25/(15+20+25) = 4.375  </span>
+        <span class="cpp-comment">// (also = 10.50-6.125)</span>
+        Assertion.Assert(cs2.Charges[<span class="cpp-literal">0</span>].Amount=<span class="cpp-literal">4.375</span>;
+
+        <span class="cpp-comment">// while we have a unit test that verifies that parts are added to </span>
+        <span class="cpp-comment">// charge slips correctly, we don't have a unit test to verify that </span>
+        <span class="cpp-comment">// the purchase order Close process does this correctly.</span>
+
+        Part cs1p1=cs1.Parts[<span class="cpp-literal">0</span>];
+        Part cs1p2=cs1.Parts[<span class="cpp-literal">1</span>];
+        <span class="cpp-keyword">if</span> (cs1p1.Number==<span class="cpp-string">"A"</span>)
+        {
+            Assertion.Assert(cs1p1.VendorCost==<span class="cpp-literal">15</span>);
+        }
+        <span class="cpp-keyword">else</span> <span class="cpp-keyword">if</span> (cs1p1.Number==<span class="cpp-string">"B"</span>)
+        {
+            Assertion.Assert(cs1p1.VendorCost==<span class="cpp-literal">20</span>);
+        }
+        <span class="cpp-keyword">else</span>
+        {
+            <span class="cpp-keyword">throw</span>(IncorrectChargeSlipException);
+        }
+
+        Assertion.Assert(cs1p1.Number != cs1p1.Number);
+
+        <span class="cpp-keyword">if</span> (cs1p2.Number==<span class="cpp-string">"A"</span>)
+        {
+            Assertion.Assert(cs1p2.VendorCost==<span class="cpp-literal">15</span>);
+        }
+        <span class="cpp-keyword">else</span> <span class="cpp-keyword">if</span> (cs1p2.Number==<span class="cpp-string">"B"</span>)
+        {
+            Assertion.Assert(cs1p2.VendorCost==<span class="cpp-literal">20</span>);
+        }
+        <span class="cpp-keyword">else</span>
+        {
+            <span class="cpp-keyword">throw</span>(IncorrectChargeSlipException);
+        }
+
+        Assertion.Assert(cs2.Parts[<span class="cpp-literal">0</span>].Number=<span class="cpp-string">"C"</span>);
+        Assertion.Assert(cs2.Parts[<span class="cpp-literal">0</span>].VendorCost==<span class="cpp-literal">25</span>);        
+    }
+}</pre>
+<table bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>As can be seen in the purchase order unit tests, it would be
+effective to implement these tests as a progression - if one passes,
+then proceed with the next.&nbsp; The final unit test, which puts all
+the parts and charges together and makes sure that they get added to
+the charge slip can leverage this progression, reducing the amount of
+time it takes to write the tests.&nbsp; It also encourages more robust
+testing of the basic functions, if for no other reason than the
+programmer knows that the effort put into the simpler tests can be
+leveraged in the more complex tests.&nbsp; I'll look at this more in
+Part III when I extend the basic unit test capability.</td></tr></tbody></table>
+<h2><a name="Coming Soon...51">Coming Next...</a></h2>
+<p>This concludes the rather long subject introducing unit
+testing.&nbsp; In the next article, I implement a unit testing
+environment similar to the NUnit windows-based application and
+implement the case study functionality to illustrate the basic unit
+testing.&nbsp; Note that the unit tests above haven't actually been
+compiled or tested, and could very well have errors in them.&nbsp; I'm
+writing this as if I were actually going through the "test-first"
+process, so you get to see all of my mistakes.</p>
+
+<!-- Article Ends -->
+
+
+
+</div>
+</span>
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/togglePre.js"></script>
+
+<h2>About Marc Clifton</h2>
+<div style="overflow: hidden;"><table border="0"><tbody><tr valign="top"><td class="smallText" nowrap="nowrap"><img src="Advanced%20Unit%20Testing%201_files/CCCA6270-7875-4937-96C2-0CF123E2F30F.jpg"><br><a href="http://www.codeproject.com/info/supporter.asp#protectors"><img src="Advanced%20Unit%20Testing%201_files/Protector.gif" alt="CodeProject Protector" border="0" height="64" width="48"></a> <a href="http://www.codeproject.com/info/supporter.asp#supporters"><img src="Advanced%20Unit%20Testing%201_files/Supporter.gif" alt="CodeProject Supporter" border="0" height="64" width="48"></a> </td><td class="smallText">Marc is the creator of <a href="http://www.myxaml.com/">MyXaml</a>,
+an open source, declarative, XML instantiation engine. He is an
+industry consultant working primarily with companies interested in
+utilizing declarative programming concepts to add flexibility to n-tier
+architectures on web, CE, and desktop platforms. His other major open
+source project is the <a href="http://www.marcclifton.com/Projects/AdvancedUnitTesting/tabid/102/Default.aspx"> Advanced Unit Testing framework</a>.&nbsp; He operates his own website, <a href="http://www.marcclifton.com/">www.marcclifton.com</a>, where you will find many of his articles.  <br><br>Marc lives in Hudson, NY with his girlfriend Karen and his son Ian, who attends the <a href="http://www.hawthornevalleyschool.org/">Hawthorne Valley School</a>.  To contact Marc, email him at <a href="mailto:marc.clifton@gmail.com">marc.clifton@gmail.com</a>.<p></p><br><p class="smallText">Click <a href="http://www.codeproject.com/script/profile/whos_who.asp?vt=arts&amp;id=36803">here</a> to view Marc Clifton's online profile.</p></td></tr></tbody></table></div><br>
+<table bgcolor="#ff9900" cellpadding="0" width="100%"><tbody><tr><td>
+<img src="Advanced%20Unit%20Testing%201_files/bannerlogo.gif" border="0" height="60" width="468"></td></tr></tbody></table>
+<h2>Discussions and Feedback</h2><blockquote><img src="Advanced%20Unit%20Testing%201_files/news_unselected.gif"> <b>46 comments</b> have  been posted for this article. Visit <b><a href="http://www.codeproject.com/csharp/autp1.asp">http://www.codeproject.com/csharp/autp1.asp</a></b> to post and view comments on this article.</blockquote>
+
+<table cellspacing="5" width="100%">
+<tbody><tr valign="top"><td class="smallText">
+
+Updated: 19 Sep 2003
+</td><td class="SmallText" align="right">
+Article content copyright Marc Clifton, 2003<br>
+everything else Copyright © <a href="mailto:webmaster@codeproject.com">CodeProject</a>, 1999-2006.
+
+</td></tr>
+</tbody></table>
+
+</td></tr></tbody></table>
+
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/front.js"></script><script language="javascript" src="Advanced%20Unit%20Testing%201_files/door.js"></script>
+
+</td></tr></tbody></table><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/func_033.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_034.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_023.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_018.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_009.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_019.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_039.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_006.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_033.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_004.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_020.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_011.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_026.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_032.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_038.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_041.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_016.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_036.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_037.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_014.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_013.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_021.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_029.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_015.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_012.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_028.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_035.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_030.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_008.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_002.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_031.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_022.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_027.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_024.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_005.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_007.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_025.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_017.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_040.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_010.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_003.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_044.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_042.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_043.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_045.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_049.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_047.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_046.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_048.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_051.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_052.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_050.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_055.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_054.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_053.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_056.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_058.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_059.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/chunks_057.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%201_files/spit.js"></script><script type="text/javascript" src="http://codeproject.us.intellitxt.com/al.asp?ipid=5102&amp;ts=20061222024006&amp;mt=13&amp;mv=1&amp;cf=3&amp;so=0"></script></body></html>

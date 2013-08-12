@@ -1,0 +1,5 @@
+bin\Debug\Bank.dll
+bin\Debug\Bank.pdb
+obj\Debug\ResolveAssemblyReference.cache
+obj\Debug\Bank.dll
+obj\Debug\Bank.pdb

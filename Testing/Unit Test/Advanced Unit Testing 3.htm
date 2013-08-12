@@ -1,0 +1,725 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Advanced Unit Testing, Part III - Testing Processes - The Code Project - C# Programming</title>
+
+
+
+
+<!-- base -->
+<meta http-equiv="Reply-to" content="mailto:webmaster@codeproject.com">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="MS.LOCALE" content="en-US">
+<meta name="Description" content="Extend Unit Testing So That Entire Processes Can Be Tested">
+<meta name="Search.TopicType" content="kbArticle">
+<meta name="Author" content="Marc Clifton">
+<meta name="Search.PublishDate" content="28 Sep 2003 14:00:00 GMT">
+<meta name="Search.RevisedDate" content="28 Sep 2003 14:00:00 GMT">
+
+<meta name="keywords" content="Free source code, , Visual C++, MFC, Windows, Unit Test NUnit CSUnit XP Extreme Programming">
+<meta name="Copyright" content="Article content copyright Marc Clifton, 2003, everthing else Copyright © CodeProject, 1999-2006, All Rights Reserved.">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Lounge Postings" href="http://www.codeproject.com/webservices/LoungeRSS.aspx">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - All topics" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=1">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - MFC / C++" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=2">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - C#" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=3">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - ASP.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=4">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - .NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=5">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - VB.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=6">
+<link rel="search" type="application/opensearchdescription+xml" title="The Code Project" href="http://www.codeproject.com/info/OpenSearch.xml">
+<link rel="icon" href="http://www.codeproject.com/favicon.ico" type="image/ico">
+<link rel="SHORTCUT ICON" href="http://www.codeproject.com/favicon.ico">
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%203_files/global.css">
+
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%203_files/netscape6.css">
+<script language="javascript">
+if (top != self) top.location.href = location.href;
+if (typeof(DemoUrl) != "undefined")
+	document.write('<me' + 'ta http' + '-equiv="re' + 'fresh" con' + 'tent="1;url=' + DemoUrl + '">');
+</script></head><body style="margin: 0pt;" oncopy="return copyCode();" alink="red" bgcolor="white" link="blue" text="black" vlink="navy">
+
+<!-- COPYRIGHT 2006 I/PRO Corporation ALL RIGHTS RESERVED. - Page view auditing -->
+<script type="text/javascript" language="JavaScript">
+var LSPT="";
+LSPT += "?durl=" + escape(document.URL);
+LSPT += "&hostname=" + location.hostname;
+LSPT += "&url=" + location.pathname;
+LSPT += "&query=" + escape(location.search) + escape(location.hash);
+LSPT += "&referrer=" + escape(document.referrer);
+LSPT += "&browser=" + escape(navigator.appName);
+LSPT += "&version=" + escape(navigator.appVersion);
+LSPT += "&os=" + escape(navigator.platform);
+LSPT += "&xdomain=codeproject.com";
+LSPT += "&custid=codeproject";
+</script>
+<script type="text/javascript">
+document.write('<img src=http://'+'content.ipro.com/images/pixel.gif'+LSPT+' height="1" width="1" style="position:absolute; top:0px; left:0px">');
+</script><img src="Advanced%20Unit%20Testing%203_files/pixel.gif" style="position: absolute; top: 0px; left: 0px;" height="1" width="1">
+<noscript>
+<img src="http://content.ipro.com/images/pixel?version=nonjava" height="1" width="1" style="position:absolute;top:0px;left:0px">
+</noscript>
+<!-- END I/PRO PAGE TAG -->
+
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+<tbody><tr>
+	<td class="HeaderLogo"><a href="http://www.codeproject.com/"><img alt="Home" src="Advanced%20Unit%20Testing%203_files/codeproject225x90.gif" border="0" height="90"></a></td>
+	<td bgcolor="#ff9900">&nbsp;</td>
+</tr>
+
+
+<tr><td colspan="2">
+
+	<table class="ArticleHeader" cellpadding="3" cellspacing="0" width="100%">
+	<tbody><tr valign="top">
+		<td class="smallText" style="padding-right: 10px;"><a href="http://www.codeproject.com/?cat=1">All Topics</a>, <a href="http://www.codeproject.com/?cat=3">C#</a>, <a href="http://www.codeproject.com/?cat=5">.NET</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/">C# Programming</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/#General">General</a><br>
+			
+			<a href="http://www.codeproject.com/csharp/autp3.asp">http://www.codeproject.com/csharp/autp3.asp</a><br>
+			
+			<br>
+			<div style="font-weight: bold; font-size: 16pt;">Advanced Unit Testing, Part III - Testing Processes</div>
+			<b>By <a href="http://www.codeproject.com/script/Articles/list_articles.asp?userid=36803">Marc Clifton</a></b>.
+			
+			<br><br><div style="font-size: 12px;">Extend Unit Testing So That Entire Processes Can Be Tested</div>
+		</td>
+		<td class="smallText" style="width: 200px;">
+			C#<br> Windows (WinXP, Win2K, Win2003, Win95, Win98, WinME), .NET (.NET 1.1)<br> Win32, VS (VS.NET2003)<br> Dev<br>
+			<span style="padding-right: 2ex;">Posted</span>: <b>29 Sep 2003</b><br>
+			<span style="padding-right: 3ex;">Views</span>: <b>90,297</b>
+		</td>
+	</tr>
+	
+	
+
+	
+
+
+</tbody></table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="top">
+
+	
+
+	<td width="100%">
+
+		
+		
+		<table width="100%">
+		<tbody><tr valign="top">
+		<td class="SmallText" nowrap="nowrap">
+		</td>
+		<td align="right" nowrap="nowrap"><a name="__top"></a><table><tbody><tr><td class="smallText" align="right">42 votes  for this article.</td><td>
+<table border="2" cellpadding="0" cellspacing="0"><tbody><tr>
+<td><img src="Advanced%20Unit%20Testing%203_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%203_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%203_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%203_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%203_files/red.gif" border="0" height="5" width="9"><img src="Advanced%20Unit%20Testing%203_files/white.gif" border="0" height="5" width="11"></td>
+</tr></tbody></table>
+</td></tr><tr><td colspan="2" class="smallText" align="right"><a href="http://www.codeproject.com/script/articles/top_articles.asp?st=2" title="Calculated as rating x Log10(# votes)">Popularity: 7.23</a>. Rating: <b>4.45</b> out of 5.</td></tr></tbody></table></td></tr>
+		</tbody></table>
+		
+			
+	</td>
+</tr>
+
+<tr>
+	<td class="ArticlePane">
+
+<span name="intelliTxt" id="intelliTXT">
+<div id="contentdiv">
+
+
+<!-- Article Starts -->
+
+
+<ul class="download">
+<li><a href="http://www.codeproject.com/csharp/autp3/autp3_demo.zip">Download demo project - 305 Kb</a> </li></ul><!-- Add the rest of your HTML here -->
+<h2>Contents</h2>
+<ul>
+<li><a href="#Introduction0">Introduction</a> 
+</li><li><a href="#The%20New%20User%20Interface1">The New User Interface</a> 
+</li><li><a href="#Advanced%20Unit%20Testing%20-%20Testing%20Processes2">Advanced Unit Testing - Testing Processes</a> 
+<ul>
+<li><a href="#Reducing%20Unnecessary%20Repetition3">Reducing Unnecessary Repetition</a> 
+</li><li><a href="#Defining%20A%20Process4">Defining A Process</a> 
+<ul>
+<li><a href="#In%20Sequence%20Processes5">In Sequence Processes</a> 
+</li><li><a href="#Out%20Of%20Sequence%20Processes6">Out Of Sequence Processes</a> 
+</li><li><a href="#Concurrent%20Processes7">Concurrent Processes</a> </li></ul>
+</li><li><a href="#New%20Attributes8">New Attributes</a> 
+<ul>
+<li><a href="#ProcessTestAttribute9">ProcessTestAttribute</a> 
+</li><li><a href="#SequenceAttribute10">SequenceAttribute</a> 
+</li><li><a href="#RequiresAttribute11">RequiresAttribute</a> 
+</li><li><a href="#ReverseProcessExpectedExceptionAttribute12">ReverseProcessExpectedExceptionAttribute</a> </li></ul></li></ul>
+</li><li><a href="#The%20Case%20Study13">The Case Study</a> 
+<ul>
+<li><a href="#Forward%20Processing14">Forward Processing</a> 
+</li><li><a href="#Reverse%20Processing15">Reverse Processing</a> 
+<ul>
+<li><a href="#Fixing%20ClosePO16">Fixing ClosePO</a> 
+</li><li><a href="#Fixing%20AddInvoiceToPO17">Fixing AddInvoiceToPO</a> 
+</li><li><a href="#Fixing%20AddChargeToInvoice18">Fixing AddChargeToInvoice</a> 
+</li><li><a href="#Fixing%20InvoiceInitialization19">Fixing InvoiceInitialization</a> 
+</li><li><a href="#Fixing%20AddPartsToPO20">Fixing AddPartsToPO</a> 
+</li><li><a href="#Fixing%20AddVendorParts21">Fixing AddVendorParts</a> </li></ul>
+</li><li><a href="#It%20Works%2122">It Works!</a> </li></ul>
+</li><li><a href="#To%20Assert%20Or%20Throw,%20That%20Is%20The%20Question23">To Assert Or Throw, That Is The Question</a> 
+</li><li><a href="#What%20We%20Have%20Learned24">What We Have Learned</a> 
+</li><li><a href="#A%20Note%20About%20The%20Code25">A Note About The Code</a> 
+</li><li><a href="#Coming%20Next...26">Coming Next...</a> </li></ul>
+<h2><a name="Introduction0">Introduction</a></h2>
+<p nd="1">In Part III, I'm going to introduce some extensions to unit
+testing that, in my opinion, make unit testing more useful for the kind
+of work that I do.</p>
+<h2><a name="The New User Interface1">The New User Interface</a></h2>
+<p align="center"><img src="Advanced%20Unit%20Testing%203_files/screenshot.jpg" border="0" height="398" width="597"></p>
+<p nd="2">I've extended the UI by adding tab pages for the pass,
+ignore, and fail states.&nbsp; Test fixtures and their tests are now
+alphabetized (although not necessarily run in alphabetical order--the
+sorting is done by the UI, not the unit test library).&nbsp; And
+finally, I've added a few features that are reflected in the UI as well.</p>
+<h2><a name="Advanced Unit Testing - Testing Processes2">Advanced Unit Testing - Testing Processes</a></h2>
+<p nd="3">Most of what I code (and I imagine what other people code) is two things:</p>
+<ol>
+<li nd="4">functions that do simple, specific, things 
+</li><li nd="5">processes that glue the functions together in a particular way </li></ol>
+<p nd="6">And a lot of times, the process is something that involves
+the user's interaction.&nbsp; An example of a very simple linear
+process is a wizard dialog, which prompts the user through a
+configuration in a very predictable and regimented manner.&nbsp; The
+automatic billing case study that I've been using in these articles is
+an example of a potentially less linear process.&nbsp; Especially when
+there's a lot of user interaction, the software has to be made a lot
+more robust (and flexible) in order to accommodate the different ways
+that the user is going to interact with the program.&nbsp; The
+programming bug in the Therac-25 that resulted in radiation overdose is
+a good example--the interface involved a concurrent system and failed
+if the operator corrected an input error within 8 seconds of entering
+the mistake.&nbsp; In this particular example:</p>
+<p><i>The general consensus is that the Atomic Energy of Canada Limited is to blame. There was only </i><em><strong>one</strong></em><i>
+person programming the code for this system and he largely did all the
+testing. The machine was tested for only 2700 hours of use, but for
+code which controls such a critical machine, many more hours should
+have been put in to the testing phase. Also Therac-25 was tested as a
+whole machine rather then in separate modules. Testing in separate
+modules would have discovered many of the bugs. Also, if the AECL
+believed that there were problems with the Therac-25 right after the
+first incident then it is possible that most of the 5 other incidents
+could have been avoided and possibly the 3 fatalities.</i><sup nd="7">1</sup></p>
+<p nd="8">On the other hand, the X-43A mishap, in which a hypersonic
+air-breathing flight vehicle lost control in an unmanned test, was
+blamed not on the failure to test separate modules, but the failure to
+properly test the system as a whole:</p>
+<p><i>The mishap board found the major contributors to the mishap were
+modeling inaccuracies in the fin actuation system, modeling
+inaccuracies in the aerodynamics, and insufficient variations of
+modeling parameters. The flight mishap could only be reproduced when
+all of the modeling inaccuracies with uncertainty variations were
+incorporated in the analysis.</i><sup nd="9">2</sup></p>
+<p nd="10">So here we have two different examples of how, while testing
+certainly was done, it wasn't done in the right way--people lost their
+lives and taxpayers saw their money going up in smoke.</p>
+<p nd="11">Now, returning to the mundane, I have in the previous two articles on Unit Testing:</p>
+<ul>
+<li nd="12">Written some unit tests in the test-first manner (Part I) 
+</li><li nd="13">Wrote stub code to verify that the tests failed (Part II) 
+</li><li nd="14">Corrected the unit tests (Part II) 
+</li><li nd="15">Implemented real functionality so that the unit tests passed (Part II) </li></ul>
+<p nd="16">But are my unit tests really all that good?&nbsp; The
+overall process (automatic billing) consists of a lot of different
+steps, involves many components, and involves a lot of user interaction:</p>
+<p><img src="Advanced%20Unit%20Testing%203_files/process.jpg" border="0" height="409" width="598"></p>
+<p nd="17">There's a lot that can go wrong here, that must be done in a
+particular order, and that are susceptible to the system changing
+because of the time it takes to complete the process&nbsp; Consider
+that it can take weeks for a part to arrive after it's been purchased,
+and several more weeks after that to receive the invoice.&nbsp; Or, as
+sometimes happens, the invoice comes in before the part has been
+received!&nbsp; Now, my case study is definitely a simplified version
+of the purchasing/receiving/billing process at the boatyard where I've
+written their yard management software, but even simplified, it is a
+good illustration for the purposes of exploring unit testing.</p>
+<h3><a name="Reducing Unnecessary Repetition3">Reducing Unnecessary Repetition</a></h3>
+<p nd="18">There's a lot of repetition involved in my case study.&nbsp; For example, testing whether the <code nd="19">ClosePO</code> function works involves setting up:</p>
+<ul>
+<li nd="20">two work orders 
+</li><li nd="21">three parts 
+</li><li nd="22">a vendor 
+</li><li nd="23">an invoice 
+</li><li nd="24">a charge 
+</li><li nd="25">and a partridge in a pear tree </li></ul>
+<p nd="26">But all this was already done as part of unit testing the
+individual work orders, parts, vendors, invoices, and charges.&nbsp;
+Why not just combine these steps into a single process?</p>
+<h3><a name="Defining A Process4">Defining A Process</a></h3>
+<p nd="27">A process is an ordered sequence of unit tests.&nbsp; As
+long as one test passes, the next test is run.&nbsp; This requires
+several modifications to MUTE:</p>
+<ul>
+<li nd="28">A test fixture must be designated as a process 
+</li><li nd="29">The tests themselves must have their order designated 
+</li><li nd="30">Tests that are not run because of a failure should be so indicated 
+</li><li nd="31">Running a process forward and in reverse </li></ul>
+<h4><a name="In Sequence Processes5">In Sequence Processes</a></h4>
+<p nd="32">An in sequence process is one that runs in the order
+specified by the programmer who wrote the unit tests.&nbsp; Each unit
+test typically builds on information verified by the previous unit
+test.&nbsp; When a unit test fails, the remaining unit tests in the
+sequence are designated as "not run" because it would be pointless to
+run them.&nbsp; This is displayed with a blue circle for each test not
+run.&nbsp; For example:</p>
+<p><img src="Advanced%20Unit%20Testing%203_files/notrun.jpg" border="0" height="273" width="180"></p>
+<p nd="33">and the tests not run are listed in the "Not Run" tab:</p>
+<p><img src="Advanced%20Unit%20Testing%203_files/notrun2.jpg" border="0" height="151" width="292"></p>
+<h4><a name="Out Of Sequence Processes6">Out Of Sequence Processes</a></h4>
+<p nd="34">The question then becomes, what do you test in order to
+ensure that the code handles itself well when the user or the program
+does something in an unexpected way (out of sequence)?&nbsp; Obviously,
+testing all the combinations is not acceptable.&nbsp; The purchase
+order sequence test that I wrote involves 16 steps, and testing every
+combination of 16 steps is 16!, or 20,922,789,888,000 (that's almost 21
+trillion cases!).</p>
+<p nd="35">What does "out of sequence" mean?&nbsp; It means that a
+piece of code is run before another piece of code.&nbsp; This clearly
+reduces the number of combinations that have to be analyzed, because
+the total combinations includes numerous combinations in which some
+code is still run in sequence, and we're not interested in those
+because we know that the "in sequence" parts of the process already
+pass!&nbsp; There is only one combination that runs all the code out of
+sequence, and that's the combination in which the process is run in
+reverse.&nbsp; So, there are only two tests that need to be
+performed--forward, in which the process is run forward, and reverse,
+in which the process is run backwards.</p>
+<p nd="36">OK, this isn't entirely true.&nbsp; It is easily possible,
+for example, to have a piece of code dependent upon two or more
+external objects.&nbsp; Testing only in reverse order catches only the
+first dependency.&nbsp; Clearly, to catch the second dependency, at
+least one predecessor (in sequence) must be run.&nbsp; This condition
+is not handled in this version (yes, yes, I'll be adding it in the next
+version as soon as I've put some thought into the implementation
+issues).</p>
+<h4><a name="Concurrent Processes7">Concurrent Processes</a></h4>
+<p nd="37">This is something that is very worthy of additional unit
+test extensions, but I'm not going to get into the issues involved at
+this point.&nbsp; Let's keep things simple for now!</p>
+<h3><a name="New Attributes8">New Attributes</a></h3>
+<p nd="38">To support all this, we need some new attributes.</p>
+<h4><a name="ProcessTestAttribute9">ProcessTestAttribute</a></h4><pre nd="39">[AttributeUsage(AttributeTargets.Class, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> ProcessTestAttribute : Attribute
+{
+}
+</pre>
+<p nd="40">This attribute is attached to a test fixture (a class) to
+indicate to the test runner that the tests should be run in the order
+specified by the programmer.&nbsp; For example:</p><pre nd="41">[TestFixture]
+[ProcessTest]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> POSequenceTest
+{
+  ...
+}
+</pre>
+<h4><a name="SequenceAttribute10">SequenceAttribute</a></h4><pre nd="42">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> SequenceAttribute : Attribute
+{
+    <span class="cpp-keyword">private</span> <span class="cpp-keyword">int</span> order;
+
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> Order
+    {
+        get {<span class="cpp-keyword">return</span> order;}
+    }
+
+    <span class="cpp-keyword">public</span> SequenceAttribute(<span class="cpp-keyword">int</span> i)
+    {
+        order=i;
+    }
+}
+</pre>
+<p nd="43">This attribute is specified for each test case in the
+process test fixture, numbered from 1 to the number of test
+cases.&nbsp; For example:</p><div class="smallText" id="premain3" style="width: 100%;"><img preid="3" src="Advanced%20Unit%20Testing%203_files/minus.gif" id="preimg3" height="9" width="9"><span nd="44" preid="3" style="margin-bottom: 0pt;" id="precollapse3"> Collapse</span></div><pre nd="45" style="margin-top: 0pt;" id="pre3">[Test, Sequence(<span class="cpp-literal">1</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> POConstructor()
+{
+    po=<span class="cpp-keyword">new</span> PurchaseOrder();
+    Assertion.Assert(po.Number==<span nd="46" class="cpp-string">""</span>, <span nd="47" class="cpp-string">"Number not initialized."</span>);
+    Assertion.Assert(po.PartCount==<span class="cpp-literal">0</span>, <span nd="48" class="cpp-string">"PartCount not initialized."</span>);
+    Assertion.Assert(po.ChargeCount==<span class="cpp-literal">0</span>, <span nd="49" class="cpp-string">"ChargeCount not initialized."</span>);
+    Assertion.Assert(po.Invoice==null, <span nd="50" class="cpp-string">"Invoice not initialized."</span>);
+    Assertion.Assert(po.Vendor==null, <span nd="51" class="cpp-string">"Vendor not initialized."</span>);
+}
+
+[Test, Sequence(<span class="cpp-literal">2</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> VendorConstructor()
+{
+    vendor=<span class="cpp-keyword">new</span> Vendor();
+    Assertion.Assert(vendor.Name==<span nd="52" class="cpp-string">""</span>, <span nd="53" class="cpp-string">"Name is not an empty string."</span>);
+    Assertion.Assert(vendor.PartCount==<span class="cpp-literal">0</span>, <span nd="54" class="cpp-string">"PartCount is not zero."</span>);
+}
+
+[Test, Sequence(<span class="cpp-literal">3</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> PartConstructor()
+{
+    part1=<span class="cpp-keyword">new</span> Part();
+    Assertion.Assert(part1.VendorCost==<span class="cpp-literal">0</span>, <span nd="55" class="cpp-string">"VendorCost is not zero."</span>);
+    Assertion.Assert(part1.Taxable==<span class="cpp-keyword">false</span>, <span nd="56" class="cpp-string">"Taxable is not false."</span>);
+    Assertion.Assert(part1.InternalCost==<span class="cpp-literal">0</span>, <span nd="57" class="cpp-string">"InternalCost is not zero."</span>);
+    Assertion.Assert(part1.Markup==<span class="cpp-literal">0</span>, <span nd="58" class="cpp-string">"Markup is not zero."</span>);
+    Assertion.Assert(part1.Number==<span nd="59" class="cpp-string">""</span>, <span nd="60" class="cpp-string">"Number is not an empty string."</span>);
+
+    part2=<span class="cpp-keyword">new</span> Part();
+    part3=<span class="cpp-keyword">new</span> Part();
+}
+...
+</pre>
+<h4><a name="RequiresAttribute11">RequiresAttribute</a></h4>
+<p nd="61">The world is not perfect, and, when running our unit tests in reverse, we don't want the <i>unit test</i> to fail, we want to see if the code <i>being tested</i>
+fails.&nbsp; Therefore, there are cases when it is necessary to execute
+some code earlier in the process in order to ensure that the unit test,
+which depends on this code, doesn't break.&nbsp; This attribute handles
+that.&nbsp; For example:</p><pre nd="62">[Test, Sequence(<span class="cpp-literal">4</span>), Requires(<span nd="63" class="cpp-string">"PartConstructor"</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> PartInitialization()
+{
+    part1.Number=<span nd="64" class="cpp-string">"A"</span>;
+    part1.VendorCost=<span class="cpp-literal">15</span>;
+    Assertion.Assert(part1.Number==<span nd="65" class="cpp-string">"A"</span>, <span nd="66" class="cpp-string">"Number did not get set."</span>);
+    Assertion.Assert(part1.VendorCost==<span class="cpp-literal">15</span>, <span nd="67" class="cpp-string">"VendorCost did not get set."</span>);
+
+    part2.Number=<span nd="68" class="cpp-string">"B"</span>;
+    part2.VendorCost=<span class="cpp-literal">20</span>;
+
+    part3.Number=<span nd="69" class="cpp-string">"C"</span>;
+    part3.VendorCost=<span class="cpp-literal">25</span>;
+}
+</pre>
+<p nd="70">In order to initialize a part, well, that part has to be
+constructed first!&nbsp; Therefore, this unit test requires that the
+constructor test be run first.</p>
+<p nd="71">It is very easy to fall into the idea that, for example,
+closing the PO requires that parts and charges have been assigned to
+the PO.&nbsp; This is <b>NOT</b> how the <code nd="72">Requires</code>
+attribute should be used, because all this does is ensure that the
+process is run in a forward direction.&nbsp; Rather, this attribute
+should be used to ensure that parameters that the unit test code needs
+are already in existence.&nbsp; The only thing I've ever needed the <code nd="73">Requires</code>
+attribute for is to guarantee that an object exists to which the unit
+test is about to assign a literal.&nbsp; Contrast the above example
+with the following code:</p><pre nd="74">[Test, Sequence(<span class="cpp-literal">15</span>), Requires(<span nd="75" class="cpp-string">"POConstructor"</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddInvoiceToPO()
+{
+    po.Invoice=invoice;
+    Assertion.Assert(invoice.Number==po.Invoice.Number,<br>          <span nd="76" class="cpp-string">"Invoice not set correctly."</span>);
+}
+</pre>
+<p nd="77">Here, we do <b>NOT</b> require that the invoice object be constructed.&nbsp; The property should validate this for itself.&nbsp; However, we <b>DO</b> require that the purchase order object be prior constructed.&nbsp; A simple "l-value" rule is sufficient to determine if the <code nd="78">Requires</code>
+attribute needs to be used--if the object is on the left side of the
+equal sign, then yes.&nbsp; If it is on the right side of the equal
+sign, then no.</p>
+<p nd="79">Note that in the definition of the <code nd="80">Requires</code> attribute:</p><pre nd="81">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">true</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> RequiresAttribute : Attribute
+{
+    <span class="cpp-keyword">private</span> string priorTestMethod;
+
+    <span class="cpp-keyword">public</span> string PriorTestMethod
+    {
+        get {<span class="cpp-keyword">return</span> priorTestMethod;}
+    }
+
+    <span class="cpp-keyword">public</span> RequiresAttribute(string methodName)
+    {
+        priorTestMethod=methodName;
+    }
+}
+</pre>
+<p nd="82">multiple attributes may be assigned to the same test.&nbsp; For example:</p><pre nd="83">[Test]
+[Sequence(<span class="cpp-literal">16</span>)]
+[Requires(<span nd="84" class="cpp-string">"POConstructor"</span>)]
+[Requires(<span nd="85" class="cpp-string">"WorkOrderConstructor"</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ClosePO()
+{
+  ...
+}
+</pre>
+<h4><a name="ReverseProcessExpectedExceptionAttribute12">ReverseProcessExpectedExceptionAttribute</a></h4><pre nd="86">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> ReverseProcessExpectedExceptionAttribute : Attribute
+{
+    <span class="cpp-keyword">private</span> Type expectedException;
+
+    <span class="cpp-keyword">public</span> Type ExceptionType 
+    {
+        get {<span class="cpp-keyword">return</span> expectedException;}
+    }
+
+    <span class="cpp-keyword">public</span> ReverseProcessExpectedExceptionAttribute(Type exception)
+    {
+        expectedException=exception;
+    }
+}
+</pre>
+<p nd="87">In a regular unit test, the <code nd="88">ExpectedException</code>
+attribute is used to ensure that the code under test throws the
+appropriate exception because the unit test is setting up a failure
+case.&nbsp; Process tests are set up to succeed--in other words, there
+shouldn't be any exceptions thrown when the process is run in the
+forward direction (individual tests that throw exceptions are still
+part of other unit tests).&nbsp; Testing a process in the reverse
+direction may cause once working code to fail, hopefully with an
+exception thrown by the code, not the framework.&nbsp; To test this,
+the <code nd="89">ReverseProcessExpectedException</code> attribute has been added to make sure that the code handles and out of order process.</p>
+<h2><a name="The Case Study13">The Case Study</a></h2>
+<p nd="90">Using the automatic billing case study I've been developing
+in Parts I and II, I wrote a process test that goes through all the
+steps involved in getting to the point where the PO can be
+closed.&nbsp; Compare this code to the <code nd="91">ClosePO</code> unit test written in Part II:</p><pre nd="92">[Test]
+[Sequence(<span class="cpp-literal">16</span>)]
+[Requires(<span nd="93" class="cpp-string">"POConstructor"</span>)]
+[Requires(<span nd="94" class="cpp-string">"WorkOrderConstructor"</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ClosePO()
+{
+  po.Close();
+
+  <span class="cpp-comment">// one charge slip should be added to both work orders</span>
+  Assertion.Assert(wo1.ChargeSlipCount==<span class="cpp-literal">1</span>,<br>    <span nd="95" class="cpp-string">"First work order: ChargeSlipCount not 1."</span>);
+  Assertion.Assert(wo2.ChargeSlipCount==<span class="cpp-literal">1</span>,<br>    <span nd="96" class="cpp-string">"Second work order: ChargeSlipCount not 1."</span>);
+  ...
+}
+</pre>
+<p nd="97">Note that all the setup stuff has already been done.&nbsp; A lot simpler, isn't it?</p>
+<h3><a name="Forward Processing14">Forward Processing</a></h3>
+<p nd="98">Running this process in the forward direction, everyone is happy:</p>
+<p><img src="Advanced%20Unit%20Testing%203_files/forwardProcess.jpg" border="0" height="271" width="172"></p>
+<h3><a name="Reverse Processing15">Reverse Processing</a></h3>
+<p nd="99">Now let's look at what happens when I run the process in reverse:</p>
+<p><img src="Advanced%20Unit%20Testing%203_files/reverseProcess.jpg" border="0" height="271" width="175"></p>
+<p nd="100">Yuck!&nbsp; Obviously, my code does not handle things being done in the wrong order very well!&nbsp; Inspecting the failures:</p>
+<p><img src="Advanced%20Unit%20Testing%203_files/failures.jpg" border="0" height="236" width="595"></p>
+<p nd="101">makes it obvious that I'm not handling un-initialized objects very well at all.&nbsp; Time to fix those.</p>
+<h4><a name="Fixing ClosePO16">Fixing ClosePO</a></h4>
+<p nd="102">An exception is thrown if the invoice does not already exist:</p><pre nd="103"><span class="cpp-keyword">if</span> (invoice==null)
+{
+  <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidInvoiceException());
+}
+</pre>
+<p nd="104">This is an important issue to note to the user--a PO cannot be closed without having an invoice against that PO!</p>
+<h4><a name="Fixing AddInvoiceToPO17">Fixing AddInvoiceToPO</a></h4>
+<p nd="105">This illustrates the usefulness of testing property
+assignments.&nbsp; It could easily have been the unit test itself that
+was throwing an exception because the the property assignment is not
+checking to see if the object being passed to it is a valid
+object!&nbsp; To fix this, the assignment is modified:</p><pre nd="106"><span class="cpp-keyword">public</span> Invoice Invoice
+{
+    get {<span class="cpp-keyword">return</span> invoice;}
+    set
+    {
+        <span class="cpp-keyword">if</span> (value==null)
+        {
+            <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidInvoiceException());
+        }
+        <span class="cpp-keyword">else</span>
+        <span class="cpp-keyword">if</span> (value.Number==<span nd="107" class="cpp-string">""</span>)
+        {
+            <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedInvoiceException());
+        }
+        <span class="cpp-comment">// *** NO VENDOR TEST !!! ***</span>
+        <span class="cpp-keyword">if</span> (value.Vendor.Name != vendor.Name)
+        {
+            <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> DifferentVendorException());
+        }
+        invoice=value;
+    }
+}</pre>
+<h5>Testing Properties<br>&nbsp;</h5>
+<table id="AutoNumber1" style="border-collapse: collapse;" bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td nd="108">Technically, the getter should also be tested in our unit
+tests, and this raises the issue of whether or not the object returning
+the value should test the value itself, or the object requesting the
+value.</td></tr></tbody></table>
+<p nd="109">This issue is complicated by the fact that it is often
+common practice to "overload information".&nbsp; Meaning that, if the
+purchase order returns a NULL, it means that the invoice hasn't yet
+been set.&nbsp; While this is easy coding practice, it isn't a good
+practice.&nbsp; A method like:</p>
+<p><code nd="110"><span class="cpp-keyword">public</span> <span class="cpp-keyword">bool</span> InvoiceExists(<span class="cpp-keyword">void</span>) {<span class="cpp-keyword">return</span> value != null;}</code></p>
+<p nd="111">is a much better solution.&nbsp; Then, the getter can throw an exception if the caller is about to get inappropriate data.</p>
+<h4><a name="Fixing AddChargeToInvoice18">Fixing AddChargeToInvoice</a></h4>
+<p nd="112">The same issues present themselves here and are easily corrected:</p><pre nd="113"><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Charge c)
+{
+    <span class="cpp-keyword">if</span> (c==null)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidChargeException());
+    }
+    <span class="cpp-keyword">if</span> (c.Description==<span nd="114" class="cpp-string">""</span>)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedChargeException());
+    }
+    charges.Add(c);
+}
+</pre>
+<h5>Validating Data Using The Has A Relationship<br>&nbsp;</h5>
+<table id="AutoNumber2" style="border-collapse: collapse;" bgcolor="#c0c0c0" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td nd="115">This brings up another design issue--if the <code nd="116">Invoice</code>
+class were written in such a way that it merely returned a collection
+of charges which the caller manipulates directly, then it would not be
+possible the catch bad data exceptions.</td></tr></tbody></table>
+<p nd="117">This points out the benefits of a "has a" relationship--the
+wrapping class can perform data validation that would otherwise not be
+possible.</p>
+<h4><a name="Fixing InvoiceInitialization19">Fixing InvoiceInitialization</a></h4>
+<p nd="118">Here we have a case where the unit test is throwing an exception because the <code nd="119">Invoice</code> class is not testing for valid data.&nbsp; This is easily fixed:</p><pre nd="120"><span class="cpp-keyword">public</span> Vendor Vendor
+{
+  get {<span class="cpp-keyword">return</span> vendor;}
+  set
+  {
+    <span class="cpp-keyword">if</span> (value==null)
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidVendorException());
+    }
+  vendor=value;
+  }
+}
+</pre>
+<h4><a name="Fixing AddPartsToPO20">Fixing AddPartsToPO</a></h4>
+<p nd="121">A couple data validation tests are added to fix this problem:</p><div class="smallText" id="premain14" style="width: 100%;"><img preid="14" src="Advanced%20Unit%20Testing%203_files/minus.gif" id="preimg14" height="9" width="9"><span preid="14" style="margin-bottom: 0pt;" id="precollapse14"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre14"><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p, WorkOrder wo)
+{
+    <span class="cpp-keyword">if</span> (p==null)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidPartException());
+    }
+
+    <span class="cpp-keyword">if</span> (wo==null)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidWorkOrderException());
+    }
+
+    <span class="cpp-keyword">if</span> (p.Number==<span class="cpp-string">""</span>)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedPartException());
+    }
+
+    <span class="cpp-keyword">if</span> (wo.Number==<span class="cpp-string">""</span>)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedWorkOrderException());
+    }
+
+    <span class="cpp-keyword">if</span> (!vendor.Find(p))
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> PartNotFromVendorException());
+    }
+
+    parts.Add(p, wo);
+    partsArray.Add(p);
+}
+</pre>
+<h4><a name="Fixing AddVendorParts21">Fixing AddVendorParts</a></h4>
+<p>More of the same...</p><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p)
+{
+    <span class="cpp-keyword">if</span> (p==null)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> InvalidPartException());
+    }
+
+    <span class="cpp-keyword">if</span> (p.Number==<span class="cpp-string">""</span>)
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedPartException());
+    }
+
+    <span class="cpp-keyword">if</span> (parts.Contains(p.Number))
+    {
+        <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> DuplicatePartException());
+    }
+
+    parts.Add(p.Number, p);
+    partsArray.Add(p);
+}
+</pre>
+<h3><a name="It Works!22">It Works!</a></h3>
+<p>Running the process is reverse now works, in the sense that all the bad data is validated and the proper exceptions are thrown.</p>
+<h2><a name="To Assert Or Throw, That Is The Question23">To Assert Or Throw, That Is The Question</a></h2>
+<p>Unit testing really brings to the forefront the difference between
+using assertions (or program by contract) and throwing exceptions (let
+the caller handle the error).&nbsp; This doesn't mean that programming
+by contract requires using assertions--rather, it means that
+programming by contract <i>shoud not</i> use assertions but rather
+throw exceptions.&nbsp; The reason for this is simple--the unit test
+itself uses assertions to validate data and expects exceptions to be
+thrown if the unit under test detects a fault.&nbsp; The unit test then
+verifies that the exception is expected or not.</p>
+<p>Throwing exceptions results in more robust code.&nbsp; The exception
+tests can (and should!) be left in production code, so that the higher
+level functions can gracefully report problems to the user and take
+corrective actions.&nbsp; Asserts, when they are removed in production
+code, simply result in program crashes or erroneous operations when the
+unexpected happens (which inevitably does).</p>
+<p>Using unit testing principles therefore, asserts are quickly going to go the way of the dinosaur.&nbsp; (Disagreements???)</p>
+<h2><a name="What We Have Learned24">What We Have Learned</a></h2>
+<ul>
+<li>Unit tests themselves have bugs and therefore need testing. 
+</li><li>Writing "test first" code isn't as bad as I thought it would be. 
+</li><li>There's a lot of redundant setup code that gets written as the functions being tested get higher up in the "object chain". 
+</li><li>Unit tests don't really ensure good coding and design.&nbsp; Bad code can pass a unit test as easily as good code. 
+</li><li>Unit tests test, well, units, not processes. 
+</li><li>Testing property assignments <i>is</i> useful, especially to check if the class is validating the value. 
+</li><li>Unit testing changes the paradigm of using asserts to throwing
+exceptions (I imagine this statement will get lots of discussion) </li></ul>
+<h2><a name="A Note About The Code25">A Note About The Code</a></h2>
+<p>As it currently stands, the code is not very robust.&nbsp; It doesn't verify that</p>
+<ul>
+<li>the process sequence starts at 1 
+</li><li>increments by 1 
+</li><li>doesn't have any duplicates or skips 
+</li><li>the <code>Requires</code> functions actually exist. </li></ul>
+<p>In other words, some unit tests really need to be written for this
+thing!&nbsp; Well, in the next release, it'll be a bit more bullet
+proofed.</p>
+<h2><a name="Coming Next...26">Coming Next...</a></h2>
+<p>Well, part IV is not going to talk about scripting.&nbsp; Part IV is
+going to look at some other useful additions to unit testing.&nbsp;
+Hopefully the next part can wrap up those extensions (this one issue
+was worthy of an article in itself, in my opinion), so hopefully Part V
+will cover scripted unit testing.</p>
+<p><b>Footnotes</b></p>
+<p><sup>1</sup> - <a href="http://neptune.netcomp.monash.edu.au/cpe9001/assets/readings/www_uguelph_ca_%7Etgallagh_%7Etgallagh.html">http://neptune.netcomp.monash.edu.au/<br>cpe9001/assets/readings/www_uguelph_ca_~tgallagh_~tgallagh.html</a></p>
+<p><sup>2</sup> - <a href="http://spaceflightnow.com/news/n0307/23x43a/">http://spaceflightnow.com/news/n0307/23x43a/</a> </p>
+<p><b>References</b></p>
+<p>Checking High-Level Protocols in Low-Level Software: <a href="http://research.microsoft.com/%7Emaf/talks/Berkeley-VAULT.ppt">http://research.microsoft.com/~maf/talks/Berkeley-VAULT.ppt</a></p>
+<p>Programming By Contract: <a href="http://www.cs.unc.edu/%7Estotts/COMP204/contract.html">http://www.cs.unc.edu/~stotts/COMP204/contract.html</a> </p>
+
+<!-- Article Ends -->
+
+
+
+</div>
+</span>
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/togglePre.js"></script>
+
+<h2>About Marc Clifton</h2>
+<div style="overflow: hidden;"><table border="0"><tbody><tr valign="top"><td class="smallText" nowrap="nowrap"><img src="Advanced%20Unit%20Testing%203_files/CCCA6270-7875-4937-96C2-0CF123E2F30F.jpg"><br><a href="http://www.codeproject.com/info/supporter.asp#protectors"><img src="Advanced%20Unit%20Testing%203_files/Protector.gif" alt="CodeProject Protector" border="0" height="64" width="48"></a> <a href="http://www.codeproject.com/info/supporter.asp#supporters"><img src="Advanced%20Unit%20Testing%203_files/Supporter.gif" alt="CodeProject Supporter" border="0" height="64" width="48"></a> </td><td class="smallText">Marc is the creator of <a href="http://www.myxaml.com/">MyXaml</a>,
+an open source, declarative, XML instantiation engine. He is an
+industry consultant working primarily with companies interested in
+utilizing declarative programming concepts to add flexibility to n-tier
+architectures on web, CE, and desktop platforms. His other major open
+source project is the <a href="http://www.marcclifton.com/Projects/AdvancedUnitTesting/tabid/102/Default.aspx"> Advanced Unit Testing framework</a>.&nbsp; He operates his own website, <a href="http://www.marcclifton.com/">www.marcclifton.com</a>, where you will find many of his articles.  <br><br>Marc lives in Hudson, NY with his girlfriend Karen and his son Ian, who attends the <a href="http://www.hawthornevalleyschool.org/">Hawthorne Valley School</a>.  To contact Marc, email him at <a href="mailto:marc.clifton@gmail.com">marc.clifton@gmail.com</a>.<p></p><br><p class="smallText">Click <a href="http://www.codeproject.com/script/profile/whos_who.asp?vt=arts&amp;id=36803">here</a> to view Marc Clifton's online profile.</p></td></tr></tbody></table></div><br>
+<table bgcolor="#ff9900" cellpadding="0" width="100%"><tbody><tr><td>
+<img src="Advanced%20Unit%20Testing%203_files/bannerlogo.gif" border="0" height="60" width="468"></td></tr></tbody></table>
+<h2>Discussions and Feedback</h2><blockquote><img src="Advanced%20Unit%20Testing%203_files/news_unselected.gif"> <b>22 comments</b> have  been posted for this article. Visit <b><a href="http://www.codeproject.com/csharp/autp3.asp">http://www.codeproject.com/csharp/autp3.asp</a></b> to post and view comments on this article.</blockquote>
+
+<table cellspacing="5" width="100%">
+<tbody><tr valign="top"><td class="smallText">
+
+Updated: 29 Sep 2003
+</td><td class="SmallText" align="right">
+Article content copyright Marc Clifton, 2003<br>
+everything else Copyright © <a href="mailto:webmaster@codeproject.com">CodeProject</a>, 1999-2006.
+
+</td></tr>
+</tbody></table>
+
+</td></tr></tbody></table>
+
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/front.js"></script><script language="javascript" src="Advanced%20Unit%20Testing%203_files/door.js"></script>
+
+</td></tr></tbody></table><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/func_033.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_030.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_007.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_014.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_003.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_004.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_009.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_012.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_006.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_015.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_013.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_017.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_008.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_011.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_018.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_010.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_002.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_005.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_016.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_019.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_022.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_021.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_020.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_025.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_024.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_023.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_026.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_029.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_028.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/chunks_027.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%203_files/spit.js"></script></body></html>

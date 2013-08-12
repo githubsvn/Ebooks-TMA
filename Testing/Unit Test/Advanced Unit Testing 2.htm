@@ -1,0 +1,2566 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Advanced Unit Testing, Part II - Core Implementation - The Code Project - C# Programming</title>
+
+
+
+
+<!-- base -->
+<meta http-equiv="Reply-to" content="mailto:webmaster@codeproject.com">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="MS.LOCALE" content="en-US">
+<meta name="Description" content="This article illustrates how a unit test automation framework is implemented and continues the case study developed in Part I.">
+<meta name="Search.TopicType" content="kbArticle">
+<meta name="Author" content="Marc Clifton">
+<meta name="Search.PublishDate" content="22 Sep 2003 14:00:00 GMT">
+<meta name="Search.RevisedDate" content="22 Sep 2003 14:00:00 GMT">
+
+<meta name="keywords" content="Free source code, , Visual C++, MFC, Windows, Unit Test NUnit CSUnit XP Extreme Programming">
+<meta name="Copyright" content="Article content copyright Marc Clifton, 2003, everthing else Copyright © CodeProject, 1999-2006, All Rights Reserved.">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Lounge Postings" href="http://www.codeproject.com/webservices/LoungeRSS.aspx">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - All topics" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=1">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - MFC / C++" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=2">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - C#" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=3">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - ASP.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=4">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - .NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=5">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - VB.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=6">
+<link rel="search" type="application/opensearchdescription+xml" title="The Code Project" href="http://www.codeproject.com/info/OpenSearch.xml">
+<link rel="icon" href="http://www.codeproject.com/favicon.ico" type="image/ico">
+<link rel="SHORTCUT ICON" href="http://www.codeproject.com/favicon.ico">
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%202_files/global.css">
+
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%202_files/netscape6.css">
+<script language="javascript">
+if (top != self) top.location.href = location.href;
+if (typeof(DemoUrl) != "undefined")
+	document.write('<me' + 'ta http' + '-equiv="re' + 'fresh" con' + 'tent="1;url=' + DemoUrl + '">');
+</script></head><body style="margin: 0pt;" oncopy="return copyCode();" alink="red" bgcolor="white" link="blue" text="black" vlink="navy">
+
+<!-- COPYRIGHT 2006 I/PRO Corporation ALL RIGHTS RESERVED. - Page view auditing -->
+<script type="text/javascript" language="JavaScript">
+var LSPT="";
+LSPT += "?durl=" + escape(document.URL);
+LSPT += "&hostname=" + location.hostname;
+LSPT += "&url=" + location.pathname;
+LSPT += "&query=" + escape(location.search) + escape(location.hash);
+LSPT += "&referrer=" + escape(document.referrer);
+LSPT += "&browser=" + escape(navigator.appName);
+LSPT += "&version=" + escape(navigator.appVersion);
+LSPT += "&os=" + escape(navigator.platform);
+LSPT += "&xdomain=codeproject.com";
+LSPT += "&custid=codeproject";
+</script>
+<script type="text/javascript">
+document.write('<img src=http://'+'content.ipro.com/images/pixel.gif'+LSPT+' height="1" width="1" style="position:absolute; top:0px; left:0px">');
+</script><img src="Advanced%20Unit%20Testing%202_files/pixel.gif" style="position: absolute; top: 0px; left: 0px;" height="1" width="1">
+<noscript>
+<img src="http://content.ipro.com/images/pixel?version=nonjava" height="1" width="1" style="position:absolute;top:0px;left:0px">
+</noscript>
+<!-- END I/PRO PAGE TAG -->
+
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+<tbody><tr>
+	<td class="HeaderLogo"><a href="http://www.codeproject.com/"><img alt="Home" src="Advanced%20Unit%20Testing%202_files/codeproject225x90.gif" border="0" height="90"></a></td>
+	<td bgcolor="#ff9900">&nbsp;</td>
+</tr>
+
+
+<tr><td colspan="2">
+
+	<table class="ArticleHeader" cellpadding="3" cellspacing="0" width="100%">
+	<tbody><tr valign="top">
+		<td class="smallText" style="padding-right: 10px;"><a href="http://www.codeproject.com/?cat=1">All Topics</a>, <a href="http://www.codeproject.com/?cat=3">C#</a>, <a href="http://www.codeproject.com/?cat=5">.NET</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/">C# Programming</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/#General">General</a><br>
+			
+			<a href="http://www.codeproject.com/csharp/autp2.asp">http://www.codeproject.com/csharp/autp2.asp</a><br>
+			
+			<br>
+			<div style="font-weight: bold; font-size: 16pt;">Advanced Unit Testing, Part II - Core Implementation</div>
+			<b>By <a href="http://www.codeproject.com/script/Articles/list_articles.asp?userid=36803">Marc Clifton</a></b>.
+			
+			<br><br><div style="font-size: 12px;">This article illustrates how a unit test automation framework is implemented and continues the case study developed in Part I.</div>
+		</td>
+		<td class="smallText" style="width: 200px;">
+			C#<br> Windows (WinXP, Win2K, Win2003, Win95, Win98, WinME), .NET (.NET 1.1)<br> Win32, VS (VS.NET2003)<br> Dev<br>
+			<span style="padding-right: 2ex;">Posted</span>: <b>23 Sep 2003</b><br>
+			<span style="padding-right: 3ex;">Views</span>: <b>69,706</b>
+		</td>
+	</tr>
+	
+	
+
+	
+
+
+</tbody></table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="top">
+
+	
+
+	<td width="100%">
+
+		
+		
+		<table width="100%">
+		<tbody><tr valign="top">
+		<td class="SmallText" nowrap="nowrap">
+		</td>
+		<td align="right" nowrap="nowrap"><a name="__top"></a><table><tbody><tr><td class="smallText" align="right">27 votes  for this article.</td><td>
+<table border="2" cellpadding="0" cellspacing="0"><tbody><tr>
+<td><img src="Advanced%20Unit%20Testing%202_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%202_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%202_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%202_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%202_files/red.gif" border="0" height="5" width="1"><img src="Advanced%20Unit%20Testing%202_files/white.gif" border="0" height="5" width="19"></td>
+</tr></tbody></table>
+</td></tr><tr><td colspan="2" class="smallText" align="right"><a href="http://www.codeproject.com/script/articles/top_articles.asp?st=2" title="Calculated as rating x Log10(# votes)">Popularity: 5.83</a>. Rating: <b>4.07</b> out of 5.</td></tr></tbody></table></td></tr>
+		</tbody></table>
+		
+			
+	</td>
+</tr>
+
+<tr>
+	<td class="ArticlePane">
+
+<span name="intelliTxt" id="intelliTXT">
+<div nd="53" id="contentdiv">
+
+
+<!-- Article Starts -->
+
+
+<ul class="download">
+<li><a href="http://www.codeproject.com/csharp/autp2/autp2_demo.zip">Download demo project - 297 Kb</a> </li></ul><!-- Add the rest of your HTML here -->
+<p align="center"><img src="Advanced%20Unit%20Testing%202_files/screenShot.JPG" border="0" height="302" width="584"></p>
+<h2>Contents</h2>
+<ul>
+<li><a href="#Introduction0">Introduction</a> 
+<ul>
+<li><a href="#Things%20You%20Will%20See1">Things You Will See</a> </li></ul>
+</li><li><a href="#Component%20Organization2">Component Organization</a> 
+<ul>
+<li><a href="#General%20Purpose%20Helper%20Library3">General Purpose Helper Library</a> 
+<ul>
+<li><a href="#String%20Helpers4">String Helpers</a> </li></ul>
+</li><li><a href="#Unit%20Test%20Attribute%20And%20Assertion%20Definitions5">Unit Test Attribute And Assertion Definitions</a> 
+<ul>
+<li><a href="#Attribute%20Definitions6">Attribute Definitions</a> 
+</li><li><a href="#Assertion%20Definitions7">Assertion Definitions</a> </li></ul>
+</li><li><a href="#Unit%20Test%20Core%20Engine8">Unit Test Core Engine</a> 
+</li><li><a href="#Unit%20Test%20Windows%20Application9">Unit Test Windows Application</a> 
+<ul>
+<li><a href="#Loading%20An%20Assembly10">Loading An Assembly</a> 
+</li><li><a href="#The%20Test%20Notification%20Event11">The Test Notification Event</a> 
+</li><li><a href="#Populating%20The%20Tree%20View12">Populating The Tree View</a> 
+</li><li><a href="#Running%20The%20Tests13">Running The Tests</a> </li></ul></li></ul>
+</li><li><a href="#The%20Unit%20Test%20Core%20Engine14">The Unit Test Core Engine</a> 
+<ul>
+<li><a href="#UniqueCollection15">UniqueCollection</a> 
+</li><li><a href="#AssemblyItem%20-%20Collecting%20Namespaces16">AssemblyItem - Collecting Namespaces</a> 
+</li><li><a href="#NamespaceItem%20-%20Collecting%20Classes17">NamespaceItem - Collecting Classes</a> 
+</li><li><a href="#ClassItem%20-%20Collecting%20Methods18">ClassItem - Collecting Methods</a> 
+</li><li><a href="#TestRunner%20-%20Creating%20Test%20Fixtures%20Out%20Of%20The%20Assembly%20Information19">TestRunner - Creating Test Fixtures Out Of The Assembly Information</a> 
+</li><li><a href="#Abstracting%20Attributes20">Abstracting Attributes</a> 
+</li><li><a href="#TestUnitAttribute%20Classes21">TestUnitAttribute Classes</a> 
+</li><li><a href="#TestFixture%20-%20Running%20The%20Tests22">TestFixture - Running The Tests</a> 
+<ul>
+<li><a href="#Invoking%20The%20Test%20Methods23">Invoking The Test Methods</a> </li></ul></li></ul>
+</li><li><a href="#The%20Case%20Study24">The Case Study</a> 
+<ul>
+<li><a href="#Compiler%20Errors25">Compiler Errors</a> 
+</li><li><a href="#Stubs%20In%20General26">Stubs In General</a> 
+<ul>
+<li><a href="#Exceptions27">Exceptions</a> 
+</li><li><a href="#Getters%20And%20Setters28">Getters And Setters</a> 
+</li><li><a href="#Constructors%20And%20Member%20Initialization29">Constructors And Member Initialization</a> 
+</li><li><a href="#Compiler%20Warnings30">Compiler Warnings</a> 
+</li><li><a href="#Tests%20With%20Multiple%20Asserts31">Tests With Multiple Asserts</a> </li></ul>
+</li><li><a href="#The%20Class%20Stubs32">The Class Stubs</a> 
+<ul>
+<li><a href="#Part,%20Unit%20Test33">Part, Unit Test</a> 
+</li><li><a href="#Part,%20Stub34">Part, Stub</a> 
+</li><li><a href="#Vendor,%20Unit%20Test35">Vendor, Unit Test</a> 
+</li><li><a href="#Vendor,%20Stub36">Vendor, Stub</a> 
+</li><li><a href="#Charge,%20Unit%20Test37">Charge, Unit Test</a> 
+</li><li><a href="#Charge,%20Stub38">Charge, Stub</a> 
+</li><li><a href="#ChargeSlip,%20Unit%20Test39">ChargeSlip, Unit Test</a> 
+</li><li><a href="#ChargeSlip,%20Stub40">ChargeSlip, Stub</a> 
+</li><li><a href="#WorkOrder,%20Unit%20Test41">WorkOrder, Unit Test</a> 
+</li><li><a href="#WorkOrder,%20Stub42">WorkOrder, Stub</a> 
+</li><li><a href="#Invoice,%20Unit%20Test43">Invoice, Unit Test</a> 
+</li><li><a href="#Invoice,%20Stub44">Invoice, Stub</a> 
+</li><li><a href="#Customer,%20Unit%20Test45">Customer, Unit Test</a> 
+</li><li><a href="#Customer,%20Stub46">Customer, Stub</a> 
+</li><li><a href="#PurchaseOrder,%20Unit%20Test47">PurchaseOrder, Unit Test</a> 
+</li><li><a href="#PurchaseOrder,%20Stub48">PurchaseOrder, Stub</a> </li></ul>
+</li><li><a href="#Running%20The%20Unit%20Tests49">Running The Unit Tests</a> 
+</li><li><a href="#Implementing%20Real%20Functionality50">Implementing Real Functionality</a> 
+<ul>
+<li><a href="#Part51">Part</a> 
+</li><li><a href="#Vendor52">Vendor</a> 
+</li><li><a href="#Charge53">Charge</a> 
+</li><li><a href="#ChargeSlip54">ChargeSlip</a> 
+<ul>
+<li><a href="#A%20good%20example%20of%20the%20difficulty%20in%20writing%20good%20unit%20tests55">A good example of the difficulty in writing good unit tests</a> </li></ul>
+</li><li><a href="#WorkOrder56">WorkOrder</a> 
+<ul>
+<li><a href="#A%20good%20example%20of%20bad%20code%20that%20passes%20the%20unit%20test57">A good example of bad code that passes the unit test</a> </li></ul>
+</li><li><a href="#Invoice58">Invoice</a> 
+</li><li><a href="#Customer59">Customer</a> 
+</li><li><a href="#PurchaseOrder60">PurchaseOrder</a> 
+<ul>
+<li><a href="#More%20incomplete%20unit%20testing61">More incomplete unit testing</a> </li></ul></li></ul>
+</li><li><a href="#Other%20Debugging%20Techniques62">Other Debugging Techniques</a> </li></ul>
+</li><li><a href="#What%27s%20Next63">What's Next</a> 
+<ul>
+<li><a href="#Unit%20Testing%20MUTE64">Unit Testing MUTE</a> 
+</li><li><a href="#More%20Complete%20User%20Interface65">More Complete User Interface</a> 
+</li><li><a href="#Mock%20Objects66">Mock Objects</a> 
+</li><li><a href="#Advanced%20Unit%20Testing67">Advanced Unit Testing</a> </li></ul></li></ul>
+<h2><a name="Introduction0">Introduction</a></h2>
+<p><a href="http://www.codeproject.com/csharp/autp1.asp">Part I</a></p>
+<p nd="1">In Part II, I will be developing a unit test application
+similar to NUnit and use it to test the implementation of the case
+study on automatic part billing.</p>
+<p nd="2">Why develop a unit test automation program again when several
+already exist?&nbsp; Well, for one of the reasons that makes re-use
+difficult--I want something that I can call "my own".&nbsp;
+Specifically, I'm looking at some of the requirements of an automated
+unit test application and seeing similarities to that of a scripting
+framework, so I thought it would be useful to take a cut at the idea of
+putting together some re-usable components that can be applied to both
+unit testing and scripting.</p>
+<p nd="3">Since a cutesy acronym is the norm for applications like
+this, I'm going to call mine "Marc's Unit Test Extensions", or MUTE
+(I'm sure that'll generate lots of witty remarks in itself).&nbsp; So,
+without further ado, I'm going to dive right into the organization,
+object models, and code.</p>
+<h3><a name="Things You Will See1">Things You Will See</a></h3>
+<p nd="4">The code for MUTE covers some interesting topics:</p>
+<ul>
+<li nd="5">Loading an assembly 
+</li><li nd="6">Identifying the namespaces in the assemblies 
+</li><li nd="7">Identifying the classes in the namespaces 
+</li><li nd="8">Identifying the methods in the classes 
+</li><li nd="9">Identifying attributes for classes and methods 
+</li><li nd="10">Invoking methods using reflection 
+</li><li nd="11">The difference between using delegate reflection and <code nd="12">MethodInfo</code> reflection with regards to capturing exceptions 
+</li><li nd="13">Creating custom attributes with attribute parameters 
+</li><li nd="14">Creating a notification event </li></ul>
+<h2><a name="Component Organization2">Component Organization</a></h2>
+<p nd="15">MUTE is organized into several logical blocks:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/components.jpg" border="0" height="121" width="433"></p>
+<h3><a name="General Purpose Helper Library3">General Purpose Helper Library</a></h3>
+<p nd="16">This consists of a small set tools that I use in different applications.</p>
+<h4><a name="String Helpers4">String Helpers</a></h4>
+<p nd="17">The string helpers implement the several functions that I
+find useful because I typically parse strings knowing what character
+I'm looking for, not it's index.</p>
+<ul>
+<li nd="19"><code nd="18">LeftOf</code> - everything to the left of the first occurrence of a character </li></ul><pre nd="20"><span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> string LeftOf(string src, <span class="cpp-keyword">char</span> c)
+{
+  <span class="cpp-keyword">int</span> idx=src.IndexOf(c);
+  <span class="cpp-keyword">if</span> (idx==-<span class="cpp-literal">1</span>)
+  {
+    <span class="cpp-keyword">return</span> src;
+  }
+
+  <span class="cpp-keyword">return</span> src.Substring(<span class="cpp-literal">0</span>, idx);
+}
+</pre>
+<ul>
+<li nd="22"><code nd="21">RightOf</code> - everything to the right of the first occurrence of a character </li></ul><pre nd="23"><span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> string RightOf(string src, <span class="cpp-keyword">char</span> c)
+{
+  <span class="cpp-keyword">int</span> idx=src.IndexOf(c);
+  <span class="cpp-keyword">if</span> (idx==-<span class="cpp-literal">1</span>)
+  {
+    <span class="cpp-keyword">return</span> <span nd="24" class="cpp-string">""</span>;
+  }
+  
+  <span class="cpp-keyword">return</span> src.Substring(idx+<span class="cpp-literal">1</span>);
+}</pre>
+<ul>
+<li nd="26"><code nd="25">LeftOfRightmostOf</code> - everything to the left of the rightmost occurrence of a character </li></ul><pre nd="27"><span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> string LeftOfRightmostOf(string src, <span class="cpp-keyword">char</span> c)
+{
+  <span class="cpp-keyword">int</span> idx=src.LastIndexOf(c);
+  <span class="cpp-keyword">if</span> (idx==-<span class="cpp-literal">1</span>)
+  {
+    <span class="cpp-keyword">return</span> src;
+  }
+  <span class="cpp-keyword">return</span> src.Substring(<span class="cpp-literal">0</span>, idx);
+}</pre>
+<ul>
+<li nd="29"><code nd="28">RightOfRightmostOf</code> - everything to the right of the rightmost occurrence of a character </li></ul><pre nd="30"><span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> string RightOfRightmostOf(string src, <span class="cpp-keyword">char</span> c)
+{
+  <span class="cpp-keyword">int</span> idx=src.LastIndexOf(c);
+  <span class="cpp-keyword">if</span> (idx==-<span class="cpp-literal">1</span>)
+  {
+    <span class="cpp-keyword">return</span> src;
+  }
+  <span class="cpp-keyword">return</span> src.Substring(idx+<span class="cpp-literal">1</span>);
+}</pre>
+<h3><a name="Unit Test Attribute And Assertion Definitions5">Unit Test Attribute And Assertion Definitions</a></h3>
+<p nd="31">This assembly consists of the necessary definitions for
+implementing a unit test class.&nbsp; The attributes that are
+associated with a unit test class and its methods must are
+defined.&nbsp; Similarly, the assertions that the unit test methods can
+perform are defined.&nbsp; This assembly is the only assembly that
+needs to be referenced by a unit test assembly.</p>
+<h4><a name="Attribute Definitions6">Attribute Definitions</a></h4>
+<p nd="32">There are six attributes in the basic unit test:</p>
+<ul>
+<li nd="34"><code nd="33">TestFixture</code> - applied to a class </li></ul><pre nd="35">[AttributeUsage(AttributeTargets.Class, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> TestFixtureAttribute : Attribute
+{
+}</pre>
+<ul>
+<li nd="37"><code nd="36">Test</code> - applied to a method </li></ul><pre nd="38">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> TestAttribute : Attribute
+{
+}</pre>
+<ul>
+<li nd="40"><code nd="39">SetUp</code> - applied to a method </li></ul><pre nd="41">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> SetUpAttribute : Attribute
+{
+}</pre>
+<ul>
+<li nd="43"><code nd="42">TearDown</code> - applied to a method </li></ul><pre nd="44">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> TearDownAttribute : Attribute
+{
+}</pre>
+<ul>
+<li nd="46"><code nd="45">ExpectedException</code> - applied to a method </li></ul><pre nd="47">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> ExpectedExceptionAttribute : Attribute
+{
+  <span class="cpp-keyword">private</span> Type expectedException;
+
+  <span class="cpp-keyword">public</span> Type ExceptionType 
+  {
+    get
+    {
+      <span class="cpp-keyword">return</span> expectedException;
+    }
+  }
+
+  <span class="cpp-keyword">public</span> ExpectedExceptionAttribute(Type exception)
+  {
+    expectedException=exception;
+  }
+}</pre>
+<ul>
+<li nd="49"><code nd="48">Ignore</code> - applied to a method </li></ul><pre nd="50">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> IgnoreAttribute : Attribute
+{
+  <span class="cpp-keyword">private</span> string reason;
+
+  <span class="cpp-keyword">public</span> string Reason
+  {
+    get
+    {
+      <span class="cpp-keyword">return</span> reason;
+    }
+  }
+
+  <span class="cpp-keyword">public</span> IgnoreAttribute(string reason)
+  {
+    <span class="cpp-keyword">this</span>.reason=reason;
+  }
+}
+</pre>
+<h4><a name="Assertion Definitions7">Assertion Definitions</a></h4>
+<p nd="51">I've kept this really simple.&nbsp; There's one assertion that tests for equality:</p><pre nd="52"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> Assertion
+{
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">void</span> Assert(<span class="cpp-keyword">bool</span> test, string message)
+  {
+    <span class="cpp-keyword">if</span> (!test)
+    {
+      Trace.Write(message);
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> AssertionException(message));
+    }
+  }
+}</pre>And as you can see, it throws an exception when the test fails: <pre nd="54"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> AssertionException : Exception
+{
+  <span class="cpp-keyword">public</span> AssertionException(string message) : base(message)
+  {
+  }
+}</pre>
+<h3><a name="Unit Test Core Engine8">Unit Test Core Engine</a></h3>
+<p nd="55">This component consists of two pieces:</p>
+<ul>
+<li nd="56">general assembly parsing functions, which extract out the classes and methods in an assembly and their attributes 
+</li><li nd="57">unit test automation, which consists of creating test
+fixtures, managing the classes and methods in a test fixture, and
+running the tests </li></ul>
+<p nd="58">This a large piece of code and will be discussed further in its own section.</p>
+<h3><a name="Unit Test Windows Application9">Unit Test Windows Application</a></h3>
+<p nd="59">The Window Forms application consists of three sections:</p>
+<ul>
+<li nd="60">a tree view showing all the unit test classes, their methods, and the specific test results 
+</li><li nd="61">a progress bar providing the user with feedback as to the progress of the test cases 
+</li><li nd="62">a summary of test results, showing the count of passed, ignored, and failed tests </li></ul>
+<p nd="63">While not as elaborate as NUnit (for example, changing the
+color of the progress bar requires using an owner draw bar!), several
+features of NUnit have been "borrowed" in my implementation, most
+notably, the use of green, yellow and red icons in the tree view to
+illustrate individual unit test results.&nbsp; These results percolate
+up the tree to the assembly--ignored tests have priority over passed
+tests, and failed tests have priority over ignored and passed tests.</p>
+<p nd="64">Also, the Windows application can only test one assembly at a time.&nbsp; Eventually, this limitation will be corrected.</p>
+<h4><a name="Loading An Assembly10">Loading An Assembly</a></h4>
+<p nd="65">Using the <a href="http://www.codeproject.com/useritems/XmlRegistry.asp">XMLRegistry</a> class written by Nadeem Ghias (this was a really simple way to do this), the program loads the last known assembly:</p><pre nd="66">XmlRegistry reg=<span class="cpp-keyword">new</span> XmlRegistry(<span nd="67" class="cpp-string">"config.xml"</span>);
+XmlRegistryKey regKey=reg.RootKey;
+XmlRegistryKey lastSelectionKey=regKey.GetSubKey(<span nd="68" class="cpp-string">"LastSelections"</span>, <span class="cpp-keyword">true</span>);
+assemblyFilename=lastSelectionKey.GetStringValue(<span nd="69" class="cpp-string">"FileName"</span>, <span nd="70" class="cpp-string">""</span>);
+<span class="cpp-keyword">if</span> (assemblyFilename != <span nd="71" class="cpp-string">""</span>)
+{
+  LoadAssembly();
+}</pre>
+<p nd="72">The assembly loading is straight forward and should be self-explanatory.</p><pre nd="73"><span class="cpp-keyword">private</span> <span class="cpp-keyword">void</span> LoadAssembly()
+{
+  testRunner=<span class="cpp-keyword">new</span> UTCore.TestRunner();
+  testRunner.LoadAssembly(assemblyFilename);
+  testRunner.ParseAssemblies();
+  testRunner.testNotificationEvent+=<span class="cpp-keyword">new</span> TestNotificationDelegate(TestCompleted);
+  PopulateTreeView();
+  lblNumTests.Text=testRunner.NumTests.ToString()+<span nd="74" class="cpp-string">" tests."</span>;
+}</pre>
+<p nd="75">Notice that the test runner object is already capable of
+handling multiple unit test assemblies, so we're most of the way to
+upgrading the GUI at some point.</p>
+<h4><a name="The Test Notification Event11">The Test Notification Event</a></h4>
+<p nd="76">This event is used as a notification that a test has
+completed.&nbsp; It updates the progress bar, sets the image state of
+the associated method in the tree view to the test result state, and
+percolates the image state up the tree.</p><pre nd="77"><span class="cpp-keyword">private</span> <span class="cpp-keyword">void</span> TestCompleted(TestAttribute ta)
+{
+  TreeNode tn=testToTreeMap[ta] as TreeNode;
+  <span class="cpp-keyword">if</span> (tn != null)
+  {
+    <span class="cpp-keyword">int</span> testState=Convert.ToInt32(ta.State);
+    tn.ImageIndex=testState;
+    tn.SelectedImageIndex=testState;
+    ++testCounts[testState];
+    UpdateTreeParent(tn.Parent, testState);
+    UpdateTestCounts();
+    ++pbarTestProgress.Value;
+  }
+}</pre>
+<p nd="78">The <code nd="79">TestAttribute.State</code> enumeration is
+intentionally designed to track with the order of images in the tree
+view's image list, so we can take advantage of casting the enumeration
+directly to an image list index:</p>
+<table id="AutoNumber1" style="border-collapse: collapse;" border="1" bordercolor="#111111" cellpadding="0" cellspacing="0" width="215">
+<tbody>
+<tr>
+<td nd="80" width="116">gray circle&nbsp;&nbsp; </td>
+<td nd="81" width="96">Untested</td></tr>
+<tr>
+<td nd="82" width="116">green circle&nbsp;&nbsp; </td>
+<td nd="83" width="96">Pass</td></tr>
+<tr>
+<td nd="84" width="116">yellow circle&nbsp;&nbsp; </td>
+<td nd="85" width="96">Ignore</td></tr>
+<tr>
+<td nd="86" width="116">red circle&nbsp;&nbsp; </td>
+<td nd="87" width="96">Fail</td></tr></tbody></table>
+<p nd="88">This same index is also used to update our test counts--the
+number of passed, ignored, and failed test counts.&nbsp; Updating the
+GUI to reflect these test counts is trivial:</p><pre nd="89"><span class="cpp-keyword">private</span> <span class="cpp-keyword">void</span> UpdateTestCounts()
+{
+  txtPassCount.Text=testCounts[<span class="cpp-literal">1</span>].ToString();
+  txtIgnoreCount.Text=testCounts[<span class="cpp-literal">2</span>].ToString();
+  txtFailCount.Text=testCounts[<span class="cpp-literal">3</span>].ToString();
+}</pre>I
+suppose a lot of people will scream at this kind of coupling, but it
+harks back to my firmware days when this sort of stuff was necessary
+and useful.&nbsp; And you shouldn't scream anyways, because Extreme
+Programming (XP) says things should be done as simply as possible,
+because you can always fix it later with refactoring.&nbsp; He
+he.&nbsp; Nothing like using the arguments of "the other camp" when
+convenient to further my own goals, eh? <p nd="90">Percolating the test results up the tree is equally
+trivial.&nbsp; The rule is simple--if the test state has higher
+priority (based on its ordinal value) than the current state, set the
+image index to the new state.&nbsp; Note the abuse between ordinality,
+image index, test state, and priority.&nbsp; I love it!</p><pre nd="91"><span class="cpp-keyword">private</span> <span class="cpp-keyword">void</span> UpdateTreeParent(TreeNode tn, <span class="cpp-keyword">int</span> testState)
+{
+  <span class="cpp-keyword">if</span> (tn != null)
+  {
+    <span class="cpp-keyword">int</span> currentState=tn.ImageIndex;
+    <span class="cpp-keyword">if</span> (testState &gt; currentState)
+    {
+      tn.ImageIndex=testState;
+      tn.SelectedImageIndex=testState;
+      UpdateTreeParent(tn.Parent, testState);
+    }
+  }
+}</pre>
+<h4><a name="Populating The Tree View12">Populating The Tree View</a></h4>
+<p nd="92">Populating the tree view consists of iterating through different collections:</p>
+<ul>
+<li nd="93">The assemblies: </li></ul><pre nd="94"><span class="cpp-keyword">private</span> <span class="cpp-keyword">void</span> PopulateTreeView()
+{
+  tvUnitTests.Nodes.Clear();
+  TreeNode tnAssembly;
+  foreach(AssemblyItem ai in testRunner.AssemblyCollection.Values)
+  {
+    tnAssembly=tvUnitTests.Nodes.Add(ai.FullName);
+    ...
+</pre>
+<ul>
+<li nd="95">The namespaces in each assembly: </li></ul><pre nd="96">...
+UniqueCollection namespaces=<span class="cpp-keyword">new</span> UniqueCollection();
+foreach (TestFixture tf in testRunner.TestFixtures)
+{
+  <span class="cpp-keyword">if</span> (tf.Assembly.FullName==tnAssembly.Text)
+  {
+    namespaces.Add(tf.Namespace, tf);
+  }
+}
+
+foreach (DictionaryEntry item in namespaces)
+{
+  string ns=item.Key.ToString();
+  TreeNode tnNamespace=tnAssembly.Nodes.Add(ns);
+  tnNamespace.ImageIndex=<span class="cpp-literal">0</span>;
+  tnNamespace.SelectedImageIndex=<span class="cpp-literal">0</span>;
+...  
+</pre>
+<ul>
+<li nd="97">The classes in each namespace </li></ul><pre nd="98">...
+UniqueCollection classes=<span class="cpp-keyword">new</span> UniqueCollection();
+foreach (TestFixture tf in testRunner.TestFixtures)
+{
+  <span class="cpp-keyword">if</span> (tf.Namespace==ns)
+  {
+    foreach (TestAttribute ta in tf.Tests)
+    {
+      classes.Add(ta.TestClass.ToString(), tf);
+    }
+  }
+}
+
+foreach (DictionaryEntry itemClass in classes)
+{
+  string className=itemClass.Key.ToString();
+  TreeNode tnClass=tnNamespace.Nodes.Add(className);
+  tnClass.ImageIndex=<span class="cpp-literal">0</span>;
+  tnClass.ImageIndex=<span class="cpp-literal">0</span>;
+...
+</pre>
+<ul>
+<li nd="99">The methods in each class: </li></ul><pre nd="100">...
+UniqueCollection methods=<span class="cpp-keyword">new</span> UniqueCollection();
+foreach(TestAttribute ta in tf.Tests)
+{
+  methods.Add(ta.TestMethod.ToString(), ta);
+}
+
+foreach (DictionaryEntry method in methods)
+{
+  string methodName=method.Key.ToString();
+  TreeNode tnMethod=tnClass.Nodes.Add(methodName);
+  tnMethod.ImageIndex=<span class="cpp-literal">0</span>;
+  tnMethod.SelectedImageIndex=<span class="cpp-literal">0</span>;
+  testToTreeMap.Add(method.Value, tnMethod);
+  tnMethod.Tag=method.Value;          <span class="cpp-comment">// currently not used</span>
+}
+...
+</pre>
+<h4><a name="Running The Tests13">Running The Tests</a></h4>
+<p nd="101">When the user clicks on the Run button, the tests are run:</p><pre nd="102"><span class="cpp-keyword">private</span> <span class="cpp-keyword">void</span> btnRun_Click(object sender, System.EventArgs e)
+{
+  pbarTestProgress.Value=<span class="cpp-literal">0</span>;
+  pbarTestProgress.Maximum=testRunner.NumTests;
+  testCounts[<span class="cpp-literal">0</span>]=<span class="cpp-literal">0</span>;
+  testCounts[<span class="cpp-literal">1</span>]=<span class="cpp-literal">0</span>;
+  testCounts[<span class="cpp-literal">2</span>]=<span class="cpp-literal">0</span>;
+  testCounts[<span class="cpp-literal">3</span>]=<span class="cpp-literal">0</span>;
+  testRunner.RunTests();
+}
+</pre>
+<p nd="103">and the event notification handles all the rest.&nbsp; That's it for the user interface!</p>
+<h2><a name="The Unit Test Core Engine14">The Unit Test Core Engine</a></h2>
+<p nd="104">A high level block diagram of the test apparatus can be illustrated as:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/topLevel.jpg" border="0" height="232" width="491"></p>
+<p nd="105">In general, I have attempted to separate the assembly
+information from the unit test apparatus.&nbsp; The TestRunner class
+maintains both a collection of assemblies and a collection of test
+fixtures.&nbsp; Using information in the assemblies, it creates the
+test fixtures.&nbsp; Each test fixture maintains information about the
+fixture--which methods are setup, teardown, ignored, etc.&nbsp; Every
+attribute is associated with a class, and, expect for the
+TestFixtureAttribute, is also associated with a method.</p>
+<p nd="106">The following UML diagram provides some detail to the high
+level diagram. I'll be discussing each of these classes in the
+following subsections.</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/Uml-small.jpg" border="0" height="635" width="601"></p>
+<h3><a name="UniqueCollection15">UniqueCollection</a></h3>
+<p nd="107">This is the base class for the key-value collections of
+different elements of an assembly.&nbsp; The collection of assemblies
+itself must have unique keys (the assembly name), within an assembly,
+the namespace names are unique keys, within a namespace, the class
+names are unique keys, and finally, within a class the test methods
+names are unique.&nbsp; Note that test methods are never overloaded
+because they all have the same signature (<code nd="108"><span class="cpp-keyword">void</span> x()</code>, where "x" is the test method name).</p>
+<p nd="109">The <code nd="110">UniqueCollection</code> class is trivial, in that it overrides the <code nd="111">Add</code>
+method and prevents duplicate keys from being inserted.&nbsp; The
+primary purpose of this class is to improve the readability of the code
+that uses this class--the test for uniqueness is applied in the
+container rather than the code that uses the container.</p><pre nd="112"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> UniqueCollection : Hashtable
+{
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> Add(object key, object val)
+  {
+    <span class="cpp-keyword">if</span> (!<span class="cpp-keyword">this</span>.Contains(key))
+    {
+      base.Add(key, val);
+    }
+  }</pre>Note
+that any duplication is simply ignored without checking if the
+associated value is still the same.&nbsp; As Microsoft is fond of
+saying: "this is by design" (which I always read as "we're too lazy to
+do it right"). <p nd="113">The remaining collection classes are really nothing more
+than stubs that help the readability of the code by using appropriate
+nomenclature for their contents:</p>
+<ul>
+<li><code nd="114">AssemblyCollection</code> </li></ul><pre nd="115"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> AssemblyCollection : UniqueCollection
+{
+  <span class="cpp-keyword">public</span> AssemblyCollection()
+  {
+  }
+}
+</pre>
+<ul>
+<li><code nd="116">NamespaceCollection</code> </li></ul><pre nd="117"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> NamespaceCollection : UniqueCollection
+{
+  <span class="cpp-keyword">public</span> NamespaceCollection()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> LoadClasses()
+  {
+    foreach (NamespaceItem ni in Values)
+    {
+      ni.LoadClasses();
+    }
+  }
+}
+</pre>
+<ul>
+<li><code nd="118">ClassCollection</code> </li></ul><pre nd="119"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ClassCollection : UniqueCollection
+{
+  <span class="cpp-keyword">public</span> ClassCollection()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> LoadMethods()
+  {
+    foreach (ClassItem ci in Values)
+    {
+      ci.LoadMethods();
+    }
+  }
+}
+</pre>
+<ul>
+<li><code nd="120">MethodCollection</code> </li></ul><pre nd="121"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> MethodCollection : UniqueCollection
+{
+  <span class="cpp-keyword">public</span> MethodCollection()
+  {
+  }
+}
+</pre>
+<p nd="122">The <code nd="123">NamespaceCollection</code> and <code nd="124">ClassCollection</code> implement a "helper iterator" to load class and method information, respectively.</p>
+<h3><a name="AssemblyItem - Collecting Namespaces16">AssemblyItem - Collecting Namespaces</a></h3>
+<p nd="125">This class loads the assembly and parses out the
+namespaces.&nbsp; I've attempted to retain some generality to each of
+the parsing functions.&nbsp; As a result, there is a bit of redundancy
+in each of the parsers, which could be avoided by coding a single,
+optimized, parser.&nbsp; However, this approach is less general and
+less readable, and since a highly optimized algorithm isn't necessary,
+I chose an implementation that seemed more maintainable and readable.</p>
+<p nd="126">Using an <code nd="127">AssemblyItem</code> object, the assembly, namespaces, classes, and methods can be loaded into the appropriate collections:</p><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Load(string assemblyName)
+{
+  assembly=Assembly.LoadFrom(assemblyName);
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> LoadNamespaces()
+{
+  namespaceCollection=GetNamespaceCollection();
+  namespaceCollection.DumpKeys(<span class="cpp-string">"Namespaces:"</span>);
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> LoadClasses()
+{
+  namespaceCollection.LoadClasses();
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> LoadMethods()
+{
+  foreach(NamespaceItem ni in namespaceCollection.Values)
+  {
+    ni.ClassCollection.LoadMethods();  
+  }
+}
+</pre>
+<p>The most interesting feature in the <code>AssemblyItem</code> class is <code>GetNamespaceCollection</code>, which has to inspect the methods in the assembly in order to identify the namespace in which the method exists:</p><pre><span class="cpp-keyword">private</span> NamespaceCollection GetNamespaceCollection()
+{
+  NamespaceCollection nc=<span class="cpp-keyword">new</span> NamespaceCollection();
+  Type[] types=assembly.GetTypes();
+  foreach (Type type in types)
+  {
+    MethodInfo[] methods=type.GetMethods(Options.BindingFlags);
+    foreach (MethodInfo methodInfo in methods)
+    {
+      string nameSpace=methodInfo.DeclaringType.Namespace;
+      nc.Add(nameSpace, <span class="cpp-keyword">new</span> NamespaceItem(assembly, nameSpace));
+    }
+  }
+  <span class="cpp-keyword">return</span> nc;
+}</pre>
+<p>In this method, all types are inspected.&nbsp; For each type, a
+collection of methods is obtained from the type that meets the criteria
+of being public instances:</p>
+<p><code><span class="cpp-keyword">private</span> <span class="cpp-keyword">static</span> BindingFlags bindingFlags=BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;</code></p>
+<p>The <code>DeclaredOnly</code> flag is important so that only members
+at the level of the current type hierarchy are returned--otherwise,
+parent members are returned also, which includes <code>System</code> objects that we don't want.</p>
+<p>The namespaces for the methods in the collection of methods is
+extracted and added to the namespace collection. Note that this method
+merely extracts namespace names. As I said earlier, the readability and
+structure of the code is more important to me than an optimized
+algorithm. Also note how the <code>UniqueCollection</code> container is used, so that duplicate namespace names can simply be ignored here.</p>
+<h3><a name="NamespaceItem - Collecting Classes17">NamespaceItem - Collecting Classes</a></h3>
+<p>Each <code>NamespaceItem</code> object is responsible for
+maintaining the collection of classes within that namespace.&nbsp; The
+process of determining the collection of classes within a namespace is
+similar to loading the namespaces:</p><pre><span class="cpp-keyword">private</span> ClassCollection GetClassCollection()
+{
+  ClassCollection classCollection=<span class="cpp-keyword">new</span> ClassCollection();
+  Type[] types=assembly.GetTypes();
+  foreach (Type type in types)
+  {
+    <span class="cpp-keyword">if</span> (type.IsClass)
+    {
+      MethodInfo[] methods=type.GetMethods(Options.BindingFlags);
+      foreach (MethodInfo methodInfo in methods)
+      {
+        <span class="cpp-keyword">if</span> (methodInfo.DeclaringType.Namespace==namespaceName)
+        {
+          string className=
+            StringHelpers.RightOfRightmostOf(methodInfo.DeclaringType.FullName, '.');
+          Type t=methodInfo.DeclaringType;
+          classCollection.Add(className,
+            <span class="cpp-keyword">new</span> ClassItem(assembly, namespaceName, className, type));
+        }
+      }
+    }
+  }
+  <span class="cpp-keyword">return</span> classCollection;
+}
+</pre>
+<p>First, all the types of the assembly are inspected. For each type
+that is a class, the collection of methods are inspected. The class
+name is extracted from each method that belongs to the specific
+namespace and added to the class collection (again, ignoring duplicate
+class entries).</p>
+<h3><a name="ClassItem - Collecting Methods18">ClassItem - Collecting Methods</a></h3>
+<p>Acquiring the collection of methods in a specific class is a similar process:</p><pre><span class="cpp-keyword">private</span> MethodCollection GetMethodCollection()
+{
+  MethodCollection methodCollection=<span class="cpp-keyword">new</span> MethodCollection();
+  Type[] types=assembly.GetTypes();
+  foreach (Type type in types)
+  {
+    MethodInfo[] methods=type.GetMethods(Options.BindingFlags);
+    foreach (MethodInfo methodInfo in methods)
+    {
+      <span class="cpp-keyword">if</span> (methodInfo.DeclaringType.Namespace==namespaceName)
+      {
+        string className=StringHelpers.RightOfRightmostOf(
+          methodInfo.DeclaringType.FullName, '.');
+        <span class="cpp-keyword">if</span> (className==<span class="cpp-keyword">this</span>.className)
+        {
+          string methodName=methodInfo.Name;
+          methodCollection.Add(methodName,
+            <span class="cpp-keyword">new</span> MethodItem(assembly, namespaceName, className,
+            methodName, methodInfo));
+        }
+      }
+    }
+  }
+  <span class="cpp-keyword">return</span> methodCollection;
+}
+</pre>
+<p>Here, we can see a similar process again--the assembly types are
+inspected, and those that are qualified with the correct namespace and
+class names are added to the method collection for that class.</p>
+<h3><a name="TestRunner - Creating Test Fixtures Out Of The Assembly Information19">TestRunner - Creating Test Fixtures Out Of The Assembly Information</a></h3>
+<p>This class maintains a collection of assemblies and is responsible
+for running the unit tests.&nbsp; Assemblies are loaded into the <code>TestRunner</code>, which maintains a collection of these assemblies:</p><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> LoadAssembly(string file)
+{
+  AssemblyItem ai=<span class="cpp-keyword">new</span> AssemblyItem();
+  ai.Load(file);
+  ai.LoadNamespaces();
+  ai.LoadClasses();
+  ai.LoadMethods();
+  assemblyCollection.Add(file, ai);
+}</pre>
+<p>The <code>TestRunner</code> is responsible for converting the
+assembly information into test fixtures. This consists of walking
+through the assembly-namespace-class-method tree and inspecting the
+attributes associated with each class and method:&nbsp; </p><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ParseAssemblies()
+{
+  numTests=<span class="cpp-literal">0</span>;
+
+  foreach (AssemblyItem ai in assemblyCollection.Values)
+  {
+    foreach (NamespaceItem ni in ai.NamespaceCollection.Values)
+    {
+      foreach (ClassItem ci in ni.ClassCollection.Values)
+      {
+        TestFixture tf=<span class="cpp-keyword">new</span> TestFixture();
+        <span class="cpp-comment">// ... Parse Class Attributes ...</span>
+        <span class="cpp-keyword">if</span> (tf.HasTestFixture)
+        {
+          foreach(MethodItem mi in ci.MethodCollection.Values)
+          {
+            <span class="cpp-comment">// ... Parse Method Attributes ...</span>
+          }
+          testFixtureList.Add(tf);
+          numTests+=tf.NumTests;
+        }
+      }
+    }
+  }
+}
+</pre>
+<p>Because there is a one-to-one association between a class and a test
+fixture, the algorithm creates a test fixture for each class and throws
+it away if the class ends up not having a test fixture attribute.</p>
+<p>Once the test fixtures are created, running the tests is a simple
+matter of working through each test fixture and telling it to run the
+tests in the fixture:</p><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RunTests()
+{
+  foreach(TestFixture tf in testFixtureList)
+  {
+    tf.RunTests(testNotificationEvent);
+  }
+}</pre>
+<h3><a name="Abstracting Attributes20">Abstracting Attributes</a></h3>
+<p>I wanted a system that handled attributes with some automation, so
+that instead of writing a big switch statement to handle the different
+attributes, the "smarts" are put into the attributes themselves.&nbsp;
+As illustrated in the UML diagram, all of the attributes are classes
+derived from <code>TestUnitAttribute</code>.&nbsp; The derived attributes are instantiated using the <code>Activator</code> function.&nbsp; This is illustrated in the section of code that registers attributes associated with a class:</p><pre>foreach (object attr in ci.Attributes)
+{
+  <span class="cpp-comment">// verify that attribute class is "UnitTest"</span>
+  string attrStr=attr.ToString();
+  attrStr=StringHelpers.RightOfRightmostOf(attrStr, '.');
+  Trace.WriteLine(<span class="cpp-string">"Class: "</span>+ci.ToString()+<span class="cpp-string">", Attribute: "</span>+attrStr);
+  <span class="cpp-keyword">try</span>
+  {
+    Type t=Type.GetType(<span class="cpp-string">"UTCore."</span>+attrStr);
+    TestUnitAttribute tua=Activator.CreateInstance(t) as TestUnitAttribute;
+    tua.Initialize(ci, null, attr);
+    tua.SelfRegister(tf);
+  }
+  <span class="cpp-keyword">catch</span>(TypeLoadException)
+  {
+    Trace.WriteLine(<span class="cpp-string">"Attribute "</span>+attrStr+<span class="cpp-string">"is unknown"</span>);
+  }
+}</pre>
+<p>This code instantiates an attribute class found in the <code>UTCore</code> assembly having the same name as the attribute.&nbsp; As these attributes are all derived from <code>TestUnitAttribute</code>,
+we can now work with the base class to initialize it with some tracking
+information and tell the attribute to register itself with the test
+fixture.&nbsp; The same process takes place for parsing method
+attributes:</p><pre>foreach (object attr in mi.Attributes)
+{
+  <span class="cpp-comment">// verify that attribute class is "UnitTest"</span>
+  string attrStr=attr.ToString();
+  attrStr=StringHelpers.RightOfRightmostOf(attrStr, '.');
+  Trace.WriteLine(<span class="cpp-string">"Method: "</span>+mi.ToString()+<span class="cpp-string">", Attribute: "</span>+attrStr);
+  <span class="cpp-keyword">try</span>
+  {
+    Type t=Type.GetType(<span class="cpp-string">"UTCore."</span>+attrStr);
+    TestUnitAttribute tua=Activator.CreateInstance(t) as TestUnitAttribute;
+    tua.Initialize(ci, mi, attr);
+    tua.SelfRegister(tf);
+  }
+  <span class="cpp-keyword">catch</span>(TypeLoadException)
+  {
+    Trace.WriteLine(<span class="cpp-string">"Attribute "</span>+attrStr+<span class="cpp-string">"is unknown"</span>);
+  }
+}
+</pre>
+<p>These two processes are identical except for the attribute source
+and a debugging statement.&nbsp; The advantage of this implementation
+is that it keeps the "knowledge" of what the attribute does within the
+attribute itself.&nbsp; The <code>TestRunner</code> doesn't care what the attribute does, it merely instantiates them for the class and its methods.</p>
+<h3><a name="TestUnitAttribute Classes21">TestUnitAttribute Classes</a></h3>
+<p>In the basic MUTE, there are six attributes. You can see from the
+code how each attribute registers itself differently with the test
+fixture (which we'll look at next).</p>
+<ul>
+<li><code>TestFixtureAttribute</code> </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> TestFixtureAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> TestFixtureAttribute()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    tf.AddTestFixtureAttribute(<span class="cpp-keyword">this</span>);
+  }
+
+}
+</pre>
+<ul>
+<li><code>TestAttribute</code> </li></ul><div class="smallText" id="premain37" style="width: 100%;"><img preid="37" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg37" height="9" width="9"><span preid="37" style="margin-bottom: 0pt;" id="precollapse37"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre37"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> TestAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">enum</span> TestState
+  {
+    Untested=<span class="cpp-literal">0</span>,
+    Pass,
+    Ignore,
+    Fail,
+  }
+
+  TestState state;
+
+  <span class="cpp-keyword">public</span> TestState State
+  {
+    get
+    {
+      <span class="cpp-keyword">return</span> state;
+    }
+    set
+    {
+      state=value;
+    }
+  }
+
+  <span class="cpp-keyword">public</span> TestAttribute()
+  {
+    state=TestState.Untested;
+  }
+
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    tf.AddTestAttribute(<span class="cpp-keyword">this</span>);
+  }
+}
+</pre>
+<ul>
+<li><code>SetUpAttribute</code> </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> SetUpAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> SetUpAttribute()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    tf.AddSetUpAttribute(<span class="cpp-keyword">this</span>);
+  }
+}
+
+</pre>
+<ul>
+<li><code>TearDownAttribute</code> </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> TearDownAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> TearDownAttribute()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    tf.AddTearDownAttribute(<span class="cpp-keyword">this</span>);
+  }
+}
+</pre>
+<ul>
+<li><code>ExpectedExceptionAttribute</code> </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ExpectedExceptionAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> ExpectedExceptionAttribute()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    mi.ExpectedException=attr as UnitTest.ExpectedExceptionAttribute;
+  }
+}
+</pre>
+<ul>
+<li><code>IgnoreAttribute</code> </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> IgnoreAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> IgnoreAttribute()
+  {
+  }
+
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    mi.Ignore=<span class="cpp-keyword">true</span>;
+  }
+}
+</pre>
+<h3><a name="TestFixture - Running The Tests22">TestFixture - Running The Tests</a></h3>
+<p>This class is a physical representation of the concept of a test
+fixture.&nbsp; It manages the associated test fixture attribute (which
+is associated with the test fixture class), the setup and teardown
+methods to run for each test (one of each per test fixture), and a list
+of tests to run.&nbsp; The primary purpose of the test fixture is to
+run the tests:</p><div class="smallText" id="premain42" style="width: 100%;"><img preid="42" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg42" height="9" width="9"><span preid="42" style="margin-bottom: 0pt;" id="precollapse42"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre42"><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RunTests(TestNotificationDelegate testNotificationEvent)
+{
+  object instance=tfa.CreateClass();
+  foreach (TestAttribute ta in testList)
+  {
+    <span class="cpp-keyword">if</span> (!ta.IgnoreTest())
+    {
+      <span class="cpp-keyword">try</span>
+      {
+        <span class="cpp-keyword">if</span> (sua != null) sua.Invoke(instance);
+        ta.Invoke(instance);
+        <span class="cpp-comment">// If we get here, the test did not throw an exception.</span>
+        <span class="cpp-comment">// Was it supposed too?</span>
+        <span class="cpp-keyword">if</span> (ta.ExpectedExceptionType != null)
+        {
+          Trace.WriteLine(<span class="cpp-string">"***Fail***: "</span>+ta.TestMethod.ToString()+
+            <span class="cpp-string">" Expected exception not encountered"</span>);
+          ta.State=TestAttribute.TestState.Fail;
+        }
+        <span class="cpp-keyword">else</span>
+        {
+          Trace.WriteLine(<span class="cpp-string">"***Pass***: "</span>+ta.TestMethod.ToString());
+          ta.State=TestAttribute.TestState.Pass;
+        }
+      }
+
+      <span class="cpp-keyword">catch</span>(UnitTest.AssertionException e)
+      {
+        Trace.WriteLine(<span class="cpp-string">"***Fail***: "</span>+ta.TestMethod.ToString()+
+          <span class="cpp-string">" Exception="</span>+e.Message);
+        ta.State=TestAttribute.TestState.Fail;
+      }
+
+      <span class="cpp-keyword">catch</span>(Exception e)
+      {
+        <span class="cpp-keyword">if</span> (e.GetType() != ta.GetExpectedExceptionType())
+        {
+          Trace.WriteLine(<span class="cpp-string">"***Fail***: "</span>+ta.TestMethod.ToString()+
+            <span class="cpp-string">" Exception="</span>+e.Message);
+          ta.State=TestAttribute.TestState.Fail;
+        }
+        <span class="cpp-keyword">else</span>
+        {
+          Trace.WriteLine(<span class="cpp-string">"***Pass***: "</span>+ta.TestMethod.ToString()+
+            <span class="cpp-string">" Exception="</span>+e.Message);
+          ta.State=TestAttribute.TestState.Pass;
+        }
+      }
+      <span class="cpp-keyword">finally</span>
+      {
+        <span class="cpp-keyword">if</span> (tda != null) tda.Invoke(instance);
+      }
+    }
+    <span class="cpp-keyword">else</span>
+    {
+      Trace.WriteLine(<span class="cpp-string">"***Ignore***: "</span>+ta.TestMethod.ToString());
+      ta.State=TestAttribute.TestState.Ignore;
+    }
+    testNotificationEvent(ta);
+  }
+}
+</pre>
+<p>As we can see from this code, for each test the setup method (if it
+exists) is invoked, then the test, then any teardown method.&nbsp; Any
+exceptions are compared to the expected exception.&nbsp; Since failed
+assertions generate an exception, assertion failure is handled with
+this mechanism as well.&nbsp; Ignored tests are, well, ignored!&nbsp;
+The resulting state (pass, ignore, or fail) is stored in the test
+attribute and the test notification event is fired.</p>
+<h4><a name="Invoking The Test Methods23">Invoking The Test Methods</a></h4>
+<p>The tests are run from the <code>MethodItem</code> class:</p><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Invoke(object classInstance)
+{
+  <span class="cpp-comment">// Delegates requires that methods have a specific signature and are public.</span>
+  <span class="cpp-comment">// Delegates are faster than "methodInfo.Invoke".</span>
+
+  Type utdType=typeof(UnitTestDelegate);
+  UnitTestDelegate utd=Delegate.CreateDelegate(utdType, classInstance, methodName)
+    as UnitTestDelegate;
+  <span class="cpp-keyword">try</span>
+  {
+    utd();
+  }
+  <span class="cpp-keyword">catch</span>(Exception e)
+  {
+    <span class="cpp-keyword">throw</span>(e);
+  }
+}
+</pre>
+<p>Given that the tests are all have the same signature (a public
+method which returns void and has no parameters), we can create a
+delegate of the same type: </p><p>
+</p><p><code><span class="cpp-keyword">private</span> delegate <span class="cpp-keyword">void</span> UnitTestDelegate();</code></p>and execute the delegate.&nbsp; Catching the exception is simple--it is merely re-thrown to the test fixture which handles it. 
+<p>However, at some point I'd like to extend MUTE so that it doesn't
+have to rely on a specific method signature.&nbsp; When this is done,
+the way the exception is handled is going to have to be changed, along
+with the way the method is invoked.&nbsp; This code, which currently
+commented out, illustrates the difference:</p><pre><span class="cpp-comment">// The invoke function allows us to call functions with different parameter lists,</span>
+<span class="cpp-comment">// and ones that are not public.</span>
+<span class="cpp-comment">// However, this changes how we handle exceptions</span>
+
+<span class="cpp-comment">//  try</span>
+<span class="cpp-comment">//  {</span>
+<span class="cpp-comment">//    methodInfo.Invoke(classInstance,</span>
+<span class="cpp-comment">//      BindingFlags.Public | BindingFlags.NonPublic |</span>
+<span class="cpp-comment">//      BindingFlags.InvokeMethod | BindingFlags.Static,</span>
+<span class="cpp-comment">//      null, null, null);</span>
+<span class="cpp-comment">//  }</span>
+<span class="cpp-comment">//  catch(Exception e)</span>
+<span class="cpp-comment">//  {</span>
+<span class="cpp-comment">//    throw(e.InnerException);</span>
+<span class="cpp-comment">//  }</span>
+</pre>Note that in this code the <code>InnerException</code> is thrown. 
+<h2><a name="The Case Study24">The Case Study</a></h2>
+<p>In Part I, I developed a case study and wrote the unit tests for
+it.&nbsp; The astute reader will note that I made a mistake in the test
+cases, leaving off the text to display when the program asserts, which
+I fixed in the code you can download here.&nbsp; In fact, there were a
+lot of problems with the code, which just shows that I really shouldn't
+write code without a compiler handy to make sure I don't do a bunch of
+stupid things.&nbsp; Of course, the way the C# compiler works, you have
+to fix some things first before the compiler can chunk along far enough
+to find the next set of problems!</p>
+<h3><a name="Compiler Errors25">Compiler Errors</a></h3>
+<p>Somewhere, I read that the first test in any unit testing is, when
+you try to compile your unit tests, you get a bunch of compiler
+errors.&nbsp; Woohoo!&nbsp; That wasn't hard to do!</p>
+<h3><a name="Stubs In General26">Stubs In General</a></h3>
+<p>Now that we have achieved that monumentus event, the next step is to
+write the classes and stubs for all the methods.&nbsp; At the end of
+implementing the method stubs, the unit tests should run, but every one
+of them should fail.</p>
+<h4><a name="Exceptions27">Exceptions</a></h4>
+<p>The first step is to implement the exceptions that the unit tests call for:</p><div class="smallText" id="premain45" style="width: 100%;"><img preid="45" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg45" height="9" width="9"><span preid="45" style="margin-bottom: 0pt;" id="precollapse45"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre45"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> DuplicatePartException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> UnassignedPartException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> BadChargeSlipNumberException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> UnassignedChargeException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> BadWorkOrderNumberException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> DuplicateChargeSlipException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> UnassignedChargeSlipException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> UnassignedWorkOrderException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> PartNotFromVendorException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> DifferentVendorException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> IncorrectChargeSlipException : Exception
+{
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> UnassignedInvoiceException : Exception
+{
+}
+</pre>
+<h4><a name="Getters And Setters28">Getters And Setters</a></h4>
+<p>OK, do we write stubs for getters and setters, or just implement
+them?&nbsp; And if we write stubs for them, what values do we
+return?&nbsp; This is one area where unit testing breaks down.&nbsp;
+While some may argue with me, I definitely think that in the XP
+paradigm there is a point to writing getter/setter unit tests.&nbsp;
+This point is not so much to test some trivial code, but rather as a
+documentation tool--that the class being tested must implement
+getter/setter functionality.&nbsp; This goes along with "the code is
+the documentation" philosophy.&nbsp; Even though unit testing
+getter/setter functions is sort of pointless, is provides a clue to the
+implementer as to the getters/setters that the class implements, their
+nomenclature, and how they are expected to work.</p>
+<p>Returning back to the question of writing stubs for getters and
+setters, I personally feel that it's a waste of time to write "do
+nothing" or "do the wrong thing" stubs, simply to test the unit
+test.&nbsp; It seems a lot more productive to write the real
+functionality (when trivial).&nbsp; This means that the unit test will
+pass, which is sufficient, in my mind.</p>
+<h4><a name="Constructors And Member Initialization29">Constructors And Member Initialization</a></h4>
+<p>Members are automatically initialized to certain values in debug mode.</p>
+<h4><a name="Compiler Warnings30">Compiler Warnings</a></h4>
+<p>In addition to eliminating compiler errors, warnings need to be
+eliminated also.&nbsp; The most common kind of warning that I
+encountered is:</p>
+<p>"x is never assigned to, and will always have its default value null"</p>
+<p>This brings up another implementation decision.&nbsp; For collections like <code>ArrayList</code> and <code>Hashtable</code>,
+do you assign them to null or instantiate the collection?&nbsp; As with
+setters/getters, it seems ridiculous to not instantiate the collection
+when it is trivial to do so.</p>
+<h4><a name="Tests With Multiple Asserts31">Tests With Multiple Asserts</a></h4>
+<p>The tests that I created have, in some cases, multiple assert
+statements.&nbsp; After implementing the stubs, I realized that this is
+not particularly a good idea.&nbsp; When the test passes, I know that
+none of the asserts failed.&nbsp; However, when one statement asserts,
+I only know that none of the previous asserts failed, but I know
+nothing of the asserts below the one that failed.&nbsp; Therefore, the
+unit is strong in testing for success but weak in identifying all the
+failures.</p>
+<h3><a name="The Class Stubs32">The Class Stubs</a></h3>
+<p>The stubs are all very basic and, for the most part, ensure that the
+unit tests fail.&nbsp; The exceptions are the setter and getter methods
+that have already been implemented with real code.&nbsp; In this
+section, I'm going to review the (now fixed) unit tests and show the
+corresponding stub for each class.</p>
+<h4><a name="Part, Unit Test33">Part, Unit Test</a></h4><div class="smallText" id="premain46" style="width: 100%;"><img preid="46" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg46" height="9" width="9"><span preid="46" style="margin-bottom: 0pt;" id="precollapse46"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre46">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> PartTest
+{
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    Assertion.Assert(part.VendorCost==<span class="cpp-literal">0</span>, <span class="cpp-string">"VendorCost is not zero."</span>);
+    Assertion.Assert(part.Taxable==<span class="cpp-keyword">false</span>, <span class="cpp-string">"Taxable is not false."</span>);
+    Assertion.Assert(part.InternalCost==<span class="cpp-literal">0</span>, <span class="cpp-string">"InternalCost is not zero."</span>);
+    Assertion.Assert(part.Markup==<span class="cpp-literal">0</span>, <span class="cpp-string">"Markup is not zero."</span>);
+    Assertion.Assert(part.Number==<span class="cpp-string">""</span>, <span class="cpp-string">"Number is not an empty string."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> SetVendorInfo()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"FIG 4RAC #R11T"</span>;
+    part.VendorCost=<span class="cpp-literal">12.50</span>;
+    part.Taxable=<span class="cpp-keyword">true</span>;
+    part.InternalCost=<span class="cpp-literal">13.00</span>;
+    part.Markup=<span class="cpp-literal">2.0</span>;
+  
+    Assertion.Assert(part.Number==<span class="cpp-string">"FIG 4RAC #R11T"</span>, <span class="cpp-string">"Number did not get set."</span>);
+    Assertion.Assert(part.VendorCost==<span class="cpp-literal">12.50</span>, <span class="cpp-string">"VendorCost did not get set."</span>);
+    Assertion.Assert(part.Taxable==<span class="cpp-keyword">true</span>, <span class="cpp-string">"Taxable did not get set."</span>);
+    Assertion.Assert(part.InternalCost==<span class="cpp-literal">13.00</span>, <span class="cpp-string">"InternalCost did not get set."</span>);
+    Assertion.Assert(part.Markup==<span class="cpp-literal">2.0</span>, <span class="cpp-string">"Markup did not get set."</span>);
+  }
+}
+</pre>
+<h4><a name="Part, Stub34">Part, Stub</a></h4><div class="smallText" id="premain47" style="width: 100%;"><img preid="47" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg47" height="9" width="9"><span preid="47" style="margin-bottom: 0pt;" id="precollapse47"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre47"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> Part
+{
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">double</span> vendorCost;
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">bool</span> taxable;
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">double</span> internalCost;
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">double</span> markup;
+  <span class="cpp-keyword">private</span> string number;
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">double</span> VendorCost
+  {
+    get {<span class="cpp-keyword">return</span> vendorCost;}
+    set {vendorCost=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">bool</span> Taxable
+  {
+    get {<span class="cpp-keyword">return</span> taxable;}
+    set {taxable=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">double</span> InternalCost
+  {
+    get {<span class="cpp-keyword">return</span> internalCost;}
+    set {internalCost=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">double</span> Markup
+  {
+    get {<span class="cpp-keyword">return</span> markup;}
+    set {markup=value;}
+  }
+
+  <span class="cpp-keyword">public</span> string Number
+  {
+    get {<span class="cpp-keyword">return</span> number;}
+    set {number=value;}
+  }
+}
+</pre>
+<h4><a name="Vendor, Unit Test35">Vendor, Unit Test</a></h4><div class="smallText" id="premain48" style="width: 100%;"><img preid="48" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg48" height="9" width="9"><span preid="48" style="margin-bottom: 0pt;" id="precollapse48"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre48">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> VendorTest
+{
+  <span class="cpp-keyword">private</span> Vendor vendor;
+
+  [SetUp]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> VendorSetUp()
+  {
+    vendor=<span class="cpp-keyword">new</span> Vendor();
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Assertion.Assert(vendor.Name==<span class="cpp-string">""</span>, <span class="cpp-string">"Name is not an empty string."</span>);
+    Assertion.Assert(vendor.PartCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"PartCount is not zero."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> VendorName()
+  {
+    vendor.Name=<span class="cpp-string">"Jamestown Distributors"</span>;
+    Assertion.Assert(vendor.Name==<span class="cpp-string">"Jamestown Distributors"</span>, <span class="cpp-string">"Name did not get set."</span>);
+    }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddUniqueParts()
+  {
+    CreateTestParts();
+    Assertion.Assert(vendor.PartCount==<span class="cpp-literal">2</span>, <span class="cpp-string">"PartCount is not 2."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveParts()
+  {
+    CreateTestParts();
+    Part part;
+    part=vendor.Parts[<span class="cpp-literal">0</span>];
+    Assertion.Assert(part.Number==<span class="cpp-string">"BOD-13-25P"</span>, <span class="cpp-string">"PartNumber is wrong."</span>);
+    part=vendor.Parts[<span class="cpp-literal">1</span>];
+    Assertion.Assert(part.Number==<span class="cpp-string">"BOD-13-33P"</span>, <span class="cpp-string">"PartNumber is wrong."</span>);
+  }
+
+  [Test, ExpectedException(typeof(DuplicatePartException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> DuplicateParts()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"Same Part Number"</span>;
+    vendor.Add(part);
+    vendor.Add(part);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedPartException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedPartNumber()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    vendor.Add(part);
+  }
+
+  <span class="cpp-keyword">void</span> CreateTestParts()
+  {
+    Part part1=<span class="cpp-keyword">new</span> Part();
+    part1.Number=<span class="cpp-string">"BOD-13-25P"</span>;
+    vendor.Add(part1);
+  
+    Part part2=<span class="cpp-keyword">new</span> Part();
+    part2.Number=<span class="cpp-string">"BOD-13-33P"</span>;
+    vendor.Add(part2);
+  }  
+}
+</pre>
+<h4><a name="Vendor, Stub36">Vendor, Stub</a></h4><div class="smallText" id="premain49" style="width: 100%;"><img preid="49" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg49" height="9" width="9"><span preid="49" style="margin-bottom: 0pt;" id="precollapse49"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre49"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> Vendor
+{
+  <span class="cpp-keyword">private</span> string name;
+  <span class="cpp-keyword">private</span> PartsArray partsArray;
+  <span class="cpp-keyword">private</span> PartsHashtable parts;
+
+  <span class="cpp-keyword">public</span> string Name
+  {
+    get {<span class="cpp-keyword">return</span> name;}
+    set {name=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> PartCount
+  {
+    get {<span class="cpp-keyword">return</span> parts.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> PartsHashtable Parts
+  {
+    get {<span class="cpp-keyword">return</span> parts;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p)
+  {
+  }
+
+  <span class="cpp-keyword">public</span> Vendor()
+  {
+    parts=<span class="cpp-keyword">new</span> PartsHashtable();
+    partsArray=<span class="cpp-keyword">new</span> PartsArray();
+  }
+}
+</pre>
+<h4><a name="Charge, Unit Test37">Charge, Unit Test</a></h4><pre>[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ChargeTest
+{
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    Assertion.Assert(charge.Description==<span class="cpp-string">""</span>, <span class="cpp-string">"Description is not an empty string."</span>);
+    Assertion.Assert(charge.Amount==<span class="cpp-literal">0</span>, <span class="cpp-string">"Amount is not zero."</span>);
+  }
+  
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> SetChargeInfo()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    charge.Description=<span class="cpp-string">"Freight"</span>;
+    charge.Amount=<span class="cpp-literal">8.50</span>;
+  
+    Assertion.Assert(charge.Description==<span class="cpp-string">"Freight"</span>, <span class="cpp-string">"Description is not set."</span>);
+    Assertion.Assert(charge.Amount==<span class="cpp-literal">8.50</span>, <span class="cpp-string">"Amount is not set correctly."</span>);
+  }
+}
+</pre>
+<h4><a name="Charge, Stub38">Charge, Stub</a></h4><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> Charge
+{
+  <span class="cpp-keyword">private</span> string description;
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">double</span> amount;
+
+  <span class="cpp-keyword">public</span> string Description
+  {
+    get {<span class="cpp-keyword">return</span> description;}
+    set {description=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">double</span> Amount
+  {
+    get {<span class="cpp-keyword">return</span> amount;}
+    set {amount=value;}
+  }
+}</pre>
+<h4><a name="ChargeSlip, Unit Test39">ChargeSlip, Unit Test</a></h4><div class="smallText" id="premain52" style="width: 100%;"><img preid="52" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg52" height="9" width="9"><span preid="52" style="margin-bottom: 0pt;" id="precollapse52"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre52">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ChargeSlipTest
+{
+  <span class="cpp-keyword">private</span> ChargeSlip chargeSlip;
+
+  [SetUp]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> SetUp()
+  {
+    chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Assertion.Assert(chargeSlip.Number==<span class="cpp-string">""</span>, <span class="cpp-string">"Number is not initialized correctly."</span>);
+    Assertion.Assert(chargeSlip.PartCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"PartCount is not zero."</span>);
+    Assertion.Assert(chargeSlip.ChargeCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"ChargeCount is not zero."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ChargeSlipNumberAssignment()
+  {
+    chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+    Assertion.Assert(chargeSlip.Number==<span class="cpp-string">"123456"</span>, <span class="cpp-string">"Number is not set correctly."</span>);
+    }
+
+  [Test, ExpectedException(typeof(BadChargeSlipNumberException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> BadChargeSlipNumber()
+  {
+    chargeSlip.Number=<span class="cpp-string">"12345"</span>;      <span class="cpp-comment">// must be six digits or letters</span>
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddPart()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"VOD-13-33P"</span>;
+    chargeSlip.Add(part);
+    Assertion.Assert(chargeSlip.PartCount==<span class="cpp-literal">1</span>, <span class="cpp-string">"PartCount is wrong."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddCharge()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    charge.Description=<span class="cpp-string">"Freight"</span>;
+    charge.Amount=<span class="cpp-literal">10.50</span>;    
+    chargeSlip.Add(charge);
+    Assertion.Assert(chargeSlip.ChargeCount==<span class="cpp-literal">1</span>, <span class="cpp-string">"ChargeCount is wrong."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrievePart()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"VOD-13-33P"</span>;
+    chargeSlip.Add(part);
+    Part p2=chargeSlip.Parts[<span class="cpp-literal">0</span>];
+    Assertion.Assert(p2.Number==part.Number, <span class="cpp-string">"Part numbers do not match."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveCharge()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    charge.Description=<span class="cpp-string">"Freight"</span>;
+    charge.Amount=<span class="cpp-literal">10.50</span>;    
+    chargeSlip.Add(charge);
+    Charge c2=chargeSlip.Charges[<span class="cpp-literal">0</span>];
+    Assertion.Assert(c2.Description==charge.Description,
+      <span class="cpp-string">"Descriptions do not match."</span>);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedPartException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddUnassignedPart()
+  {
+    Part part=<span class="cpp-keyword">new</span> Part();
+    chargeSlip.Add(part);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedChargeException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedCharge()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    chargeSlip.Add(charge);
+  }
+}
+
+</pre>
+<h4><a name="ChargeSlip, Stub40">ChargeSlip, Stub</a></h4><div class="smallText" id="premain53" style="width: 100%;"><img preid="53" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg53" height="9" width="9"><span preid="53" style="margin-bottom: 0pt;" id="precollapse53"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre53"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ChargeSlip
+{
+  <span class="cpp-keyword">private</span> string number;
+  <span class="cpp-keyword">private</span> PartsArray parts;
+  <span class="cpp-keyword">private</span> ChargesArray charges;
+
+  <span class="cpp-keyword">public</span> string Number
+  {
+    get {<span class="cpp-keyword">return</span> number;}
+    set {number=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> PartCount
+  {
+    get {<span class="cpp-keyword">return</span> parts.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> ChargeCount
+  {
+    get {<span class="cpp-keyword">return</span> charges.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p)
+  {
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Charge c)
+  {
+  }
+
+  <span class="cpp-keyword">public</span> PartsArray Parts
+  {
+    get {<span class="cpp-keyword">return</span> parts;}
+  }
+
+  <span class="cpp-keyword">public</span> ChargesArray Charges
+  {
+    get {<span class="cpp-keyword">return</span> charges;}
+  }
+
+  <span class="cpp-keyword">public</span> ChargeSlip()
+  {
+    parts=<span class="cpp-keyword">new</span> PartsArray();
+    charges=<span class="cpp-keyword">new</span> ChargesArray();
+  }
+}
+</pre>
+<h4><a name="WorkOrder, Unit Test41">WorkOrder, Unit Test</a></h4><div class="smallText" id="premain54" style="width: 100%;"><img preid="54" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg54" height="9" width="9"><span preid="54" style="margin-bottom: 0pt;" id="precollapse54"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre54">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> WorkOrderTest
+{
+  <span class="cpp-keyword">private</span> WorkOrder workOrder;
+
+  [SetUp]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> WorkOrderSetUp()
+  {
+    workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Assertion.Assert(workOrder.Number==<span class="cpp-string">""</span>, <span class="cpp-string">"Number not initialized."</span>);
+    Assertion.Assert(workOrder.ChargeSlipCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"ChargeSlipCount not initialized."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> WorkOrderNumber()
+  {
+    workOrder.Number=<span class="cpp-string">"112233"</span>;
+    Assertion.Assert(workOrder.Number==<span class="cpp-string">"112233"</span>, <span class="cpp-string">"Number not set."</span>);
+    }
+
+  [Test, ExpectedException(typeof(BadWorkOrderNumberException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> BadWorkOrderNumber()
+  {
+    workOrder.Number=<span class="cpp-string">"12345"</span>;
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddChargeSlip()
+  {
+    ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+    chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+    workOrder.Add(chargeSlip);
+    Assertion.Assert(workOrder.ChargeSlipCount==<span class="cpp-literal">1</span>, <span class="cpp-string">"ChargeSlip not added."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveChargeSlip()
+  {
+    ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+    chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+    workOrder.Add(chargeSlip);
+    ChargeSlip cs2=workOrder.ChargeSlips[<span class="cpp-literal">0</span>];
+    Assertion.Assert(chargeSlip.Number==cs2.Number, <span class="cpp-string">"ChargeSlip numbers do not match."</span>);
+  }
+
+  [Test, ExpectedException(typeof(DuplicateChargeSlipException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> DuplicateChargeSlip()
+  {
+    ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+    chargeSlip.Number=<span class="cpp-string">"123456"</span>;
+    workOrder.Add(chargeSlip);
+    workOrder.Add(chargeSlip);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedChargeSlipException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedChargeSlipNumber()
+  {
+    ChargeSlip chargeSlip=<span class="cpp-keyword">new</span> ChargeSlip();
+    workOrder.Add(chargeSlip);
+  }
+}
+</pre>
+<h4><a name="WorkOrder, Stub42">WorkOrder, Stub</a></h4><div class="smallText" id="premain55" style="width: 100%;"><img preid="55" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg55" height="9" width="9"><span preid="55" style="margin-bottom: 0pt;" id="precollapse55"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre55"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> WorkOrder
+{
+  <span class="cpp-keyword">private</span> string number;
+  <span class="cpp-keyword">private</span> ChargeSlipHashtable chargeSlips;
+  <span class="cpp-keyword">private</span> ChargeSlipArray chargeSlipsArray;
+
+  <span class="cpp-keyword">public</span> string Number
+  {
+    get {<span class="cpp-keyword">return</span> number;}
+    set {number=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> ChargeSlipCount
+  {
+    get {<span class="cpp-keyword">return</span> chargeSlips.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> ChargeSlipArray ChargeSlips
+  {
+    get {<span class="cpp-keyword">return</span> chargeSlipsArray;}
+  }
+
+  <span class="cpp-keyword">public</span> WorkOrder()
+  {
+    chargeSlips=<span class="cpp-keyword">new</span> ChargeSlipHashtable();
+    chargeSlipsArray=<span class="cpp-keyword">new</span> ChargeSlipArray();
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(ChargeSlip cs)
+  {
+  }
+}
+</pre>
+<h4><a name="Invoice, Unit Test43">Invoice, Unit Test</a></h4><div class="smallText" id="premain56" style="width: 100%;"><img preid="56" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg56" height="9" width="9"><span preid="56" style="margin-bottom: 0pt;" id="precollapse56"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre56">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> InvoiceTest
+{
+  <span class="cpp-keyword">private</span> Invoice invoice;
+
+  [SetUp]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> InvoiceSetUp()
+  {
+    invoice=<span class="cpp-keyword">new</span> Invoice();
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Assertion.Assert(invoice.Number==<span class="cpp-string">""</span>, <span class="cpp-string">"Number not initialized."</span>);
+    Assertion.Assert(invoice.ChargeCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"ChargeCount not initialized."</span>);
+    Assertion.Assert(invoice.Vendor==null, <span class="cpp-string">"Vendor not initialized."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> InvoiceNumber()
+  {
+    invoice.Number=<span class="cpp-string">"112233"</span>;
+    Assertion.Assert(invoice.Number==<span class="cpp-string">"112233"</span>, <span class="cpp-string">"Number not set."</span>);
+    }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> InvoiceVendor()
+  {
+    Vendor vendor=<span class="cpp-keyword">new</span> Vendor();
+    vendor.Name=<span class="cpp-string">"Nantucket Parts"</span>;
+    invoice.Vendor=vendor;
+    Assertion.Assert(invoice.Vendor.Name==vendor.Name, <span class="cpp-string">"Vendor name not set."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddCharge()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    charge.Description=<span class="cpp-string">"Freight"</span>;
+    invoice.Add(charge);
+    Assertion.Assert(invoice.ChargeCount==<span class="cpp-literal">1</span>, <span class="cpp-string">"Charge count wrong."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveCharge()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    charge.Description=<span class="cpp-string">"123456"</span>;
+    invoice.Add(charge);
+    Charge c2=invoice.Charges[<span class="cpp-literal">0</span>];
+    Assertion.Assert(charge.Description==c2.Description,
+      <span class="cpp-string">"Charge description does not match."</span>);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedChargeException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedChargeNumber()
+  {
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    invoice.Add(charge);
+  }
+}
+</pre>
+<h4><a name="Invoice, Stub44">Invoice, Stub</a></h4><div class="smallText" id="premain57" style="width: 100%;"><img preid="57" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg57" height="9" width="9"><span preid="57" style="margin-bottom: 0pt;" id="precollapse57"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre57"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> Invoice
+{
+  <span class="cpp-keyword">private</span> string number;
+  <span class="cpp-keyword">private</span> Vendor vendor;
+  <span class="cpp-keyword">private</span> ChargesArray charges;
+
+  <span class="cpp-keyword">public</span> string Number
+  {
+    get {<span class="cpp-keyword">return</span> number;}
+    set {number=value;}
+  }
+
+  <span class="cpp-keyword">public</span> Vendor Vendor
+  {
+    get {<span class="cpp-keyword">return</span> vendor;}
+    set {vendor=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> ChargeCount
+  {
+    get {<span class="cpp-keyword">return</span> charges.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> ChargesArray Charges
+  {
+    get {<span class="cpp-keyword">return</span> charges;}
+  }
+
+  <span class="cpp-keyword">public</span> Invoice()
+  {
+    charges=<span class="cpp-keyword">new</span> ChargesArray();
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Charge c)
+  {
+  }
+}
+</pre>
+<h4><a name="Customer, Unit Test45">Customer, Unit Test</a></h4><div class="smallText" id="premain58" style="width: 100%;"><img preid="58" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg58" height="9" width="9"><span preid="58" style="margin-bottom: 0pt;" id="precollapse58"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre58">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> CustomerTest
+{
+  <span class="cpp-keyword">private</span> Customer customer;
+
+  [SetUp]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> CustomerSetUp()
+  {
+    customer=<span class="cpp-keyword">new</span> Customer();
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    Assertion.Assert(customer.Name==<span class="cpp-string">""</span>, <span class="cpp-string">"Name not initialized."</span>);
+    Assertion.Assert(customer.WorkOrderCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"WorkOrderCount not initialized."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> CustomerName()
+  {
+    customer.Name=<span class="cpp-string">"Marc Clifton"</span>;
+    Assertion.Assert(customer.Name==<span class="cpp-string">"Marc Clifton"</span>, <span class="cpp-string">"Name not set."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddWorkOrder()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    workOrder.Number=<span class="cpp-string">"123456"</span>;
+    customer.Add(workOrder);
+    Assertion.Assert(customer.WorkOrderCount==<span class="cpp-literal">1</span>, <span class="cpp-string">"Work order not added."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RetrieveWorkOrder()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    workOrder.Number=<span class="cpp-string">"123456"</span>;
+    customer.Add(workOrder);
+    WorkOrder wo2=customer.WorkOrders[<span class="cpp-literal">0</span>];
+    Assertion.Assert(workOrder.Number==wo2.Number, <span class="cpp-string">"WorkOrder numbers do not match."</span>);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedWorkOrderException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedWorkOrderNumber()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    customer.Add(workOrder);
+  }
+}
+</pre>
+<h4><a name="Customer, Stub46">Customer, Stub</a></h4><div class="smallText" id="premain59" style="width: 100%;"><img preid="59" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg59" height="9" width="9"><span preid="59" style="margin-bottom: 0pt;" id="precollapse59"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre59"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> Customer
+{
+  <span class="cpp-keyword">private</span> string name;
+  <span class="cpp-keyword">private</span> WorkOrderArray workOrders;
+
+  <span class="cpp-keyword">public</span> string Name
+  {
+    get {<span class="cpp-keyword">return</span> name;}
+    set {name=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> WorkOrderCount
+  {
+    get {<span class="cpp-keyword">return</span> workOrders.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> WorkOrderArray WorkOrders
+  {
+    get {<span class="cpp-keyword">return</span> workOrders;}
+  }
+
+  <span class="cpp-keyword">public</span> Customer()
+  {
+    workOrders=<span class="cpp-keyword">new</span> WorkOrderArray();
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(WorkOrder wo)
+  {
+  }
+}
+</pre>
+<h4><a name="PurchaseOrder, Unit Test47">PurchaseOrder, Unit Test</a></h4><div class="smallText" id="premain60" style="width: 100%;"><img preid="60" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg60" height="9" width="9"><span preid="60" style="margin-bottom: 0pt;" id="precollapse60"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre60">[TestFixture]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> PurchaseOrderTest
+{
+  <span class="cpp-keyword">private</span> PurchaseOrder po;
+  <span class="cpp-keyword">private</span> Vendor vendor;
+
+  [SetUp]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> PurchaseOrderSetUp()
+  {
+    po=<span class="cpp-keyword">new</span> PurchaseOrder();
+    vendor=<span class="cpp-keyword">new</span> Vendor();
+    vendor.Name=<span class="cpp-string">"West Marine"</span>;
+    po.Vendor=vendor;
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ConstructorInitialization()
+  {
+    PurchaseOrder po=<span class="cpp-keyword">new</span> PurchaseOrder();
+    Assertion.Assert(po.Number==<span class="cpp-string">""</span>, <span class="cpp-string">"Number not initialized."</span>);
+    Assertion.Assert(po.PartCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"PartCount not initialized."</span>);
+    Assertion.Assert(po.ChargeCount==<span class="cpp-literal">0</span>, <span class="cpp-string">"ChargeCount not initizlied."</span>);
+    Assertion.Assert(po.Invoice==null, <span class="cpp-string">"Invoice not initialized."</span>);
+    Assertion.Assert(po.Vendor==null, <span class="cpp-string">"Vendor not initialized."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> PONumber()
+  {
+    po.Number=<span class="cpp-string">"123456"</span>;
+    Assertion.Assert(po.Number==<span class="cpp-string">"123456"</span>, <span class="cpp-string">"Number not set."</span>);
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddPart()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    workOrder.Number=<span class="cpp-string">"123456"</span>;
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"112233"</span>;
+    vendor.Add(part);
+    po.Add(part, workOrder);
+    WorkOrder wo2;
+    Part p2;
+    po.GetPart(<span class="cpp-literal">0</span>, out p2, out wo2);
+    Assertion.Assert(p2.Number==part.Number, <span class="cpp-string">"Part number does not match."</span>);
+    Assertion.Assert(wo2.Number==workOrder.Number, <span class="cpp-string">"Work order number does not match."</span>);
+  }
+
+  [Test, ExpectedException(typeof(PartNotFromVendorException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddPartNotFromVendor()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    workOrder.Number=<span class="cpp-string">"123456"</span>;
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"131133"</span>;
+    po.Add(part, workOrder);
+  }
+
+  [Test, ExpectedException(typeof(DifferentVendorException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AddInvoiceFromDifferentVendor()
+  {
+    Vendor vendor1=<span class="cpp-keyword">new</span> Vendor();
+    vendor1.Name=<span class="cpp-string">"ABC Co."</span>;
+    po.Vendor=vendor1;
+    Invoice invoice=<span class="cpp-keyword">new</span> Invoice();
+    invoice.Number=<span class="cpp-string">"123456"</span>;
+    Vendor vendor2=<span class="cpp-keyword">new</span> Vendor();
+    vendor2.Name=<span class="cpp-string">"XYZ Inc."</span>;
+    invoice.Vendor=vendor2;
+    po.Invoice=invoice;
+  }
+
+  [Test, ExpectedException(typeof(UnassignedWorkOrderException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedWorkOrderNumber()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    Part part=<span class="cpp-keyword">new</span> Part();
+    part.Number=<span class="cpp-string">"112233"</span>;
+    po.Add(part, workOrder);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedPartException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedPartNumber()
+  {
+    WorkOrder workOrder=<span class="cpp-keyword">new</span> WorkOrder();
+    workOrder.Number=<span class="cpp-string">"123456"</span>;
+    Part part=<span class="cpp-keyword">new</span> Part();
+    po.Add(part, workOrder);
+  }
+
+  [Test, ExpectedException(typeof(UnassignedInvoiceException))]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnassignedInvoiceNumber()
+  {
+    Invoice invoice=<span class="cpp-keyword">new</span> Invoice();
+    po.Invoice=invoice;
+  }
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> ClosePO()
+  {
+    WorkOrder wo1=<span class="cpp-keyword">new</span> WorkOrder();
+    WorkOrder wo2=<span class="cpp-keyword">new</span> WorkOrder();
+
+    wo1.Number=<span class="cpp-string">"000001"</span>;
+    wo2.Number=<span class="cpp-string">"000002"</span>;
+
+    Part p1=<span class="cpp-keyword">new</span> Part();
+    Part p2=<span class="cpp-keyword">new</span> Part();
+    Part p3=<span class="cpp-keyword">new</span> Part();
+
+    p1.Number=<span class="cpp-string">"A"</span>;
+    p1.VendorCost=<span class="cpp-literal">15</span>;
+
+    p2.Number=<span class="cpp-string">"B"</span>;
+    p2.VendorCost=<span class="cpp-literal">20</span>;
+
+    p3.Number=<span class="cpp-string">"C"</span>;
+    p3.VendorCost=<span class="cpp-literal">25</span>;
+
+    vendor.Add(p1);
+    vendor.Add(p2);
+    vendor.Add(p3);
+
+    po.Add(p1, wo1);
+    po.Add(p2, wo1);
+    po.Add(p3, wo2);
+
+    Charge charge=<span class="cpp-keyword">new</span> Charge();
+    charge.Description=<span class="cpp-string">"Freight"</span>;
+    charge.Amount=<span class="cpp-literal">10.50</span>;
+    po.Add(charge);
+
+    po.Close();
+
+    <span class="cpp-comment">// one charge slip should be added to both work orders</span>
+    Assertion.Assert(wo1.ChargeSlipCount==<span class="cpp-literal">1</span>,
+      <span class="cpp-string">"First work order: ChargeSlipCount not 1."</span>);
+    Assertion.Assert(wo2.ChargeSlipCount==<span class="cpp-literal">1</span>,
+      <span class="cpp-string">"Second work order: ChargeSlipCount not 1."</span>);
+
+    ChargeSlip cs1=wo1.ChargeSlips[<span class="cpp-literal">0</span>];
+    ChargeSlip cs2=wo2.ChargeSlips[<span class="cpp-literal">0</span>];
+
+    <span class="cpp-comment">// three charges should exist for charge slip #1: two parts and one freight charge</span>
+    Assertion.Assert(cs1.PartCount + cs1.ChargeCount==<span class="cpp-literal">3</span>,
+      <span class="cpp-string">"Charge slip 1: doesn't have three charges."</span>);
+
+    <span class="cpp-comment">// the freight for CS1 should be 10.50 * (15+20)/(15+20+25) = 6.125</span>
+    Assertion.Assert(cs1.Charges[<span class="cpp-literal">0</span>].Amount==<span class="cpp-literal">6.125</span>,
+      <span class="cpp-string">"Charge slip 1: charge not the correct amount."</span>);
+
+    <span class="cpp-comment">// two charges should exist for charge slip #2: one part and one freight charge</span>
+    Assertion.Assert(cs2.PartCount + cs2.ChargeCount==<span class="cpp-literal">2</span>,
+      <span class="cpp-string">"Charge slip 2: doesn't have two charges."</span>);
+
+    <span class="cpp-comment">// the freight for CS2 should be 10.50 * 25/(15+20+25) = 4.375  (also = 10.50-6.125)</span>
+    Assertion.Assert(cs2.Charges[<span class="cpp-literal">0</span>].Amount==<span class="cpp-literal">4.375</span>,
+      <span class="cpp-string">"Charge slip 2: charge not the correct amount."</span>);
+
+    <span class="cpp-comment">// while we have a unit test that verifies that parts are added to charge slips</span>
+    <span class="cpp-comment">// correctly, we don't have a unit test to verify that the purchase order</span>
+    <span class="cpp-comment">// Close process does this correctly.</span>
+
+    Part cs1p1=cs1.Parts[<span class="cpp-literal">0</span>];
+    Part cs1p2=cs1.Parts[<span class="cpp-literal">1</span>];
+    <span class="cpp-keyword">if</span> (cs1p1.Number==<span class="cpp-string">"A"</span>)
+    {
+      Assertion.Assert(cs1p1.VendorCost==<span class="cpp-literal">15</span>,
+        <span class="cpp-string">"Charge slip 1, vendor cost not correct for part A."</span>);
+    }
+    <span class="cpp-keyword">else</span> <span class="cpp-keyword">if</span> (cs1p1.Number==<span class="cpp-string">"B"</span>)
+    {
+      Assertion.Assert(cs1p1.VendorCost==<span class="cpp-literal">20</span>,
+        <span class="cpp-string">"Charge slip 1, vendor cost not correct for part B."</span>);
+    }
+    <span class="cpp-keyword">else</span>
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> IncorrectChargeSlipException());
+    }
+
+    Assertion.Assert(cs1p1.Number != cs1p2.Number,
+      <span class="cpp-string">"Charge slip part numbers are not unique."</span>);
+
+    <span class="cpp-keyword">if</span> (cs1p2.Number==<span class="cpp-string">"A"</span>)
+    {
+      Assertion.Assert(cs1p2.VendorCost==<span class="cpp-literal">15</span>,
+        <span class="cpp-string">"Charge slip 1, vendor cost is not correct for part A."</span>);
+    }
+    <span class="cpp-keyword">else</span> <span class="cpp-keyword">if</span> (cs1p2.Number==<span class="cpp-string">"B"</span>)
+    {
+      Assertion.Assert(cs1p2.VendorCost==<span class="cpp-literal">20</span>,
+        <span class="cpp-string">"Charge slip 1, vendor cost is not correct for part B."</span>);
+    }
+    <span class="cpp-keyword">else</span>
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> IncorrectChargeSlipException());
+    }
+
+    Assertion.Assert(cs2.Parts[<span class="cpp-literal">0</span>].Number==<span class="cpp-string">"C"</span>,
+      <span class="cpp-string">"Charge slip 2, part number is not correct."</span>);
+    Assertion.Assert(cs2.Parts[<span class="cpp-literal">0</span>].VendorCost==<span class="cpp-literal">25</span>,
+      <span class="cpp-string">"Charge slip 2, vendor cost is not correct for part C."</span>);    
+  }
+}
+</pre>
+<h4><a name="PurchaseOrder, Stub48">PurchaseOrder, Stub</a></h4><div class="smallText" id="premain61" style="width: 100%;"><img preid="61" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg61" height="9" width="9"><span preid="61" style="margin-bottom: 0pt;" id="precollapse61"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre61"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> PurchaseOrder
+{
+  <span class="cpp-keyword">private</span> string number;
+  <span class="cpp-keyword">private</span> Vendor vendor;
+  <span class="cpp-keyword">private</span> Invoice invoice;
+  <span class="cpp-keyword">private</span> PartsHashtable parts;
+  <span class="cpp-keyword">private</span> ChargesArray charges;
+
+  <span class="cpp-keyword">public</span> string Number
+  {
+    get {<span class="cpp-keyword">return</span> number;}
+    set {number=value;}
+  }
+
+  <span class="cpp-keyword">public</span> Invoice Invoice
+  {
+    get {<span class="cpp-keyword">return</span> invoice;}
+    set {invoice=value;}
+  }
+
+  <span class="cpp-keyword">public</span> Vendor Vendor
+  {
+    get {<span class="cpp-keyword">return</span> vendor;}
+    set {vendor=value;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> PartCount
+  {
+    get {<span class="cpp-keyword">return</span> parts.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">int</span> ChargeCount
+  {
+    get {<span class="cpp-keyword">return</span> charges.Count;}
+  }
+
+  <span class="cpp-keyword">public</span> PurchaseOrder()
+  {
+    parts=<span class="cpp-keyword">new</span> PartsHashtable();
+    charges=<span class="cpp-keyword">new</span> ChargesArray();
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p, WorkOrder wo)
+  {
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Charge c)
+  {
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> GetPart(<span class="cpp-keyword">int</span> index, out Part p, out WorkOrder wo)
+  {
+    p=null;
+    wo=null;
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Close()
+  {
+  }
+}
+</pre>
+<h3><a name="Running The Unit Tests49">Running The Unit Tests</a></h3>
+<p><img src="Advanced%20Unit%20Testing%202_files/stubs.jpg" border="0" height="434" width="584"></p>
+<p>Running the unit tests reveals what we expect--that all the
+functions fail except for the simple getter/setter methods we
+implemented.</p>
+<h3><a name="Implementing Real Functionality50">Implementing Real Functionality</a></h3>
+<p>Once the stubs have been implemented, we can now fill them out with
+some real functionality and get the indicators to start turning
+green.&nbsp; This is a simple process of inspecting the MUTE to see
+what tests failed and implement the functionality until the failure
+goes away.</p>
+<h4><a name="Part51">Part</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/partFail.JPG" border="0" height="48" width="165"></p>
+<p>The <code>Part</code> class needs nothing more than a constructor:</p><pre><span class="cpp-keyword">public</span> Part()
+{
+  vendorCost=<span class="cpp-literal">0</span>;
+  taxable=<span class="cpp-keyword">false</span>;
+  internalCost=<span class="cpp-literal">0</span>;
+  markup=<span class="cpp-literal">0</span>;
+  number=<span class="cpp-string">""</span>;
+}
+</pre>and voila! The part test passes: 
+<p><img src="Advanced%20Unit%20Testing%202_files/partPass.JPG" border="0" height="47" width="173"></p>
+<h4><a name="Vendor52">Vendor</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/vendorFail.JPG" border="0" height="110" width="173"></p>
+<p>The vendor class needs a bit more work:</p>
+<ul>
+<li>an addition to the constructor </li></ul><pre><span class="cpp-keyword">public</span> Vendor()
+{
+  parts=<span class="cpp-keyword">new</span> PartsHashtable();
+  partsArray=<span class="cpp-keyword">new</span> PartsArray();
+  name=<span class="cpp-string">""</span>;
+}
+</pre>
+<ul>
+<li>the part collection implemented, along with duplicate part and unassigned part testing </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p)
+{
+  <span class="cpp-keyword">if</span> (p.Number==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedPartException());
+  }
+
+  <span class="cpp-keyword">if</span> (parts.Contains(p.Number))
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> DuplicatePartException());
+  }
+
+  parts.Add(p.Number, p);
+  partsArray.Add(p);
+}
+</pre>
+<p>and voila!&nbsp; The vendor test passes:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/vendorPass.JPG" border="0" height="110" width="173"></p>
+<h4><a name="Charge53">Charge</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/chargeFail.JPG" border="0" height="47" width="170"></p>
+<p>This class simply needs a constructor.</p><pre><span class="cpp-keyword">public</span> Charge()
+{
+  description=<span class="cpp-string">""</span>;
+  amount=<span class="cpp-literal">0</span>;
+}
+</pre>and the unit test passes: 
+<p><img src="Advanced%20Unit%20Testing%202_files/chargePass.JPG" border="0" height="46" width="165"></p>
+<h4><a name="ChargeSlip54">ChargeSlip</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/chargeSlipFail.JPG" border="0" height="158" width="200"></p>
+<p>There's lots wrong with this class!&nbsp; It needs:</p>
+<ul>
+<li>initialization in its constructor: </li></ul><pre><span class="cpp-keyword">public</span> ChargeSlip()
+{
+  parts=<span class="cpp-keyword">new</span> PartsArray();
+  charges=<span class="cpp-keyword">new</span> ChargesArray();
+  number=<span class="cpp-string">""</span>;
+}
+</pre>
+<ul>
+<li>validation in the charge slip number setter: </li></ul><pre><span class="cpp-keyword">public</span> string Number
+{
+  get {<span class="cpp-keyword">return</span> number;}
+  set
+  {
+    <span class="cpp-keyword">if</span> (value.Length != <span class="cpp-literal">6</span>)
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> BadChargeSlipNumberException());
+    }
+    number=value;
+  }
+}
+</pre>
+<ul>
+<li>Parts need to be validated and added (duplicates are OK?) </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p)
+{
+  <span class="cpp-keyword">if</span> (p.Number==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedPartException());
+  }
+  parts.Add(p);
+}
+</pre>
+<ul>
+<li>Charges need to be validated and added (duplicates are OK?) </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Charge c)
+{
+  <span class="cpp-keyword">if</span> (c.Description==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedChargeException());
+  }
+  charges.Add(c);
+}
+</pre>
+<p>The result:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/chargeSlipPass.JPG" border="0" height="159" width="199"></p>
+<h5><a name="A good example of the difficulty in writing good unit tests55">A good example of the difficulty in writing good unit tests</a></h5>
+<p>This class illustrates the problems with incomplete unit
+testing.&nbsp; With the vendor class, we specifically implemented a
+test to ensure that duplicate parts are not allowed.&nbsp; What about
+charge slips?&nbsp; Are duplicate parts and charges allowed?&nbsp;
+Well, actually, yes.&nbsp; But there is not unit test written to ensure
+that the programmer didn't implement part and charge uniqueness.&nbsp;
+This demonstrates that a unit test should not only test that a function
+<i>does</i> something, but it should also test that a function <i>does not</i> do something.</p>
+<h4><a name="WorkOrder56">WorkOrder</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/workOrderFail.JPG" border="0" height="128" width="201"></p>
+<p>This class requires:</p>
+<ul>
+<li>some constructor initialization: </li></ul><pre><span class="cpp-keyword">public</span> WorkOrder()
+{
+  chargeSlips=<span class="cpp-keyword">new</span> ChargeSlipArray();
+  number=<span class="cpp-string">""</span>;
+}
+</pre>
+<ul>
+<li>work order number validation: </li></ul><pre><span class="cpp-keyword">public</span> string Number
+{
+  get {<span class="cpp-keyword">return</span> number;}
+  set
+  {
+    <span class="cpp-keyword">if</span> (value.Length != <span class="cpp-literal">6</span>)
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> BadWorkOrderNumberException());
+    }
+    number=value;
+  }
+}</pre>
+<ul>
+<li>charge slip validation and collection: </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(ChargeSlip cs)
+{
+  <span class="cpp-keyword">if</span> (cs.Number==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedChargeSlipException());
+  }
+
+  <span class="cpp-keyword">if</span> (chargeSlips.Contains(cs.Number))
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> DuplicateChargeSlipException());
+  }
+  chargeSlips.Add(cs.Number, cs);
+  chargeSlipsArray.Add(cs);
+}
+</pre><img src="Advanced%20Unit%20Testing%202_files/workOrderPass.JPG" border="0" height="126" width="203"> 
+<h5><a name="A good example of bad code that passes the unit test57">A good example of bad code that passes the unit test</a></h5>
+<p>Several of these classes implement both an <code>ArrayList</code> and a <code>Hashtable</code>.&nbsp; The <code>ArrayList</code> is used for ordinal indexing of the collection and the <code>Hashtable</code>
+is used to quickly determine if a duplicate entry exists.&nbsp; The two
+lists are used in parallel.&nbsp; Now, this is really bad code, and in
+no way would I ever implement something like this in real life.&nbsp;
+But it does point out several problems beyond the incompleteness of the
+.NET collection classes.&nbsp; From the perspective of unit testing, it
+illustrates that bad code can be written that ends up passing the unit
+tests. </p>
+<p>Is there a way in which the implementation itself can be tested to
+ensure some level of quality?&nbsp; Yes and no.&nbsp; I suppose the
+point of pair programming is that this kind of implementation would not
+happen, but I don't buy that.&nbsp; Two dumb programmers do not add up
+to one smart programmer.&nbsp; I suppose you could say that I'm
+adhering to the XP's idea of "keep it as simple as possible and
+refactor later", but I don't buy that either.&nbsp; Why not just do it
+right from the beginning.&nbsp; I suppose this kind of bad programming
+can be caught with code walkthroughs, and that's a good thing unless
+you're like me, a consultant, and there really isn't anyone with which
+to share my awful code.</p>
+<p>So, there are a couple unit tests that can be written to "contain"
+stupidity.&nbsp; One involves measuring performance and the other
+involves measuring memory allocation.&nbsp; Both of these I'll discuss
+more in Part III, so for the moment, I'm going to leave this terrible
+code in place so we can write unit tests to fix it!</p>
+<h4><a name="Invoice58">Invoice</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/invoiceFail.JPG" border="0" height="111" width="189"></p>
+<p>This class needs:</p>
+<ul>
+<li>some additional work in the constructor </li></ul><pre><span class="cpp-keyword">public</span> Invoice()
+{
+  charges=<span class="cpp-keyword">new</span> ChargesArray();
+  number=<span class="cpp-string">""</span>;
+  vendor=null;
+}
+</pre>
+<ul>
+<li>validation and collection of the charges </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Charge c)
+{
+  <span class="cpp-keyword">if</span> (c.Description==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedChargeException());
+  }
+  charges.Add(c);
+}
+</pre>
+<p>and then we have success:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/invoicePass.JPG" border="0" height="111" width="185"></p>
+<h4><a name="Customer59">Customer</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/customerFail.JPG" border="0" height="94" width="204"></p>
+<p>This class requires:</p>
+<ul>
+<li>some additional constructor initialization </li></ul><pre><span class="cpp-keyword">public</span> Customer()
+{
+  workOrders=<span class="cpp-keyword">new</span> WorkOrderArray();
+  name=<span class="cpp-string">""</span>;
+}
+</pre>
+<ul>
+<li>validation and collection of work orders </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(WorkOrder wo)
+{
+  <span class="cpp-keyword">if</span> (wo.Number==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedWorkOrderException());
+  }
+  workOrders.Add(wo);
+}
+</pre>
+<p>and then we have success:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/customerPass.JPG" border="0" height="94" width="202"></p>
+<h4><a name="PurchaseOrder60">PurchaseOrder</a></h4>
+<p><img src="Advanced%20Unit%20Testing%202_files/purchaseOrderFail.JPG" border="0" height="158" width="208"></p>
+<p>Finally, this class puts it all together.&nbsp; For it to pass:</p>
+<ul>
+<li>the constructor needs to initialize the private members: </li></ul><pre><span class="cpp-keyword">public</span> PurchaseOrder()
+{
+  parts=<span class="cpp-keyword">new</span> PartsArray();
+  charges=<span class="cpp-keyword">new</span> ChargesArray();
+  number=<span class="cpp-string">""</span>;
+  vendor=null;
+  invoice=null;
+}
+</pre>
+<ul>
+<li>adding a part must be validated, checked if it exists for the current vendor, and added to the collection: </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Add(Part p, WorkOrder wo)
+{
+  <span class="cpp-keyword">if</span> (p.Number==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedPartException());
+  }
+  <span class="cpp-keyword">if</span> (wo.Number==<span class="cpp-string">""</span>)
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedWorkOrderException());
+  }
+  <span class="cpp-keyword">if</span> (!vendor.Find(p))
+  {
+    <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> PartNotFromVendorException());
+  }
+  parts.Add(p, wo);
+}
+</pre>
+<ul>
+<li>getting a part needs to be implemented (observe the kludge here in the indexing mechanism): </li></ul><pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> GetPart(<span class="cpp-keyword">int</span> index, out Part p, out WorkOrder wo)
+{
+  p=null;
+  wo=null;
+
+  foreach (DictionaryEntry item in parts)
+  {
+    <span class="cpp-keyword">if</span> (--index &lt; <span class="cpp-literal">0</span>)
+    {
+      p=item.Key as Part;
+      wo=item.Value as WorkOrder;
+      <span class="cpp-keyword">break</span>;
+    }
+  }
+}
+</pre>
+<ul>
+<li>the invoice number needs to be validated and must match the vendor for the purchase order: </li></ul><pre><span class="cpp-keyword">public</span> Invoice Invoice
+{
+  get {<span class="cpp-keyword">return</span> invoice;}
+  set
+  {
+    <span class="cpp-keyword">if</span> (value.Number==<span class="cpp-string">""</span>)
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> UnassignedInvoiceException());
+    }
+    <span class="cpp-keyword">if</span> (value.Vendor.Name != vendor.Name)
+    {
+      <span class="cpp-keyword">throw</span>(<span class="cpp-keyword">new</span> DifferentVendorException());
+    }
+    invoice=value;
+  }
+}
+</pre>
+<ul>
+<li>the <code>Close</code> method has to be implemented: </li></ul><div class="smallText" id="premain81" style="width: 100%;"><img preid="81" src="Advanced%20Unit%20Testing%202_files/minus.gif" id="preimg81" height="9" width="9"><span preid="81" style="margin-bottom: 0pt;" id="precollapse81"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre81"><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Close()
+{
+  <span class="cpp-comment">// Collect all the different work orders the parts go to.</span>
+  <span class="cpp-comment">// For each work order, create a charge slip</span>
+  Hashtable woList=<span class="cpp-keyword">new</span> Hashtable();
+  <span class="cpp-keyword">int</span> n=<span class="cpp-literal">1</span>;    <span class="cpp-comment">// we always start with charge slip #000001</span>
+  string nStr=<span class="cpp-string">"000000"</span>;
+  <span class="cpp-keyword">double</span> totalPartCost=<span class="cpp-literal">0</span>;
+  foreach (DictionaryEntry item in parts)
+  {
+    <span class="cpp-keyword">if</span> (!woList.Contains(item.Value))
+    {
+      ChargeSlip cs=<span class="cpp-keyword">new</span> ChargeSlip();
+      string s=n.ToString();
+      cs.Number=nStr.Substring(<span class="cpp-literal">0</span>, <span class="cpp-literal">6</span>-s.Length)+s; 
+      woList[item.Value]=cs;
+
+      <span class="cpp-comment">// add the new charge slip to the work order</span>
+      (item.Value as WorkOrder).Add(cs);
+    }
+    
+    <span class="cpp-comment">// For each charge slip, add the part to</span>
+    <span class="cpp-comment">// the charge slip.</span>
+    ChargeSlip cs2=woList[item.Value] as ChargeSlip;
+    cs2.Add(item.Key as Part);
+    totalPartCost+=(item.Key as Part).VendorCost;
+  }
+
+  <span class="cpp-comment">// For each work order, get the total parts amount on</span>
+  <span class="cpp-comment">// its corresponding charge slip.</span>
+  foreach (DictionaryEntry item in woList)
+  {
+    ChargeSlip cs=item.Value as ChargeSlip;
+    <span class="cpp-keyword">double</span> csPartCost=<span class="cpp-literal">0</span>;
+    <span class="cpp-keyword">for</span> (<span class="cpp-keyword">int</span> i=<span class="cpp-literal">0</span>; i&lt;cs.PartCount; i++)
+    {
+      csPartCost+=cs.Parts[i].VendorCost;
+    }
+
+    <span class="cpp-comment">// The charge amount added to the charge slip =</span>
+    <span class="cpp-comment">// csPartCost * chargeAmt / totalPartCost</span>
+    <span class="cpp-keyword">for</span> (<span class="cpp-keyword">int</span> i=<span class="cpp-literal">0</span>; i&lt;charges.Count; i++)
+    {
+      Charge charge=<span class="cpp-keyword">new</span> Charge();
+      charge.Amount=csPartCost * charges[i].Amount / totalPartCost;
+      charge.Description=charges[i].Description;
+      cs.Add(charge);
+    }
+  }
+}
+</pre>
+<p>After writing this code, the <code>PurchaseOrder</code> unit test passes!</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/purchaseOrderPass.JPG" border="0" height="159" width="209"></p>
+<p>and even better, the entire assembly passes its unit tests:</p>
+<p><img src="Advanced%20Unit%20Testing%202_files/assemblyPass.JPG" border="0" height="165" width="184"></p>
+<h5><a name="More incomplete unit testing61">More incomplete unit testing</a></h5>
+<p>Here, the implementation uses a <code>Hashtable</code> to collect
+the parts, which implies that part objects added to the collection must
+be unique.&nbsp; Because there is not unit test to validate this, there
+is no test in the <code>PurchaseOrder</code> class that generates an
+exception if two of the same part objects are added to the purchase
+order.&nbsp; At some point, this will probably happen in the real
+system and everyone will wonder why the program crashed.&nbsp; But
+that's OK, because once we figure it out, we can add the appropriate
+unit test!&nbsp; (No really, I'm not being sarcastic, I'm really not!)</p>
+<h3><a name="Other Debugging Techniques62">Other Debugging Techniques</a></h3>
+<p>Note the complete lack of other useful debugging techniques, namely
+instrumentation--the ability to track what's going, functions that can
+provide dumps of the collections, and asserts to verify
+parameters.&nbsp; It really is necessary to practice these disciplines
+as well.&nbsp; A framework that provides automatic instrumentation
+(something like the Application Automation Layer), or a methodology
+(like Aspect Oriented Programming) are two possible solutions to this
+problem.&nbsp; The point though is that some thought needs to be put
+into how other debugging aids are going to be incorporated into your
+project.&nbsp; Relying on the team members to "remember" to put in
+asserts, instrumentation, and collection dumps (to name a few) is
+probably the least desirable "methodology".</p>
+<h2><a name="What's Next63">What's Next</a></h2>
+<h3><a name="Unit Testing MUTE64">Unit Testing MUTE</a></h3>
+<p>I suppose this is an obvious thing to do, isn't it?&nbsp; Well, I
+think the case study is more interesting that writing UT's for MUTE, so
+I'll get around to it one of these days (as usual, anyone wanting to
+contribute is more than welcome).</p>
+<h3><a name="More Complete User Interface65">More Complete User Interface</a></h3>
+<p>There's some things that need to be added to GUI, namely providing
+some more specific information as to the test results--assertion
+message, exception, etc.&nbsp; I'll do this in Part III.</p>
+<h3><a name="Mock Objects66">Mock Objects</a></h3>
+<p>It would be fun to work with a mock object, such as a data access
+layer object, and discuss the issues involved with using mock objects
+vs. production objects.&nbsp; I should be able to get to that in Part
+III as well.</p>
+<h3><a name="Advanced Unit Testing67">Advanced Unit Testing</a></h3>
+<p>In Part III, I'll look at extending the unit tests in ways that I feel would make it more useful.&nbsp; Suggestions are welcome!</p>
+
+<!-- Article Ends -->
+
+
+
+</div>
+</span>
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/togglePre.js"></script>
+
+<h2>About Marc Clifton</h2>
+<div style="overflow: hidden;"><table border="0"><tbody><tr valign="top"><td class="smallText" nowrap="nowrap"><img src="Advanced%20Unit%20Testing%202_files/CCCA6270-7875-4937-96C2-0CF123E2F30F.jpg"><br><a href="http://www.codeproject.com/info/supporter.asp#protectors"><img src="Advanced%20Unit%20Testing%202_files/Protector.gif" alt="CodeProject Protector" border="0" height="64" width="48"></a> <a href="http://www.codeproject.com/info/supporter.asp#supporters"><img src="Advanced%20Unit%20Testing%202_files/Supporter.gif" alt="CodeProject Supporter" border="0" height="64" width="48"></a> </td><td class="smallText">Marc is the creator of <a href="http://www.myxaml.com/">MyXaml</a>,
+an open source, declarative, XML instantiation engine. He is an
+industry consultant working primarily with companies interested in
+utilizing declarative programming concepts to add flexibility to n-tier
+architectures on web, CE, and desktop platforms. His other major open
+source project is the <a href="http://www.marcclifton.com/Projects/AdvancedUnitTesting/tabid/102/Default.aspx"> Advanced Unit Testing framework</a>.&nbsp; He operates his own website, <a href="http://www.marcclifton.com/">www.marcclifton.com</a>, where you will find many of his articles.  <br><br>Marc lives in Hudson, NY with his girlfriend Karen and his son Ian, who attends the <a href="http://www.hawthornevalleyschool.org/">Hawthorne Valley School</a>.  To contact Marc, email him at <a href="mailto:marc.clifton@gmail.com">marc.clifton@gmail.com</a>.<p></p><br><p class="smallText">Click <a href="http://www.codeproject.com/script/profile/whos_who.asp?vt=arts&amp;id=36803">here</a> to view Marc Clifton's online profile.</p></td></tr></tbody></table></div><br>
+<table bgcolor="#ff9900" cellpadding="0" width="100%"><tbody><tr><td>
+<img src="Advanced%20Unit%20Testing%202_files/bannerlogo.gif" border="0" height="60" width="468"></td></tr></tbody></table>
+<h2>Discussions and Feedback</h2><blockquote><img src="Advanced%20Unit%20Testing%202_files/news_unselected.gif"> <b>15 comments</b> have  been posted for this article. Visit <b><a href="http://www.codeproject.com/csharp/autp2.asp">http://www.codeproject.com/csharp/autp2.asp</a></b> to post and view comments on this article.</blockquote>
+
+<table cellspacing="5" width="100%">
+<tbody><tr valign="top"><td class="smallText">
+
+Updated: 23 Sep 2003
+</td><td class="SmallText" align="right">
+Article content copyright Marc Clifton, 2003<br>
+everything else Copyright © <a href="mailto:webmaster@codeproject.com">CodeProject</a>, 1999-2006.
+
+</td></tr>
+</tbody></table>
+
+</td></tr></tbody></table>
+
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/front.js"></script><script language="javascript" src="Advanced%20Unit%20Testing%202_files/door.js"></script>
+
+</td></tr></tbody></table><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/func_033.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_008.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_017.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_018.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_021.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_012.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_015.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_019.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_022.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_016.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_007.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_005.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_009.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_024.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_011.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_004.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_028.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_003.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_026.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_023.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_020.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_006.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_013.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_025.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_002.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_010.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_014.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/chunks_027.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%202_files/spit.js"></script></body></html>

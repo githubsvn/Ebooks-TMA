@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "Math\Math.csproj", "{4DB50416-0A9E-46BD-8AB4-AB1C1DCDBCE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "MathTest\Test.csproj", "{D934FED6-89DE-4BB1-ABC6-9D3C42C27D52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank", "Bank\Bank.csproj", "{C60A2779-FF3E-409D-98B0-612DAA5E8858}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DB50416-0A9E-46BD-8AB4-AB1C1DCDBCE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DB50416-0A9E-46BD-8AB4-AB1C1DCDBCE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DB50416-0A9E-46BD-8AB4-AB1C1DCDBCE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DB50416-0A9E-46BD-8AB4-AB1C1DCDBCE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D934FED6-89DE-4BB1-ABC6-9D3C42C27D52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D934FED6-89DE-4BB1-ABC6-9D3C42C27D52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D934FED6-89DE-4BB1-ABC6-9D3C42C27D52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D934FED6-89DE-4BB1-ABC6-9D3C42C27D52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C60A2779-FF3E-409D-98B0-612DAA5E8858}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C60A2779-FF3E-409D-98B0-612DAA5E8858}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C60A2779-FF3E-409D-98B0-612DAA5E8858}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C60A2779-FF3E-409D-98B0-612DAA5E8858}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,520 @@
+h1. Coding standards
+
+h1. MUST FOLLOW
+
+h2. 1.Editor:
+
+## geany/gedit/Aptana
+## Always configure your IDEs to replace tab by 2 spaces
+On IDE=> Window=> Reference=>generals=>Editor=>Text editor=>Replace 4 to 2 at "Display tab width"
+# svn
+## Must comment when check in
+## only select the files need to be checked in and check them in all at once with one comment.
+# Error Handling:
+## call e.backtrace whenever you catch the exception 
+## must log e
+# Constant
+## environment dependent?
+## in db or not?
+# Avoid
+## 0, 1, -2 in your code
+*** Use Constant, true/false, variable
+## long lines that are longer than 120 characters
+## for loop
+## if else deeper than 3 levels
+## before save, after save, etc, unless it is necessary
+# Rails
+## use "save!" instead of "save" to trigger an exception that helps diagnose the problem
+# Ruby
+## if else or case when
+## begin rescue end
+
+h2. 2.Code structure and convention
+
+<pre>
+Basic Stuff:
+
+  - Two Spaces, No tabs
+  - Keep lines to a reasonable length(80 characters is classical but 100-120 is probably acceptable with screen sizes these days)
+  - Method names should be intuitive and meaningful
+  - Variable names should be intuitive and meaningful
+  - Don’t commit commented out code - It makes everything confusing and it’s in the version control anyway
+  - Comment when necessary - If comments are necessary check that your code couldn’t be simplified first
+  - Maintain application style - If it’s a new application then be Railsy.
+  - If you want your application to survive then prioritize making the code easy to understand and navigate. 
+
+Code:
+
+  - Skinny Controllers, Fat models 
+  - If a controller method is more than a few lines long then think very carefully about what you’re doing.
+  - Views should have very very little ruby in them and certainly shouldn’t touch the Databases.
+  - If something requires more than one commit then do it in a branch. Almost everything should take more than one commit.
+  - Use plugins only if they’re exactly what you need. Do not cargo cult.
+  - In Ruby Regexes \A is the beginning of the string and \z is the end, ^ and $ also match the beginning and end of lines. 
+  - You almost always want \A and \z, especially in input validations.
+  - Try to keep initializers limited to config.
+  - Make sure your calls to the database are including everything they need to in the original call
+  - N+1 problems are way too common in most rails apps.
+  - RESTful controllers, they’re much easier to navigate and generally more secure.
+  - Ternaries (?:) are good if they fit on one line (remember the short lines rule).
+  - ||= is good
+  - def self.method to define singleton methods not class << self
+  - Select the appropriate columns in a database call if you don’t need everything and the table has lots of data.
+  - Migrations go up AND down - they maintain database structure not data.
+  - Test first all the time unless you’re prototyping. If you’re prototyping then either you throw the code away afterwards or 
+    you have to convince someone else to write tests for all of it.
+  - Blocks should be {|x| ... } on one line and do |x|...end on multiple lines. .
+  - One line if statements when appropriate.
+  - A ridiculously large number of Railsy plugins use single table inheritance for things that it will turn out that you want 
+    to search over, avoid them if you want to be able to scale at all. 
+
+Security:
+
+  - Rails has built in SQL Injection protection if you do :conditions => [“something =? “, thing] - Use it
+  - h() to escape user inputted content in all pre Rails3 apps.
+  - Use attr_accessible to whitelist variables that should mass-assignable.
+
+These are guidelines, break them if you have a good reason. Feel free to leave any extra suggestions, I've probably missed stuff.
+</pre>
+
+h2. A good external guide that we should also and follow
+
+# http://www.pathf.com/blogs/ruby-and-rails-style-guide/
+ <pre>
+Ruby and Rails Style Guide
+
+Version 1.0. Comments welcome, both for things that you think are incorrect and for things that you think are missing.
+Goals: Why have a style guide?
+
+The Ruby community in general, and the Rails community in particular, have a
+reputation for being very concerned with the look-and-feel of their API’s from
+the perspective of the programmer who will eventually have to read the code.
+Ruby and Rails are full of examples where programmers put a little bit of
+extra effort to create a framework where the code reads clearly and easily.
+
+This style guide is presented in the same spirit. A little effort placed up
+front in keeping the code layout and usage consistent makes it easier for the
+poor slob who will have to read the code six months later — remember, that
+poor slob is likely to be you. Consistent style can also make the code writing
+process easier in much the same way that Rails consistent application
+structure does — by making some of the decisions for you in advance.
+
+The recommendations in this guide come largely from what’s already being done
+in the Ruby and Rails community, in particular the Rails code base itself.
+Where a recommendation is based on my own quirky self, I’ve tried to label it
+as such. The idea is not strict obedience to arbitrary rules made up by me,
+but rather voluntary obedience to already existing community standards that
+will give your code the best chance of being easily understood by other Ruby
+programmers.
+The goal of well-styled code is correctness and simplicity, in that order.
+
+I don’t want to pretend that it’s not important for code to be correct. Still,
+I think that functionally correct code is not the last step. For me, the best
+order is: Make it Work, Make it Clean, Make it Fast (if necessary).
+Naming Conventions
+Method Names
+
+Method names must start with a lower case letter, and should be in all
+lower-case: method_name.
+
+By convention getter and setter methods are simply the name of the attribute,
+without the get_ or set_ prefix you might find in Java.
+
+In the case where the getter and setter are basic, the attr_reader,
+attr_writer, and attr_accessor family of methods should be used instead of
+explicit getter and setter methods.
+
+In general, def attribute= is preferred over def set_attribute even in the
+case where attribute is virtual.
+
+Methods that return a boolean should end in ? and generally do not have the
+is_ prefix that you might find in Java: active? rather than is_active or
+is_active.
+
+The ! character is used in several different ways at the end of a method.
+It is best used to contrast two versions of the same method, where the method
+that includes the ! is different in one of two ways:
+
+    *
+
+      The method with the ! changes the self object directly, whereas the
+      method without the ! returns a changed copy and leaves the self object
+      alone. As in String#gsub versus String#gsub!
+    *
+
+      The method with the ! throws an exception in a failure condition, where
+      the method without the bang returns a failure value, usually nil or
+      false. As in ActiveRecord::Base#save versus ActiveRecord::Base#save!
+
+Usage Conventions
+If Statements
+
+In Ruby, there are two ways to code conditional assignment. The ternary
+operator:
+
+x = active? ? 3 : 5
+
+Or, the use of an if statement as an expression
+
+x = if active? then 3 else 5 end
+
+Both are fine style. I prefer the if statement because I think it reads more
+clearly, and also the dual question marks if the boolean is a correctly named
+method look weird to me. Either form should be preferred to duplicating the
+left hand side of the assignment in both parts of the if statement.
+
+if active?
+  x = 3
+else
+  x = 5
+end
+
+If the expression goes longer than a single screen, I will often break the
+expression up like this:
+
+x = if a_really_long_boolean_function
+    then a_long_true_value
+    else a_long_false_value
+    end
+
+Many programmers will leave out the then in the above statement, I like it
+because it keeps the parallelism, and slightly prefer the above to:
+
+x = if a_really_long_boolean_function
+      a_long_true_value
+    else
+      a_long_false_value
+    end
+
+However, at this point, it might be better to split the boolean assignment out
+to it’s own method
+
+def assign_x
+  if a_really_long_boolean_function
+    a_long_true_value
+  else
+    a_long_false_value
+  end
+end
+
+x = assign_x
+
+Also see below on guard clauses for alternate ways to format the assign x
+method.
+Trailing If Statements
+
+Ruby lets you write statements that are only executed conditionally
+
+return if x.nil?
+
+In general, these statements can get hard to read (people tend to overlook the
+if part when it’s to the right) and should only be used if:
+
+    *
+
+      The statement and the conditional are both simple
+    *
+
+      The statement is a guard clause that prevents execution of the rest of the
+      method — this can save a level of indent and make the method easier to
+      read. I’m a big fan of saving levels of indent where possible.
+
+Ruby also allows you to write right-hand loop statements using while and
+until. I’ve never seen a non-contrived use of this feature, and it should
+be avoided.
+If and unless
+
+Ruby offers unless as a replacement for if not, as in
+
+return unless logged_in?
+
+Or:
+
+unless logged_in?
+  do_something_for_unlogged_in_requests
+end
+
+This is marginally preferred over if not, but if you have a specific case
+where you think if ! reads better, go with that.
+
+You should never have an unless with an else clause, even though Ruby
+allows it.
+Return statements
+
+You will sometimes read people who say that a method should only have one
+return statement. I disagree with that — I’d rather get out of the method
+early if the data is wrong then have the guts of the method indented inside an
+if statement.
+
+In Ruby, every method returns the value of its last expression, so you only
+need to explicitly include a return statement when you are bailing out of a
+method. That’s a useful enough distinction that I don’t use the actual return
+statement on the last line of code even if it’s a simple statement of the
+return value.
+Common Ruby Idioms
+
+There are a couple of idioms that, although they are sort of opaque the first time you see them, are commonly used enough that they should be used in place of wordier alternatives. Right now the list starts at three:
+
+||= as in, @user ||= User.find(params[:id])
+
+&&= as in, @user.name &&= @user.name.downcase
+
+Rails only: Symbol#to_proc as in, array.map(&:upcase)
+
+I realize some people don’t like Symbol#to_proc — I really do, though.
+
+Also, Ruby’s boolean methods should be used in favor of equality statements:
+
+x.nil? rather than x == nil
+x.empty? rather than x.size == 0 — in Rails x.blank? is preferred.
+Method Chains
+
+Ruby tends to encourage stringing method results together, especially for a
+bunch of enumeration methods:
+
+all_users.select(&:is_active).map(&:name).sort
+
+Although you can go overboard with this, I think it’s okay as long as the
+logical chain makes sense as a single operation — I’d avoid it if it was
+genuinely chaining through a series of different objects (I probably would
+avoid doing something like user.manager.company.name.size as a single line).
+A good rule of thumb is that if any of the intermediate statements could
+return nil, that usually means the chain should be split up.
+
+Anyway, if this goes over a single line, that’s the time to break the chain up into two or more statements.
+And and or or && and ||
+
+The issue here is binding and precedence. The &&/|| form has very high
+precedence, while and/or has very low precedence. So the following two
+statements are equivalent, since the || has top priority:
+
+x = y || z
+x = (y || z)
+
+Also, the following two statements are equivalent, since the assignment
+operator has higher priority than and:
+
+x = y or z
+(x = y) or z
+
+About 99 times out of a hundred, the || is what you want, while the or
+will cause a subtle bug that you will never find. Hence, the advice is to just
+stick to &&/||.
+Class Methods
+
+There are two accepted ways to create class methods. The first one is to use
+the def self. mechanism:
+
+def self.a_class_method
+  do_something_classy
+end
+
+The second is to use the object’s singleton class:
+
+class << self
+  def a_class_method
+    do_something_classy
+  end
+end
+
+The singleton version is explicitly preferred by the Rails team, and it has
+a couple of things going for it. First is that it keeps all the class methods
+together in a block. The second is that dealing with instance variables of
+the singleton class (which become class methods of the main class) are
+somewhat easier to deal with (especially if the main class has subclasses).
+
+On the down side, if the block of class methods is long, it’s easy to lose
+the context and forget which methods are class methods. The first mechanism
+at least is clear as to whether a method is a class method.
+
+Personally, I prefer the explicit self form unless I’m writing a few related
+class methods that share class variables, in which case the second form is
+easier to manage.
+Layout Conventions
+Indentation
+
+Ruby code and Rails ERb code should be indented two spaces.
+
+Indentation inside an ERb Ruby block should be aligned with the ERb delimiter,
+not the Ruby statement:
+
+<% if something %>
+  two spaces
+<% end %>
+
+Not this:
+
+<% if something %>
+     too many spaces
+<% end %>
+
+Indentation of case statements
+
+The when clauses of a case statements should not be indented relative to the
+
+parent case statement:
+
+Like this:
+
+case thing
+when 1
+  do_one_thing
+when 10
+  do_ten_things
+else
+  do_nothing
+end
+
+NOT like this
+
+case thing
+  when 1
+    do_one_thing
+  when 2
+    do_two_things
+  end
+end
+
+If the when clause is very simple, it can be kept on one line:
+
+case thing
+when 1 then do_one_thing
+when 2 then do_two_things
+end
+
+I’d do this sparingly, it can get a little cluttered.
+Indentation of rescue and begin/end
+
+Code inside a begin/end block is indented two spaces. A rescue statement
+inside the begin end block is outdented to the level of the begin and
+end statements:
+
+begin
+  do_something
+rescue
+  raise Exception
+end
+
+A rescue block that is bounded by a method without a (begin/end) block
+surrounding it) is outdented to the level of the method name
+
+def sample_method
+  do_something
+rescue
+  raise Exception
+end
+
+Indentation of access modifiers
+
+The access modifier methods public, private, and protected do not define
+blocks. Code after the modifier methods should not be further indented.
+
+private
+
+def a_private_method
+  do_not_tell
+end
+
+Breaking up lines
+
+Statements that are to wide to fit in a single screen should be broken up and
+indented on the following line.
+
+This one may be a little idiosyncratic, since I tend to use a narrower edit
+window than a lot of people. That said, it’s still a good idea to have a hard
+right margin to your code. Whether it’s 80 or 100 characters is less relevant
+than that all of the code can fit on the screen without scrolling. If you have
+to scroll to see code, eventually, you’ll make mistakes based on code that you
+can’t all see at once. (I find this especially true in HTML/ERb, where you can
+easily mangle a closing tag in column 125 and lose your mind trying to find
+the problem).
+
+There are two possibilities for indenting the second part of a long line. The
+first, which is the one recommended in Code Complete, is to double indent it
+compared to the top line:
+
+a_very_long_method_name(argument1,
+    a + b, arg_3)
+
+The other is to indent to the level of the parenthesis in the statement, like Emacs Lisp does:
+
+a_very_long_method_name(argument1,
+                        a + b, arg_3)
+
+You’ll sometimes see this written with each argument on its own line:
+
+a_very_long_method_name(argument1,
+                        a + b,
+                        arg_3)
+
+That’s okay, especially if the arguments are longish and it’s easier to
+separate them out.
+
+In either case, you should never break up individual sub statements — in the
+above examples, never split up a + b — you should try to keep entire
+expression, hash, or array arguments on the same line even if that means the
+line above is shorter.
+
+All the choices have tradeoffs. The double-indent is the easiest to maintain
+as the code changes, but can make it tricky to follow the logical structure of
+the code. The longer indent makes it generally clear what goes together, but
+it’s a little hard to keep up, and can look kind of ragged.
+
+I tend to prefer the first form for Ruby, although I do use the second
+sometimes, especially for, say, hash options inside a larger statement.
+Parenthesis
+
+Parenthesis make the code easier to follow. Ruby allows parenthesis to be left
+off the code in unambiguous cases. General Ruby style is to use them, except
+in the following cases:
+
+    *
+
+      Always leave out empty parentheses in a method call or a method definition
+    *
+
+      The parentheses can be left out of a single command that is surrounded by
+      ERb delimiters — the ERb markers make sure the code is still readable
+    *
+
+      A function with arguments should have parenthesis if it is the right hand
+      side of an assignment. A line that is a single command and a single simple
+      argument can be written without the parenthesis. Personally, I find that I
+      do this less and less, but it’s still perfectly readable. I tend not to like
+      single lines in regular ruby code that have multiple arguments and no
+      parentheses.
+    *
+
+      A lot of Ruby-based Domain Specific Languages (such as Rake) don’t use
+      parenthesis to preserve a more natural language feel to their statements.
+
+Block Layout
+
+The convention is braces for single line blocks and do/end for multi-line
+blocks:
+
+list.map { |x| x + 3 }
+
+list.map do |x|
+  x + 3
+end
+
+I’m okay with using braces for a multi-line block if you are using the result
+of the entire statement in a chain (but see below):
+
+list.map { |x|
+  x + 3
+}.sort
+
+Default arguments
+
+Is this too nit-picky? Default arguments in a method declaration should have
+spaces around the equals sign. This is consistent throughout the Rails code
+base, but is different from standard Python style, where the spaces are not
+included
+
+def(x, a = 3, b = nil)
+
+Related Services: Ruby on Rails Development, Custom Software Development
+ </pre>
+

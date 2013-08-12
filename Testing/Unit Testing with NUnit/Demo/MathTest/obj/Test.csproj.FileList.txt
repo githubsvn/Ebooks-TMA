@@ -1,0 +1,9 @@
+obj\Debug\ResolveAssemblyReference.cache
+bin\Debug\MathTest.pdb
+bin\Debug\Bank.dll
+bin\Debug\Math.dll
+bin\Debug\Math.pdb
+bin\Debug\Bank.pdb
+obj\Debug\MathTest.pdb
+bin\Debug\MathTest.exe
+obj\Debug\MathTest.exe

@@ -1,0 +1,886 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Advanced
+Unit Testing, Part IV - Fixture Setup/Teardown, Test Repetition And
+Performance Tests - The Code Project - C# Programming</title>
+
+
+
+
+<!-- base -->
+<meta http-equiv="Reply-to" content="mailto:webmaster@codeproject.com">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta name="MS.LOCALE" content="en-US">
+<meta name="Description" content="This article extends the unit testing framework, adding fixture setup/teardown capability and performance (time and memory) measurement/testing.">
+<meta name="Search.TopicType" content="kbArticle">
+<meta name="Author" content="Marc Clifton">
+<meta name="Search.PublishDate" content="08 Oct 2003 14:00:00 GMT">
+<meta name="Search.RevisedDate" content="08 Oct 2003 14:00:00 GMT">
+
+<meta name="keywords" content="Free source code, , Visual C++, MFC, Windows, NUnit Unit Test Process QueryPerformanceCounter XP">
+<meta name="Copyright" content="Article content copyright Marc Clifton, 2003, everthing else Copyright © CodeProject, 1999-2006, All Rights Reserved.">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Lounge Postings" href="http://www.codeproject.com/webservices/LoungeRSS.aspx">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - All topics" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=1">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - MFC / C++" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=2">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - C#" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=3">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - ASP.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=4">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - .NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=5">
+<link rel="alternate" type="application/rss+xml" title="CodeProject Latest articles - VB.NET" href="http://www.codeproject.com/webservices/articlerss.aspx?cat=6">
+<link rel="search" type="application/opensearchdescription+xml" title="The Code Project" href="http://www.codeproject.com/info/OpenSearch.xml">
+<link rel="icon" href="http://www.codeproject.com/favicon.ico" type="image/ico">
+<link rel="SHORTCUT ICON" href="http://www.codeproject.com/favicon.ico">
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%204_files/global.css">
+
+<link rel="stylesheet" type="text/css" href="Advanced%20Unit%20Testing%204_files/netscape6.css">
+<script language="javascript">
+if (top != self) top.location.href = location.href;
+if (typeof(DemoUrl) != "undefined")
+	document.write('<me' + 'ta http' + '-equiv="re' + 'fresh" con' + 'tent="1;url=' + DemoUrl + '">');
+</script></head><body style="margin: 0pt;" oncopy="return copyCode();" alink="red" bgcolor="white" link="blue" text="black" vlink="navy">
+
+<!-- COPYRIGHT 2006 I/PRO Corporation ALL RIGHTS RESERVED. - Page view auditing -->
+<script type="text/javascript" language="JavaScript">
+var LSPT="";
+LSPT += "?durl=" + escape(document.URL);
+LSPT += "&hostname=" + location.hostname;
+LSPT += "&url=" + location.pathname;
+LSPT += "&query=" + escape(location.search) + escape(location.hash);
+LSPT += "&referrer=" + escape(document.referrer);
+LSPT += "&browser=" + escape(navigator.appName);
+LSPT += "&version=" + escape(navigator.appVersion);
+LSPT += "&os=" + escape(navigator.platform);
+LSPT += "&xdomain=codeproject.com";
+LSPT += "&custid=codeproject";
+</script>
+<script type="text/javascript">
+document.write('<img src=http://'+'content.ipro.com/images/pixel.gif'+LSPT+' height="1" width="1" style="position:absolute; top:0px; left:0px">');
+</script><img src="Advanced%20Unit%20Testing%204_files/pixel.gif" style="position: absolute; top: 0px; left: 0px;" height="1" width="1">
+<noscript>
+<img src="http://content.ipro.com/images/pixel?version=nonjava" height="1" width="1" style="position:absolute;top:0px;left:0px">
+</noscript>
+<!-- END I/PRO PAGE TAG -->
+
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+
+<tbody><tr>
+	<td class="HeaderLogo"><a href="http://www.codeproject.com/"><img alt="Home" src="Advanced%20Unit%20Testing%204_files/codeproject225x90.gif" border="0" height="90"></a></td>
+	<td bgcolor="#ff9900">&nbsp;</td>
+</tr>
+
+
+<tr><td colspan="2">
+
+	<table class="ArticleHeader" cellpadding="3" cellspacing="0" width="100%">
+	<tbody><tr valign="top">
+		<td class="smallText" style="padding-right: 10px;"><a href="http://www.codeproject.com/?cat=1">All Topics</a>, <a href="http://www.codeproject.com/?cat=3">C#</a>, <a href="http://www.codeproject.com/?cat=5">.NET</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/">C# Programming</a> &gt;&gt; <a href="http://www.codeproject.com/csharp/#General">General</a><br>
+			
+			<a href="http://www.codeproject.com/csharp/autp4.asp">http://www.codeproject.com/csharp/autp4.asp</a><br>
+			
+			<br>
+			<div style="font-weight: bold; font-size: 16pt;">Advanced Unit Testing, Part IV - Fixture Setup/Teardown, Test Repetition And Performance Tests</div>
+			<b>By <a href="http://www.codeproject.com/script/Articles/list_articles.asp?userid=36803">Marc Clifton</a></b>.
+			
+			<br><br><div style="font-size: 12px;">This
+article extends the unit testing framework, adding fixture
+setup/teardown capability and performance (time and memory)
+measurement/testing.</div>
+		</td>
+		<td class="smallText" style="width: 200px;">
+			C#<br> Windows (WinXP, Win2K, Win2003, Win95, Win98, WinME), .NET<br> Win32, VS<br> Dev<br>
+			<span style="padding-right: 2ex;">Posted</span>: <b>9 Oct 2003</b><br>
+			<span style="padding-right: 3ex;">Views</span>: <b>59,006</b>
+		</td>
+	</tr>
+	
+	
+
+	
+
+
+</tbody></table>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr valign="top">
+
+	
+
+	<td width="100%">
+
+		
+		
+		<table width="100%">
+		<tbody><tr valign="top">
+		<td class="SmallText" nowrap="nowrap">
+		</td>
+		<td align="right" nowrap="nowrap"><a name="__top"></a><table><tbody><tr><td class="smallText" align="right">30 votes  for this article.</td><td>
+<table border="2" cellpadding="0" cellspacing="0"><tbody><tr>
+<td><img src="Advanced%20Unit%20Testing%204_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%204_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%204_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%204_files/red.gif" border="0" height="5" width="20"></td>
+<td><img src="Advanced%20Unit%20Testing%204_files/red.gif" border="0" height="5" width="6"><img src="Advanced%20Unit%20Testing%204_files/white.gif" border="0" height="5" width="14"></td>
+</tr></tbody></table>
+</td></tr><tr><td colspan="2" class="smallText" align="right"><a href="http://www.codeproject.com/script/articles/top_articles.asp?st=2" title="Calculated as rating x Log10(# votes)">Popularity: 6.34</a>. Rating: <b>4.3</b> out of 5.</td></tr></tbody></table></td></tr>
+		</tbody></table>
+		
+			
+	</td>
+</tr>
+
+<tr>
+	<td class="ArticlePane">
+
+<span name="intelliTxt" id="intelliTXT">
+<div nd="132" id="contentdiv">
+
+
+<!-- Article Starts -->
+
+
+<ul class="download">
+<li><a href="http://www.codeproject.com/csharp/autp4/autp4_demo.zip">Download demo project - 318 Kb</a> </li></ul><!-- Add the rest of your HTML here -->
+<h2>Contents</h2>
+<ul>
+<li><a href="#Introduction0">Introduction</a> 
+<ul>
+<li><a href="#Drawbacks1">Drawbacks</a> 
+<ul>
+<li><a href="#General%20Issues2">General Issues</a> 
+</li><li><a href="#Just+In+Time+Compiler%A0+Assemblies3">Just In Time Compiler&nbsp;/ Assemblies</a> 
+</li><li><a href="#Other%20Execution%20Time%20Problems4">Other Execution Time Problems</a> 
+</li><li><a href="#Garbage%20Collection5">Garbage Collection</a> 
+</li><li><a href="#Collections%20Such%20As%20ArrayList%20And%20Hashtable6">Collections Such As ArrayList And Hashtable</a> </li></ul></li></ul>
+</li><li><a href="#Extending%20MUTE7">Extending MUTE</a> 
+<ul>
+<li><a href="#Step%201:%20Define%20An%20Attribute8">Step 1: Define An Attribute</a> 
+</li><li><a href="#Step%202:%20Define%20The%20Attribute%20Functionality9">Step 2: Define The Attribute Functionality</a> 
+<ul>
+<li><a href="#Accessing%20Attribute%20Parameters10">Accessing Attribute Parameters</a> </li></ul>
+</li><li><a href="#Step%203:%20Implement%20The%20Runner,%20Class,%20And%20Method%20Extensions11">Step 3: Implement The Runner, Class, And Method Extensions</a> 
+<ul>
+<li><a href="#Runner%20Extensions12">Runner Extensions</a> 
+</li><li><a href="#Class%20Extensions13">Class Extensions</a> 
+</li><li><a href="#Method%20Extensions14">Method Extensions</a> </li></ul></li></ul>
+</li><li><a href="#Fixture%20Setup%20And%20Tear%20Down15">Fixture Setup And Tear Down</a> 
+<ul>
+<li nd="1"><a href="#Why%20Would%20You%20Use%20A%20Fixture%20Setup16">Why Would You Use A Fixture Setup</a>? 
+<ul>
+<li><a href="#A%20Simple%20Case%20Study17">A Simple Case Study</a> </li></ul>
+</li><li nd="2"><a href="#Why%20Not%20Just%20Use%20The%20Test%20Fixture%27s%20Class%20Constructor18">Why Not Just Use The Test Fixture's Class Constructor</a>? 
+</li><li><a href="#An%20Example:%20Measuring%20Processing%20Time19">An Example: Measuring Processing Time</a> </li></ul>
+</li><li><a href="#Processing%20Time20">Processing Time</a> 
+<ul>
+<li><a href="#Testing%20Processing%20Time21">Testing Processing Time</a> </li></ul>
+</li><li><a href="#Test%20Repetition22">Test Repetition</a> 
+<ul>
+<li nd="3"><a href="#What%20Other%20Uses%20Are%20There23">What Other Uses Are There</a>? </li></ul>
+</li><li><a href="#Memory%20Utilization24">Memory Utilization</a> 
+<ul>
+<li><a href="#New/Delete%20vs.%20Garbage%20Collection25">New/Delete vs. Garbage Collection</a> 
+</li><li><a href="#Unit%20Testing%20As%20Documentation26">Unit Testing As Documentation</a> 
+<ul>
+<li><a href="#Manual%20Cleanup27">Manual Cleanup</a> 
+</li><li><a href="#Directed%20Cleanup28">Directed Cleanup</a> 
+</li><li><a href="#Automatic%20Cleanup29">Automatic Cleanup</a> </li></ul>
+</li><li><a href="#Memory%20Testing30">Memory Testing</a> </li></ul>
+</li><li><a href="#Conclusion31">Conclusion</a> </li></ul>
+<p align="center"><img src="Advanced%20Unit%20Testing%204_files/screenshot.JPG" border="0" height="468" width="585"></p>
+<p><a href="http://www.codeproject.com/csharp/autp1.asp">Part I</a><br><a href="http://www.codeproject.com/csharp/autp2.asp">Part II</a><br><a href="http://www.codeproject.com/csharp/autp3.asp">Part III</a></p>
+<h2><a name="Introduction0">Introduction</a></h2>
+<p nd="4">Part IV of this series introduces the final set of extensions to the basic unit testing application.&nbsp; These extensions are:</p>
+<ul>
+<li nd="5">Fixture setup and tear down attributes 
+</li><li nd="6">Processing time measurements 
+</li><li nd="7">Test repetition 
+</li><li nd="8"><a itxtdid="3214434" target="_blank" href="#" style="border-bottom: 0.075em solid darkgreen; font-weight: normal; font-size: 100%; text-decoration: underline; color: darkgreen; background-color: transparent; padding-bottom: 1px;" class="iAs">Memory</a> utilization measurements </li></ul>
+<p nd="9">I've worked on a lot of applications that interface with
+hardware and other applications that require optimizing analysis
+algorithms such as network tracing and real time image
+processing.&nbsp; I think this has given me a different perspective
+with regards to unit testing that you won't find in the mainstream
+discussions.&nbsp; There's certainly an argument to be made as to
+whether functionality like this should even be part of a unit test
+attribute suite, instead implemented as assertions in the test
+code.&nbsp; My argument for including this functionality as part of
+unit test attributes is the following:</p>
+<ul>
+<li nd="10">It provides a consistent mechanism 
+</li><li nd="11">The functionality is already written for the programmer 
+</li><li nd="12">It more easily documents the intent of the unit test 
+</li><li nd="13">It makes it easier to categorize tests </li></ul>
+<h3><a name="Drawbacks1">Drawbacks</a></h3>
+<p nd="14">There are several drawbacks with execution time and memory testing.</p>
+<h4><a name="General Issues2">General Issues</a></h4>
+<p nd="15">The execution and memory tests are implemented around the delegate call to the unit test (<code nd="16">utd</code>):</p><pre nd="17">startMem=GC.GetTotalMemory(<span class="cpp-keyword">true</span>);
+startTime=HiResTimer.Ticks;
+<span class="cpp-keyword">try</span>
+{
+  utd();
+}
+<span class="cpp-keyword">catch</span>(Exception e)
+{
+  <span class="cpp-keyword">throw</span>(e);
+}
+<span class="cpp-keyword">finally</span>
+{
+  stopTime=HiResTimer.Ticks;
+  endMem=GC.GetTotalMemory(<span class="cpp-keyword">true</span>);
+  executionTime=(stopTime==startTime ? <span class="cpp-literal">1</span> : stopTime-startTime);
+}
+</pre>
+<p nd="18">This means that what's really being measured includes not
+only the function under test, but the wrapper that calls that
+function.&nbsp; Obviously, this has unintentional side-effects,
+especially when the unit test itself executes memory and/or time
+consuming code not part of the actual code under test.&nbsp; The best
+way to handle this situation is to implement a two stage test
+sequence--the first stage does the setup and the second stage invokes
+the method(s) under test.</p>
+<h4><a name="Just In Time Compiler&nbsp; Assemblies3">Just In Time Compiler /&nbsp; Assemblies</a></h4>
+<p nd="19">Code that activates the JIT compiler (for example, with
+generics, from what I've read, the JIT compiler will replace the
+generic IL with the specific type and compile to native code the first
+time the generic time is constructed) results in a first time <a itxtdid="3162329" target="_blank" href="#" style="border-bottom: 0.075em solid darkgreen; font-weight: normal; font-size: 100%; text-decoration: underline; color: darkgreen; background-color: transparent; padding-bottom: 1px;" class="iAs">performance</a>
+hit.&nbsp; This is true for all Microsoft intermediate language (MSIL)
+code--it gets translated to native processor instructions by the JIT
+compiler the first time the code is loaded.&nbsp; You can see this
+performance difference using MUTE--the first time you run the tests,
+the performance is notably slower than the subsequent runs.</p>
+<h4><a name="Other Execution Time Problems4">Other Execution Time Problems</a></h4>
+<p nd="20">Obviously, issues such as other worker threads, other applications and services, network performance, <a itxtdid="3060005" target="_blank" href="#" style="border-bottom: 0.075em solid darkgreen; font-weight: normal; font-size: 100%; text-decoration: underline; color: darkgreen; background-color: transparent; padding-bottom: 1px;" class="iAs">server performance</a>,
+etc., all affect execution time.&nbsp; Most of the execution time
+issues are addressed by the ability to specify a test repetition
+count.&nbsp; The test runner throws out the best and worst time samples
+and reports the average time.</p>
+<h4><a name="Garbage Collection5">Garbage Collection</a></h4>
+<p nd="21">Environments that implement garbage collection (GC) make it
+nearly impossible to accurately track the memory allocated by a
+function within a thread.&nbsp; Calling the <code nd="22">GC.Collect()</code>
+method or other functions also does not guarantee a correct value
+because the garbage collection runs on an internal CLR thread.&nbsp;
+You can see this happening in MUTE.&nbsp; If you change the code to
+call <code nd="23">GC.Collect()</code> before the delegate call:</p><pre nd="24">...
+GC.Collect();
+startMem=GC.GetTotalMemory(<span class="cpp-keyword">true</span>);
+startTime=HiResTimer.Ticks;
+<span class="cpp-keyword">try</span>
+{
+  utd();
+}
+...
+</pre>
+<p nd="25">the performance of the tests degrade considerably and relative to the number of allocations that have been made.</p>
+<h4><a name="Collections Such As ArrayList And Hashtable6">Collections Such As ArrayList And Hashtable</a></h4>
+<p nd="26">As the size of a collection grows, space to maintain the list's elements is increased (it's <i>capacity</i>,
+in other words).&nbsp; When the Clear() function is used, the objects
+contained by the list are de-referenced (let's assume for the sake of
+argument that nothing else is referencing the objects in the list) and
+the GC can reclaim them.&nbsp; However, the internal buffers used by
+the collection <i>are not reclaimed.</i>&nbsp; In the case of the <code nd="27">ArrayList</code> collection, you can manually reclaim the buffer space using the <code nd="28">Capacity</code> property, and setting it to zero which sets the internal buffers to the default array size, which is 16.&nbsp; The <code nd="29">Hashtable</code> collection (and any collection implementing <code nd="30">IDictionary</code>) does not have a corresponding function.</p>
+<p nd="31">For example:</p><pre nd="32"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> CaseStudyMemoryTests
+{
+  Vendor vendor;
+
+  [Test]
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> AllocationTest()
+  {
+    vendor=<span class="cpp-keyword">new</span> Vendor();
+    <span class="cpp-keyword">for</span> (<span class="cpp-keyword">int</span> i=<span class="cpp-literal">0</span>; i&lt;<span class="cpp-literal">100000</span>; i++)
+    {
+      Part p=<span class="cpp-keyword">new</span> Part();
+      p.Number=i.ToString();
+      vendor.Add(p);
+    }
+    vendor.Clear();
+  }
+}
+</pre>
+<p nd="33">the above code allocates about 10MB of memory.&nbsp; When <code nd="34">vendor.Clear</code> is called, there still remains about 2.7MB of allocated memory!&nbsp; The <code nd="35">Vendor</code> class maintains both an <code nd="36">ArrayList</code> and a <code nd="37">Hashtable</code> (sort of like the way a <code nd="38">SortedList</code> works).&nbsp; When the <code nd="39">ArrayList Capacity</code> property is reset: <code nd="40">parts.Capacity=<span class="cpp-literal">0</span></code>,
+the allocated memory is further reduced to 2.2MB.&nbsp; Unfortunately,
+there is no way to reclaim the buffers used by the Hashtable.</p>
+<p nd="41">Personally, I think this points to a problem with the way
+collections are implemented in the .NET framework.&nbsp; It should be
+possible to reclaim the buffers.&nbsp; Let's say that the next list of
+parts that the vendor object manages contains 10 parts (perhaps because
+the part list has been filtered).&nbsp; If the first list contained
+100,000 parts, there's 2MB being wasted on maintaining a collection of
+10 parts.&nbsp; Now, you all say "woohoo" because you've got 1G of RAM
+on your system.&nbsp; Well, I come from the days when memory was
+expensive, both in physical dollars and in usage.&nbsp; One of the
+reasons we have so much bloat in our applications is because of sloppy
+implementations like <code nd="42">Hashtable</code>.&nbsp; Time to write my own collection classes, I say.</p>
+<h2><a name="Extending MUTE7">Extending MUTE</a></h2>
+<p nd="43">Extending the unit test framework is very simple, as demonstrated in this section.</p>
+<h3><a name="Step 1: Define An Attribute8">Step 1: Define An Attribute</a></h3>
+<p nd="44">Define the new attribute in the UnitTest assembly,
+Attributes.cs file.&nbsp; If the attribute (let's say it is the
+"CodeProject" attribute) is a class attribute, define it as follows:</p><pre nd="45">[AttributeUsage(AttributeTargets.Class, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> CodeProjectAttribute : Attribute
+{
+}
+</pre>
+<p nd="46">Conversely, if it is an attribute associated with a method (let's say it is the "Bob" attribute), it is defined as follows:</p><pre nd="47">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">false</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> FixtureSetUpAttribute : Attribute
+{
+}
+</pre>
+<p nd="48">In both cases, the above example assumes that only one
+instance of the attribute is associated with any given class or
+method.&nbsp; This is obviously the case for attributes that don't have
+any parameters.&nbsp; If your attribute takes parameters, then you may
+want to set <code nd="49">AllowMultiple</code> to true, as it the case with the Requires attribute.&nbsp; This attribute also demonstrates managing attribute parameters:</p><pre nd="50">[AttributeUsage(AttributeTargets.Method, AllowMultiple=<span class="cpp-keyword">true</span>, Inherited=<span class="cpp-keyword">true</span>)]
+<span class="cpp-keyword">public</span> sealed <span class="cpp-keyword">class</span> RequiresAttribute : Attribute
+{
+  <span class="cpp-keyword">private</span> string priorTestMethod;
+
+  <span class="cpp-keyword">public</span> string PriorTestMethod
+  {
+    get {<span class="cpp-keyword">return</span> priorTestMethod;}
+  }
+
+  <span class="cpp-keyword">public</span> RequiresAttribute(string methodName)
+  {
+    priorTestMethod=methodName;
+  }
+}
+</pre>
+<h3><a name="Step 2: Define The Attribute Functionality9">Step 2: Define The Attribute Functionality</a></h3>
+<p nd="51">Define what the attribute does in the UTCore assembly, TestUnitAttribute.cs file.&nbsp; All attributes are derived from the <code nd="52">TestUnitAttribute</code>
+class.&nbsp; (Yes, this should be refactored, splitting the
+implementation into a base class and some interfaces, I think).&nbsp;
+For example, the "CodeProject" class attribute would be created as:</p><pre nd="53"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> CodeProjectAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+      <span class="cpp-comment">// ... do something here ...</span>
+  }
+}
+</pre>
+<p nd="54">The <code nd="55">SelfRegister</code> method provides the attribute with the means to set the state in one or more of:</p>
+<ul>
+<li nd="56">the test fixture 
+</li><li nd="57">the class 
+</li><li nd="58">the method </li></ul>
+<p nd="59">Obviously, if the attribute is associated with a class, then
+the method item is not valid.&nbsp; The following two rules apply (and
+also indicate where some refactoring would make things a bit easier to
+use):</p>
+<ol>
+<li nd="60">Since there's a one-to-one correlation between a test fixture and a class, I usually put class attribute options in the <code nd="61">TestFixture</code> object 
+</li><li nd="62">Since there's a many-to-one correlation between method attributes and the method, I put method attribute options in the <code nd="63">MethodItem</code> object. </li></ol>
+<p nd="64">This is a cheap and dirty way of handling new attributes,
+and should really be refactored so that there's more of a messaging
+mechanism used.&nbsp; The class and method attributes could then be
+independently managed, and the messaging could be used to provide
+custom extensions without changing the core fixture and method
+classes.&nbsp; Any takers?</p>
+<h4><a name="Accessing Attribute Parameters10">Accessing Attribute Parameters</a></h4>
+<p nd="65">The <code nd="66">TestUnitAttribute</code> class already has the attribute object initialized before the framework calls <code nd="67">SelfRegister</code>.&nbsp; To access the attribute, cast it to the appropriate <code nd="68">UnitTest</code> assembly attribute and extract the desired information.&nbsp; For example:</p><pre nd="69"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> RepeatAttribute : TestUnitAttribute
+{
+  <span class="cpp-keyword">public</span> override <span class="cpp-keyword">void</span> SelfRegister(TestFixture tf)
+  {
+    mi.RepeatCount=(attr as UnitTest.RepeatAttribute).RepeatCount;
+    mi.RepeatDelay=(attr as UnitTest.RepeatAttribute).RepeatDelay;
+  }
+}
+</pre>
+<h3><a name="Step 3: Implement The Runner, Class, And Method Extensions11">Step 3: Implement The Runner, Class, And Method Extensions</a></h3>
+<p nd="70">As I just said, this is a cheap and dirty way of doing things.&nbsp; But hey, isn't that the XP approach?</p>
+<h4><a name="Runner Extensions12">Runner Extensions</a></h4>
+<p nd="71">This step is only necessary if you want to change the way in
+which the tests inside the fixture are run.&nbsp; For example, in the
+previous article, I discussed running tests in order as part of a test
+process.&nbsp; Typically though, tests are run in an unpredictable
+order, although consistent.&nbsp; A runner extension might truly
+randomize the test order.&nbsp; Other extensions might support
+multithreaded testing, in which several test fixtures are run
+simultaneously in order to test semaphores, mutexes, etc.&nbsp;
+Anyways...</p>
+<p nd="72">In TestFixture.cs, there is a call to the test runner
+factory, which creates the appropriate test runner depending on the
+fixture (class) attributes:</p><pre nd="73"><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RunTests(TestNotificationDelegate testNotificationEvent,<br>    TestIterationDelegate testIterationEvent)
+{
+  notificationEvent=testNotificationEvent;
+  iterationEvent=testIterationEvent;
+  TestFixtureRunner tfr=CreateTestFixtureRunner();
+  tfr.RunTests();
+}
+</pre>
+<p nd="74">Modify the CreateTestFixtureRunner factory if
+necessary.&nbsp; The current implementation supports running a process
+(a sequence of tests) and running tests independently of each
+other.&nbsp; This is a bare-bones implementation:</p><pre nd="75"><span class="cpp-comment">// test fixture runner factory</span>
+<span class="cpp-keyword">public</span> TestFixtureRunner CreateTestFixtureRunner()
+{
+    <span class="cpp-keyword">if</span> (isProcessTest)
+    {
+        <span class="cpp-keyword">return</span> <span class="cpp-keyword">new</span> TestFixtureRunProcess(<span class="cpp-keyword">this</span>);
+    }
+    <span class="cpp-keyword">return</span> <span class="cpp-keyword">new</span> TestFixtureRunIndividual(<span class="cpp-keyword">this</span>);
+}
+</pre>
+<p nd="76">All custom test runners must be derived from <code nd="77">TestFixtureRunner</code> and implement two functions (hmmm, do you smell an interface here instead???):</p><pre nd="78"><span class="cpp-keyword">public</span> abstract <span class="cpp-keyword">void</span> RunTests();
+<span class="cpp-keyword">public</span> abstract <span class="cpp-keyword">bool</span> ExceptionConfirmed(Exception e, TestAttribute ta);
+</pre>
+<p nd="79">The <code nd="80">TestFixtureRunner</code> class implements the <code nd="81">RunTest</code>
+method, which should always be used to run the the actual unit
+test.&nbsp; It requires an instance to the class containing the unit
+test, constructed by calling:</p><pre nd="82">object instance=tf.SetUpClass();</pre>
+<p nd="83">and the <code nd="84">TestAttribute</code> of the method
+under test.&nbsp; This is the [Test] attribute associated with the
+method, regardless of any other attributes that may also be associated
+with the method.</p>
+<p nd="85">Iterating through all the tests in the test fixture is straightforward, and at minimum:</p><pre nd="86">foreach (TestAttribute ta in tf.TestList)
+{
+    RunTest(instance, ta);
+}
+</pre>
+<h4><a name="Class Extensions13">Class Extensions</a></h4>
+<p nd="87">Adding attributes that extend a class (and therefore the test fixture) can be added in the TestFixture.cs file, to the <code nd="88">SetUpClass</code> and <code nd="89">TearDownClass</code> methods:</p><pre nd="90"><span class="cpp-keyword">public</span> object SetUpClass()
+{
+  instance=tfa.CreateClass();
+  fsua.Invoke(instance);
+  <span class="cpp-keyword">return</span> instance;
+}
+
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> TearDownClass()
+{
+  ftda.Invoke(instance);
+}
+</pre>
+<p nd="91">Currently, these simply instantiate the class and invoke the
+fixture set up and tear down methods, if defined.&nbsp; Again, this
+code should be refactored to use a messaging or event mechanism to
+allow for easy extension of the fixture attributes.</p>
+<h4><a name="Method Extensions14">Method Extensions</a></h4>
+<p nd="92">Additional functionality specified by method attributes are
+either handled in the MethodItem.cs file or as part of a new test
+runner.&nbsp; If you're extending the method invocation directly, this
+would be done in the <code nd="93">Invoke</code> method.&nbsp; Note however that attributes that <i>test</i> for a certain condition, such as memory usage, processing time, handles used, etc., are actually implemented as part of the <code nd="94">RunTest</code> method found in the TestFixtureRunner.cs file.&nbsp; Tests should set the method's <code nd="95">TestAttribute</code> state and result message so that the GUI can properly display the results:</p><pre nd="96">ta.State=TestAttribute.TestState.Fail;
+ta.Result=<span nd="97" class="cpp-string">"... your message ..."</span>;
+</pre>
+<h2><a name="Fixture Setup And Tear Down15">Fixture Setup And Tear Down</a></h2>
+<p nd="98">The <code nd="99">TestSetUp</code> and <code nd="100">TestTearDown</code> attributes specify functions that are run before and after each test in the fixture.&nbsp; Conversely, the <code nd="101">FixtureSetUp</code> and <code nd="102">FixtureTearDown</code> attributes specify functions that are run before and after <i>all</i> tests have run in the fixture.</p>
+<p align="center"><img src="Advanced%20Unit%20Testing%204_files/TestFixtureSetUp.jpg" border="0" height="169" width="337"></p>
+<h3><a name="Why Would You Use A Fixture Setup16">Why Would You Use A Fixture Setup</a>?</h3>
+<p nd="103">Several reasons come to mind:</p>
+<ul>
+<li nd="104">The test fixture contains a suite of tests, each of which operates on a common set of data; 
+</li><li nd="105">The set of data is very large and might takes a lot of time to load for each test; 
+</li><li nd="106">When interfacing to hardware, there will be, most
+likely, a setup and teardown process that is independent of tests being
+performed; </li><li nd="107">Any time a common setup and/or teardown is required that is independent of the test functions; 
+</li><li nd="108">Starting a separate process required to support the tests </li></ul>
+<h4><a name="A Simple Case Study17">A Simple Case Study</a></h4>
+<p nd="109">An application that I've developed for one of my clients
+involves interfacing to different hardware modules using TCP/IP.&nbsp;
+There are usually 30 to 60 of these modules sitting on the network,
+each configured to do different things--handle bill acceptors, unlock
+turnstiles and doors, report alarms, provide punch-clock services,
+report on system status, etc.&nbsp; Instead of having all this hardware
+laying around at home, I have a simulator that I wrote that runs as a
+separate application, either locally or on a separate computer.&nbsp;
+The unit tests that verify the packet I/O between the application and
+the modules requires starting up the simulator and shutting it down
+when the tests are complete.&nbsp; This is easily handled in the test
+fixture setup and teardown functions, and saves a lot of time as
+compared to doing this for each test in the fixture.</p>
+<h3><a name="Why Not Just Use The Test Fixture's Class Constructor18">Why Not Just Use The Test Fixture's Class Constructor</a>?</h3>
+<p nd="110">There is some merit to this, but there are several problems with this approach:</p>
+<ul>
+<li nd="111">It breaks the model of using attributes to designate special code to be run at certain times by the test runner 
+</li><li nd="112">It breaks the symmetry with regards to the test setup and tear down functions 
+</li><li nd="113">In C#, there is no corresponding destructor, so it isn't possible to have the test fixture tear down in the destructor </li></ul>
+<h3><a name="An Example: Measuring Processing Time19">An Example: Measuring Processing Time</a></h3>
+<p nd="114">Performance measurements illustrates the usefulness of this
+feature.&nbsp; For this example, I'll be extending the case study I've
+developed in the previous articles.</p><pre nd="115">[FixtureSetUp]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> TestFixtureSetup()
+{
+  vendor=<span class="cpp-keyword">new</span> Vendor();
+  <span class="cpp-keyword">for</span> (<span class="cpp-keyword">int</span> i=<span class="cpp-literal">0</span>; i&lt;<span class="cpp-literal">100000</span>; i++)
+  {
+    Part p=<span class="cpp-keyword">new</span> Part();
+    p.Number=i.ToString();
+    vendor.Add(p);
+  }
+}
+</pre>
+<p nd="116">The above function creates 100,000 parts and associates
+them with a vendor.&nbsp; The remainder of the test fixture measures
+the performance of:</p>
+<ul>
+<li nd="117">random access by Part object </li></ul><pre nd="118">[Test]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RandomAccessTestByPart()
+{
+    <span class="cpp-keyword">int</span> n=rnd.Next(<span class="cpp-literal">0</span>, <span class="cpp-literal">100000</span>);
+    Part p=<span class="cpp-keyword">new</span> Part();
+    p.Number=n.ToString();
+    <span class="cpp-keyword">bool</span> found=vendor.Contains(p);
+    Assertion.Assert(found==<span class="cpp-keyword">true</span>, <span nd="119" class="cpp-string">"Expected to find the part!"</span>);
+}
+</pre>
+<ul>
+<li nd="120">random access by index </li></ul><pre nd="121">[Test]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RandomAccessTestByIndex()
+{
+    <span class="cpp-keyword">int</span> n=rnd.Next(<span class="cpp-literal">0</span>, <span class="cpp-literal">100000</span>);
+    Part p=vendor.Parts[n];
+    Assertion.Assert(p.Number==n.ToString(), <br>          <span nd="122" class="cpp-string">"Parts not in the same order as when added!"</span>);
+}
+</pre>
+<ul>
+<li nd="123">random access by Part number </li></ul><pre nd="124">[Test]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RandomAccessTestByNumber()
+{
+    <span class="cpp-keyword">int</span> n=rnd.Next(<span class="cpp-literal">0</span>, <span class="cpp-literal">100000</span>);
+    <span class="cpp-keyword">bool</span> found=vendor.Contains(n.ToString());
+    Assertion.Assert(found==<span class="cpp-keyword">true</span>, <span nd="125" class="cpp-string">"Expected to find the part!"</span>);
+}
+</pre>
+<p nd="126">The example above illustrates that a fixture setup and tear
+down capability has its uses also, in addition to the test setup and
+tear down capability.</p>
+<h2><a name="Processing Time20">Processing Time</a></h2>
+<p nd="127">Measuring the processing time of a function is not straightforward.&nbsp; First off, you can't use the <code nd="128">DateTime.Now.Ticks</code> property because it doesn't have the necessary resolution.&nbsp; While <code nd="129">TimeSpan.TicksPerSecond</code> reports an interval of 100ns, this is not the resolution of the <code nd="130">DateTime.Now.Ticks</code> property.&nbsp; A simple test illustrates this fact.&nbsp; Using the class:</p><pre nd="131"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> HiResTimer
+{
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">long</span> Ticks
+    {
+        get {<span class="cpp-keyword">return</span> DateTime.Now.Ticks;}
+    }
+
+    <span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">long</span> TicksPerSecond
+    {
+        get {<span class="cpp-keyword">return</span> TimeSpan.TicksPerSecond;}
+    }
+}
+</pre>and the function: <pre><span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> Resolution()
+{
+    <span class="cpp-keyword">long</span> n1=HiResTimer.Ticks;
+    <span class="cpp-keyword">long</span> n2;
+    <span class="cpp-keyword">long</span> n3;
+
+    <span class="cpp-comment">// sync</span>
+    <span class="cpp-keyword">while</span> (n1 == (n2=HiResTimer.Ticks)) {}
+
+    <span class="cpp-comment">// wait</span>
+    <span class="cpp-keyword">while</span> (n2 == (n3=HiResTimer.Ticks)) {}
+    <span class="cpp-keyword">long</span> q=n3-n2;
+    <span class="cpp-comment">// q==156250</span>
+</pre>
+<p>The result is that q=156250, giving a resolution of 15.625 milliseconds. Instead, the <code>QueryPerformanceCounter</code> and <code>QueryPerformanceFrequency</code> functions have to be used instead:</p><div class="smallText" id="premain21" style="width: 100%;"><img preid="21" src="Advanced%20Unit%20Testing%204_files/minus.gif" id="preimg21" height="9" width="9"><span preid="21" style="margin-bottom: 0pt;" id="precollapse21"> Collapse</span></div><pre style="margin-top: 0pt;" id="pre21"><span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> HiResTimer
+{
+  [DllImport(<span class="cpp-string">"Kernel32.dll"</span>)]
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">extern</span> <span class="cpp-keyword">bool</span><br>     QueryPerformanceCounter(out <span class="cpp-keyword">long</span> lpPerformanceCount);
+
+  [DllImport(<span class="cpp-string">"Kernel32.dll"</span>)]
+  <span class="cpp-keyword">private</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">extern</span> <span class="cpp-keyword">bool</span><br>     QueryPerformanceFrequency(out <span class="cpp-keyword">long</span> lpFrequency);
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">long</span> Ticks
+  {
+    get
+    {
+      <span class="cpp-keyword">long</span> t;
+      QueryPerformanceCounter(out t);
+      <span class="cpp-keyword">return</span> t;
+    }
+  }
+
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">long</span> TicksPerSecond
+  {
+    get
+    {
+      <span class="cpp-keyword">long</span> freq;
+      QueryPerformanceFrequency(out freq);
+      <span class="cpp-keyword">return</span> freq;
+     }
+  }
+}
+</pre>
+<p>This results in an resolution of about 569ns (at least, on my computer).&nbsp; Much better!</p>
+<h3><a name="Testing Processing Time21">Testing Processing Time</a></h3>
+<p>Validating the processing time is dubious because processing time
+varies so much depending on the machine, what it's doing and other
+technologies with which the unit tests are interfacing.&nbsp; However,
+this does not mean that testing the processing time of a function is
+without merit when used appropriately.&nbsp; Several appropriate
+applications come to mind, such as:</p>
+<ul>
+<li>Detecting a highly inefficient algorithm; 
+</li><li>Assisting in detecting Quality of Service (QoS) problems; 
+</li><li>Meeting some baseline performance in a controlled environment. </li></ul>
+<p>I have dealt with unit testing in each of these cases--a network
+analysis application for satellite switch rings, bit rate degradation
+resulting from rain fade in an Internet over satellite simulator, and
+real time updating of status information to a database.&nbsp; While the
+performance of an algorithm varies from machine to machine, having a
+minimum "operations per second" criteria is very useful, especially
+when tweaking some low-level code that ends up having major
+repercussions in the performance of an algorithm.</p>
+<p>The <code>MinOperationsPerSecond</code> attribute can be applied to any unit test to validate performance.&nbsp; For example:</p><pre>[Test]
+[MinOperationsPerSecond(<span class="cpp-literal">150000</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RandomAccessTestByPart()
+{
+    <span class="cpp-keyword">int</span> n=rnd.Next(<span class="cpp-literal">0</span>, <span class="cpp-literal">100000</span>);
+    Part p=<span class="cpp-keyword">new</span> Part();
+    p.Number=n.ToString();
+    <span class="cpp-keyword">bool</span> found=vendor.Contains(p);
+    Assertion.Assert(found==<span class="cpp-keyword">true</span>, <span class="cpp-string">"Expected to find the part!"</span>);
+}
+</pre>
+<p>The above unit test verifies that a random access test can be performed at a rate of at least 150,000 operations per second.</p>
+<h2><a name="Test Repetition22">Test Repetition</a></h2>
+<p>Performance testing can definitely benefit from repeat testing to
+average out the vagaries of measuring time in a multi-tasking operating
+system.&nbsp; The <code>Repeat</code> attribute informs the test
+runner that a test should be repeated by the specified count,
+optionally with a delay between each repetition.&nbsp; For example:</p><pre>[Test]
+[MinOperationsPerSecond(<span class="cpp-literal">150000</span>)]
+[Repeat(<span class="cpp-literal">100</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> RandomAccessTestByNumber()
+{
+    <span class="cpp-keyword">int</span> n=rnd.Next(<span class="cpp-literal">0</span>, <span class="cpp-literal">100000</span>);
+    <span class="cpp-keyword">bool</span> found=vendor.Contains(n.ToString());
+    Assertion.Assert(found==<span class="cpp-keyword">true</span>, <span class="cpp-string">"Expected to find the part!"</span>);
+}
+</pre>
+<p>The above code will run 100 times.&nbsp; From the test results:</p>
+<p><img src="Advanced%20Unit%20Testing%204_files/opfail.JPG" border="0" height="57" width="601"></p>
+<p>it's pretty clear that the implementation is has a severe problem
+(in this case, I implemented a really dumb function that walks through
+each element in the collection of parts until a match is found).</p>
+<h3><a name="What Other Uses Are There23">What Other Uses Are There</a>?</h3>
+<p>As I mentioned in the introduction, I do a lot of work with
+hardware, and there's simply no other way to test hardware than to
+repeat something over and over again.&nbsp; More times than I'd like to
+remember, I've had problems in my code because one out of every
+thousand times, there would be a hardware glitch that reported
+erroneous values.&nbsp; Other uses abound--there's nothing like
+physically unplugging the network cable or pulling the power plug on
+the server to see how your software on the client side handles the
+fault.&nbsp; Monitoring network loading is another application which
+requires repetition.&nbsp; The uses abound if one stops thinking in
+terms of rigid test-once analysis.</p>
+<h2><a name="Memory Utilization24">Memory Utilization</a></h2>
+<p>As I discussed in the introduction, memory allocation is pretty much
+impossible to track in a garbage collecting environment.&nbsp; A GC
+environment also creates a dilemma when monitoring memory, and a little
+analysis of the problem is helpful at this point so we can select the
+appropriate solution.</p>
+<h3><a name="New/Delete vs. Garbage Collection25">New/Delete vs. Garbage Collection</a></h3>
+<p>In a classical memory management scheme, where the programmer is required to free allocations, memory has only two states:</p>
+<ul>
+<li>allocated 
+</li><li>unallocated </li></ul>
+<p>In system that use garbage collection, the programmer doesn't need to free allocations.&nbsp; Memory still has two states:</p>
+<ul>
+<li>referenced 
+</li><li>unreferenced </li></ul>
+<p>but these states are not the same as the allocated/unallocated states.&nbsp; In terms of physical memory, a GC system has <i>three</i> states:</p>
+<ul>
+<li>allocated (referenced) 
+</li><li>allocated (unreferenced) 
+</li><li>unallocated (unreferenced) </li></ul>
+<p>It is the allocated but unreferenced state that causes so much
+confusion when determining how much memory is "in use" at any given
+time.&nbsp; This memory is allocated but awaiting to be reclaimed by
+the GC.&nbsp; Does this memory count toward the unallocated total or
+does it count toward the allocated total?&nbsp; Depending on what the
+intent of monitoring memory is, the answer is different.&nbsp; Is a
+memory test supposed to check that:</p>
+<ul>
+<li>after a function runs, no unexpected memory remains referenced? 
+</li><li>a function uses a reasonable amount of memory? 
+</li><li>a function properly cleans up so that memory is most
+efficiently utilized (this involves issues such as I mentioned
+regarding collection buffers)? </li><li>a function properly disposes of unmanaged objects? </li></ul>
+<p>The problem with attempting to get a true count of the allocated
+memory in a GC system is that the test, by its very nature, interferes
+with the very thing we're trying to test!&nbsp; Like Schroedinger's
+cat, neither alive nor dead until we open the box and look, allocated
+but unreferenced memory is in this quasi-state of being neither
+allocated nor unallocated.&nbsp; Once we call <code>GC.GetTotalMemory(<span class="cpp-keyword">true</span>);</code>
+any unreferenced memory is (ideally) reclaimed and we have a true
+(again ideally) count of the available memory (so, I guess the cat is
+always dead after we open the box).&nbsp; Therefore, in an ideal world,
+this code:</p><pre>...
+startMem=GC.GetTotalMemory(<span class="cpp-keyword">true</span>);
+startTime=HiResTimer.Ticks;
+<span class="cpp-keyword">try</span>
+{
+  utd();
+}
+<span class="cpp-keyword">catch</span>(Exception e)
+{
+  <span class="cpp-keyword">throw</span>(e);
+}
+<span class="cpp-keyword">finally</span>
+{
+  stopTime=HiResTimer.Ticks;
+  endMem=GC.GetTotalMemory(<span class="cpp-keyword">true</span>);
+...
+</pre>
+<p>would measure how much memory still remains referenced after the <code>utd()</code>
+delegate call.&nbsp; However, this doesn't tell us anything about the
+memory utilization while the function was running, in terms of the
+amount of memory that it allocated, referenced, and subsequently
+de-referenced.&nbsp; Also, the world is not ideal.&nbsp; Rather than
+reclaiming all unreferenced memory, the GC starts a separate
+thread.&nbsp; The function <code>GetTotalMemory(<span class="cpp-keyword">true</span>)</code> merely waits a short interval.&nbsp; So:</p>
+<ul>
+<li>we are not guaranteed of getting an accurate count 
+</li><li>the timing of the unit under test is thrown off because the GC is now running in the background </li></ul>
+<p>Another problem is that the GC reports only on the memory that it
+manages.&nbsp; The GC is oblivious to unmanaged memory such as bitmaps,
+COM objects, etc.&nbsp; In my article on <code>IDispose</code> I
+demonstrate this using a 3MB JPG image.&nbsp; The GC reports zero
+memory utilization while the object is referenced!&nbsp; And worse,
+without properly disposing the object, physical memory will continue to
+be utilized until none is left and the GC finally starts reclaiming
+it.&nbsp; Bitmaps and the like are an interesting problem in themselves
+though.&nbsp; They're sort of a "quasi-managed" resource since the
+wrapping class implements the <code>IDispose</code> interface and
+therefore the unmanaged resources are cleaned up when the managed
+resource is reclaimed.&nbsp; This binding between managed/unmanaged
+resources makes the issue of resource management yet again more
+confusing.</p>
+<p>It becomes clear that using the GC to test memory allocations is
+pointless.&nbsp; It is inaccurate, affects other performance
+measurements, and incomplete.</p>
+<h3><a name="Unit Testing As Documentation26">Unit Testing As Documentation</a></h3>
+<p>Remember that part of the purpose of a unit test is to guide the
+programmer to properly implement the functionality under test.&nbsp;
+With regards to memory utilization, the unit test needs to consider the
+nature of the GC and the nature of the object under test.&nbsp; What
+really needs to be determined is whether the implementation:</p>
+<ul>
+<li>needs to support a manual cleanup in cases where the resources are
+allocated completely externally from the .NET framework, such as in a
+COM object; </li><li>needs to support "directed" cleanup in cases where manually cleaning up managed resources improves overall performance; 
+</li><li>can rely entirely on the GC to eventually get around to performing cleanup. </li></ul>
+<p>This criteria gives us a clearer picture of what the purpose of memory testing is within the concept of a unit test.</p>
+<h4><a name="Manual Cleanup27">Manual Cleanup</a></h4>
+<p>Manual cleanup is needed for resources that are allocated completely
+outside of the domain of the .NET framework.&nbsp; This typically means
+COM objects or other third party programs which allocate resources and
+require the application to specifically free these resources.&nbsp;
+Since the GC functions are useless in tracking this kind of memory, we
+have to rely on system diagnostics to tell us how much memory is being
+used by these functions.&nbsp; Because these resources are completely
+unmanaged by the GC, there is no binding managed resource which
+implements <code>IDispose</code>, and therefore the programmer must wrap the resource in a class that either implements <code>IDispose</code>
+or provides some other mechanism to free up the resources.&nbsp; The
+unit test should include whatever code is necessary to ensure that the
+application interfaces with the third party functionality so that
+resources are reclaimed.</p>
+<h4><a name="Directed Cleanup28">Directed Cleanup</a></h4>
+<p>Directed cleanup handles cases where unmanaged resources are already
+wrapped by classes in the .NET framework (or by the application), thus
+becoming "managed".&nbsp; A bitmap or other GDI resource is an example
+of this.&nbsp; It is often necessary to manually direct the reclamation
+of the unmanaged portion of the managed resource so that memory and/or
+handles do not continue to be allocated without limit.&nbsp; Waiting
+for all physical memory plus all virtual memory to be consumed before
+the GC starts reclaiming resources results in very poor performance of
+not only your application, but the entire system.&nbsp; The unit test
+needs to be written in such a manner as to "document" the need for this
+implementation.</p>
+<p>It is important to recognize that for directed cleanup unit tests, <i>we do not want the GC to run.</i>&nbsp;
+If the GC were to start reclaiming memory, then the unmanaged
+resources, being wrapped in a managed object, would be freed.&nbsp;
+Rather, the unit test should ensure that the directed cleanup <i>implementation</i> is correct.</p>
+<h4><a name="Automatic Cleanup29">Automatic Cleanup</a></h4>
+<p>In this case, the application is going to rely on the GC to perform
+all cleanup whenever it decides to start collection.&nbsp; The unit
+test does not need to measure memory or resource utilization.&nbsp;
+This "don't test" approach should only be taken when the resources are
+fully managed by the GC--there are no objects that interface to or wrap
+unmanaged resources.&nbsp; The only exception to this that I can think
+of has to do with managing large collections.&nbsp; In this case,
+directed cleanup of the collection would improve memory
+utilization.&nbsp; However, because the .NET collection classes don't
+provide for a complete reclamation of memory in a manual way, this is
+sort of pointless for now.&nbsp; Hopefully, when generics are
+implemented and we can migrate to an STL approach for containers, the
+.NET collection classes can be thrown away.</p>
+<h3><a name="Memory Testing30">Memory Testing</a></h3>
+<p>If you buy into the three cases (manual, directed, and automatic)
+that I described above, then it should be clear that the memory
+functions the GC provides are not appropriate, since the only thing
+we're really interested in is tracking unmanaged resources, whether
+wrapped by a managed object or not.&nbsp; To do this, we simply need to
+watch the process memory using a simple helper class:</p><pre>using System.Diagnostics;
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">class</span> ProcessMemory
+{
+  <span class="cpp-keyword">public</span> <span class="cpp-keyword">static</span> <span class="cpp-keyword">int</span> WorkingSet
+  {
+    get {<span class="cpp-keyword">return</span> Process.GetCurrentProcess().WorkingSet;}
+  }
+}
+</pre>
+<p>which returns our process' physically allocated memory (we're going to ignore virtual memory allocations).&nbsp; The <code>MaxKMemory</code>
+is used to specify the maximum amount of memory that a function is
+allowed to allocate on the process heap (not the GC pool) without
+failing.&nbsp; For example:</p><pre>[Test]
+[MaxKMemory(<span class="cpp-literal">1000</span>)]
+<span class="cpp-keyword">public</span> <span class="cpp-keyword">void</span> UnmanagedTest()
+{
+  ClassBeingTested cbt=<span class="cpp-keyword">new</span> ClassBeingTested();
+  cbt.LoadImage(<span class="cpp-string">"fish.jpg"</span>);
+  cbt.Dispose();
+}
+</pre>
+<p>The above code verifies that after the image has been loaded and
+disposed of, less than 1,000K of memory remains allocated (1MB).&nbsp;
+What this test is really doing is:</p>
+<ul>
+<li>telling the programmer that the class needs to implement IDipose 
+</li><li>verifying that IDispose is working correctly </li></ul>
+<p>(to keep the download size small, I have <i>not</i> included the fish.jpg file).</p>
+<h2><a name="Conclusion31">Conclusion</a></h2>
+<p>I completely agree that the usefulness of some of these tests are
+dubious for most applications.&nbsp; In my little corner of the world
+however, I find them very helpful.&nbsp; And the real point here is
+that the intent of unit testing should be to provide the programmer
+with a suite of tools to choose from that try to automate as best as
+possible different testing requirements.&nbsp; I believe MUTE does
+this, and provides a good framework (albeit in need of some
+refactoring!) for programmers to continue extending it for their own
+needs.</p>
+
+<!-- Article Ends -->
+
+
+
+</div>
+</span>
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/togglePre.js"></script>
+
+<h2>About Marc Clifton</h2>
+<div style="overflow: hidden;"><table border="0"><tbody><tr valign="top"><td class="smallText" nowrap="nowrap"><img src="Advanced%20Unit%20Testing%204_files/CCCA6270-7875-4937-96C2-0CF123E2F30F.jpg"><br><a href="http://www.codeproject.com/info/supporter.asp#protectors"><img src="Advanced%20Unit%20Testing%204_files/Protector.gif" alt="CodeProject Protector" border="0" height="64" width="48"></a> <a href="http://www.codeproject.com/info/supporter.asp#supporters"><img src="Advanced%20Unit%20Testing%204_files/Supporter.gif" alt="CodeProject Supporter" border="0" height="64" width="48"></a> </td><td class="smallText">Marc is the creator of <a href="http://www.myxaml.com/">MyXaml</a>,
+an open source, declarative, XML instantiation engine. He is an
+industry consultant working primarily with companies interested in
+utilizing declarative programming concepts to add flexibility to n-tier
+architectures on web, CE, and desktop platforms. His other major open
+source project is the <a href="http://www.marcclifton.com/Projects/AdvancedUnitTesting/tabid/102/Default.aspx"> Advanced Unit Testing framework</a>.&nbsp; He operates his own website, <a href="http://www.marcclifton.com/">www.marcclifton.com</a>, where you will find many of his articles.  <br><br>Marc lives in Hudson, NY with his girlfriend Karen and his son Ian, who attends the <a href="http://www.hawthornevalleyschool.org/">Hawthorne Valley School</a>.  To contact Marc, email him at <a href="mailto:marc.clifton@gmail.com">marc.clifton@gmail.com</a>.<p></p><br><p class="smallText">Click <a href="http://www.codeproject.com/script/profile/whos_who.asp?vt=arts&amp;id=36803">here</a> to view Marc Clifton's online profile.</p></td></tr></tbody></table></div><br>
+<table bgcolor="#ff9900" cellpadding="0" width="100%"><tbody><tr><td>
+<img src="Advanced%20Unit%20Testing%204_files/bannerlogo.gif" border="0" height="60" width="468"></td></tr></tbody></table>
+<h2>Discussions and Feedback</h2><blockquote><img src="Advanced%20Unit%20Testing%204_files/news_unselected.gif"> <b>3 comments</b> have  been posted for this article. Visit <b><a href="http://www.codeproject.com/csharp/autp4.asp">http://www.codeproject.com/csharp/autp4.asp</a></b> to post and view comments on this article.</blockquote>
+
+<table cellspacing="5" width="100%">
+<tbody><tr valign="top"><td class="smallText">
+
+Updated: 9 Oct 2003
+</td><td class="SmallText" align="right">
+Article content copyright Marc Clifton, 2003<br>
+everything else Copyright © <a href="mailto:webmaster@codeproject.com">CodeProject</a>, 1999-2006.
+
+</td></tr>
+</tbody></table>
+
+</td></tr></tbody></table>
+
+
+<script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/front.js"></script><script language="javascript" src="Advanced%20Unit%20Testing%204_files/door.js"></script>
+
+</td></tr></tbody></table><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/func_033.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_003.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_005.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_002.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_021.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_015.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_026.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_022.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_030.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_027.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_019.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_011.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_020.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_006.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_028.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_029.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_009.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_008.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_012.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_017.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_014.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_004.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_018.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_024.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_010.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_025.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_016.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_013.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_023.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_031.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_007.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/chunks_032.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/spit.js"></script><script type="text/javascript" src="Advanced%20Unit%20Testing%204_files/al.htm"></script></body></html>
